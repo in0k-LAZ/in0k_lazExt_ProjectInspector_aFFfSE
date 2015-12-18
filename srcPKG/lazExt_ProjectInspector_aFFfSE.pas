@@ -204,8 +204,19 @@ begin
    end;
    //treeView.
    if Assigned(result) then begin
-       treeView.ClearSelection();
-       treeView.Selected:=TTreeNode(result);
+       treeView.BeginUpdate;
+            treeView.ClearSelection();
+            treeView.Selected:=TTreeNode(result);
+           // treeView.
+ //           treeView.Selected.EndEdit();
+       treeView.EndUpdate;
+//       TTreeNode(result).Focused:=TRUE;
+//       treeView.Repaint;
+       //treeView.Invalidate;
+       //TTreeNode(result).
+       //treeView;
+       //treeView.ClearSelection();
+       //treeView.Selected:=TTreeNode(result);
    end;
 
 
