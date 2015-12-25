@@ -6,15 +6,14 @@ interface
 
 {$define _EventLOG_}
 
-uses in0k_lazExt_DEBUG, messages, Dialogs, ComCtrls,
+uses in0k_lazIdeSRC_SourceEditorWindow_onActivate,
+
+     in0k_lazExt_DEBUG, messages, Dialogs, ComCtrls,
      SrcEditorIntf, IDECommands,  TreeFilterEdit,
      Classes, Forms;
 
 type
 
-  https://github.com/in0k-LazarusIDE-plugins/TEST1.git
-  https://github.com/in0k-LazarusIDE-sources/TEST1.git
-                          lazExtSRC
 
  tLazExt_ProjectInspector_aFFfSE=class
   function _wndOInsp_find_inSCREEN_:TCustomForm;

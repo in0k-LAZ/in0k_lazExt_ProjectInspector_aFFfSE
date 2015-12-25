@@ -8,11 +8,11 @@
       <Version Value="11"/>
       <PathDelim Value="\"/>
       <SearchPaths>
-        <OtherUnitFiles Value="srcPKG\DEBUG;srcPKG"/>
+        <OtherUnitFiles Value="srcEXT\in0k-lazarusIdeSRC-SourceEditorWindow-onActivate;srcPKG\DEBUG;srcPKG"/>
         <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>
     </CompilerOptions>
-    <Files Count="3">
+    <Files Count="4">
       <Item1>
         <Filename Value="srcPKG\DEBUG\in0k_lazExt_DEBUG.pas"/>
         <UnitName Value="in0k_lazExt_DEBUG"/>
@@ -26,6 +26,10 @@
         <Filename Value="srcPKG\lazExt_ProjectInspector_aFFfSE.pas"/>
         <UnitName Value="lazExt_ProjectInspector_aFFfSE"/>
       </Item3>
+      <Item4>
+        <Filename Value="srcEXT\in0k-lazarusIdeSRC-SourceEditorWindow-onActivate\in0k_lazIdeSRC_SourceEditorWindow_onActivate.pas"/>
+        <UnitName Value="in0k_lazIdeSRC_SourceEditorWindow_onActivate"/>
+      </Item4>
     </Files>
     <RequiredPkgs Count="2">
       <Item1>

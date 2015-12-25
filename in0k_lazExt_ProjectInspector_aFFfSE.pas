@@ -8,7 +8,8 @@ interface
 
 uses
   in0k_lazExt_DEBUG, in0k_lazExt_ProjectInspector_aFFfSE_REG, 
-  lazExt_ProjectInspector_aFFfSE, LazarusPackageIntf;
+  lazExt_ProjectInspector_aFFfSE, 
+  in0k_lazIdeSRC_SourceEditorWindow_onActivate, LazarusPackageIntf;
 
 implementation
 
