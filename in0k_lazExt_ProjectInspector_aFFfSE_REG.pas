@@ -17,7 +17,7 @@ var _LazEXT_:tLazExt_ProjectInspector_aFFfSE;
 procedure REGISTER;
 begin
     _LazEXT_:=tLazExt_ProjectInspector_aFFfSE.Create;
-    _LazEXT_.RegisterInIdeLAZARUS;
+    _LazEXT_.LazarusIDE_SetUP;
     {.$ifDef _EventLOG_}
     in0k_lazExt_DEBUG.RegisterInIdeLAZARUS;
     {.$endIf}

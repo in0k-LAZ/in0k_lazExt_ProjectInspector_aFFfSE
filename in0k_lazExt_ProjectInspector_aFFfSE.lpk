@@ -12,7 +12,7 @@
         <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>
     </CompilerOptions>
-    <Files Count="4">
+    <Files Count="7">
       <Item1>
         <Filename Value="srcPKG\DEBUG\in0k_lazExt_DEBUG.pas"/>
         <UnitName Value="in0k_lazExt_DEBUG"/>
@@ -30,6 +30,18 @@
         <Filename Value="srcEXT\in0k-lazarusIdeSRC-SourceEditorWindow-onActivate\in0k_lazIdeSRC_SourceEditor_onActivate.pas"/>
         <UnitName Value="in0k_lazIdeSRC_SourceEditor_onActivate"/>
       </Item4>
+      <Item5>
+        <Filename Value="srcPKG\lazExt_wndInspector_aFFfSE_node.pas"/>
+        <UnitName Value="lazExt_wndInspector_aFFfSE_node"/>
+      </Item5>
+      <Item6>
+        <Filename Value="srcPKG\lazExt_wndInspector_aFFfSE_nodeProjectInspector.pas"/>
+        <UnitName Value="lazExt_wndInspector_aFFfSE_nodeProjectInspector"/>
+      </Item6>
+      <Item7>
+        <Filename Value="srcPKG\lazExt_wndInspector_aFFfSE_nodePackageEditor.pas"/>
+        <UnitName Value="lazExt_wndInspector_aFFfSE_nodePackageEditor"/>
+      </Item7>
     </Files>
     <RequiredPkgs Count="2">
       <Item1>
