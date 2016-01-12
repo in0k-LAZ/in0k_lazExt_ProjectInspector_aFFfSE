@@ -1,3 +1,6 @@
 [submodule "srcEXT/in0k-lazarusIdeSRC-SourceEditorWindow-onActivate"]
 	path = srcEXT/in0k-lazarusIdeSRC-SourceEditorWindow-onActivate
 	url = https://github.com/in0k-LazarusIDE-soures/in0k-lazarusIdeSRC-SourceEditorWindow-onActivate.git
+[submodule "srcEXT/in0k-lazarusIdeSRC-SourceEditor-onActivate"]
+	path = srcEXT/in0k-lazarusIdeSRC-SourceEditor-onActivate
+	url = https://github.com/in0k-LazarusIDE-soures/in0k-lazarusIdeSRC-SourceEditor-onActivate.git
