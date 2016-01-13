@@ -1,4 +1,4 @@
-unit lazExt_wndInspector_aFFfSE_nodeProjectInspector;
+unit lazExt_wndInspector_aFFfSE_wndNode_ProjectInspector;
 
 {$mode objfpc}{$H+}
 
@@ -6,7 +6,7 @@ interface
 
 uses Forms, ComCtrls, TreeFilterEdit,
   LCLVersion,
-  lazExt_wndInspector_aFFfSE_node;
+  lazExt_wndInspector_aFFfSE_wndNode;
 
 
 const
@@ -15,20 +15,19 @@ const
 
 type
 
- tLazExt_wndInspector_aFFfSE_nodeProjectInspector=class(tLazExt_wndInspector_aFFfSE_Node)
+ tLazExt_wndInspector_aFFfSE_wndNode_ProjectInspector=class(tLazExt_wndInspector_aFFfSE_Node)
   private
    _TV_:tTreeView;
-  protected
     function _treeView_:tTreeView;
     function _treeNode_fnd_(const FileName:string):TTreeNode;
-
-    //function _Select_(const FileName:string);
   public
-    constructor Create(const aForm:tForm); override;
+    class function OfMyType(const testForm:TCustomForm):boolean; override;
+  public
+    procedure FuckUP_SET; override;
+    procedure FuckUP_CLR; override;
+  public
     procedure Select(const FileName:string); override;
   end;
-
-function Form_of_this_TYPE(const Form:tForm):boolean;
 
 implementation
 
@@ -38,27 +37,33 @@ const
  cCompNameName='ItemsTreeView';
 // ItemsTreeView
 
+//------------------------------------------------------------------------------
 
-function Form_of_this_TYPE(const Form:tForm):boolean;
+class function tLazExt_wndInspector_aFFfSE_wndNode_ProjectInspector.OfMyType(const testForm:TCustomForm):boolean;
 begin
-    result:=Form.ClassNameIs(cFormClassName);
+    result:=testForm.ClassNameIs(cFormClassName);
 end;
 
-//==============================================================================
+//------------------------------------------------------------------------------
 
-
-constructor tLazExt_wndInspector_aFFfSE_nodeProjectInspector.Create(const aForm:tForm);
+procedure tLazExt_wndInspector_aFFfSE_wndNode_ProjectInspector.FuckUP_SET;
 begin
-    inherited Create(aForm);
    _TV_:=nil;
 end;
 
-function tLazExt_wndInspector_aFFfSE_nodeProjectInspector._TreeView_:tTreeView;
+procedure tLazExt_wndInspector_aFFfSE_wndNode_ProjectInspector.FuckUP_CLR;
+begin
+   _TV_:=nil;
+end;
+
+//------------------------------------------------------------------------------
+
+function tLazExt_wndInspector_aFFfSE_wndNode_ProjectInspector._TreeView_:tTreeView;
 var i:integer;
 begin
     if not Assigned(_TV_) then begin
-        if Assigned(_frm_) then begin
-            for i:=0 to _frm_.ControlCount-1 do begin
+        if Assigned(Form) then begin
+            for i:=0 to Form.ControlCount-1 do begin
                   if (form.Controls[i] is TTreeView) and
                      (form.Controls[i].Name=cCompNameName)
                   then begin
@@ -74,19 +79,16 @@ end;
 
 {%region --- FuckUP lazarusSRC --- /fold ---------------}
 
-
 {$if lcl_fullversion = 1060001 }
     {$define fuckUp_01}
 {$else}
-    {$hint 'NOT Tested in this LazarusIDE version'}
+    {$WARNING 'NOT Tested in this LazarusIDE version'}
     {$define fuckUp_01}
 {$endif}
 
-
 {%region --- fuckUp_01 --- /fold}
-{$ifDef fuckUp_01}{$hint 'lazExt_wndInspector_aFFfSE_nodeProjectInspector use FuckUP_01'}
-
-// "lazDIR"\packager\PackageEditor.pas
+{$ifDef fuckUp_01}{$note 'tLazExt_wndInspector_aFFfSE_wndNode_ProjectInspector use FuckUP_01'}
+// взято из "lazDIR"\packager\PackageEditor.pas
 
 type
  _TPENodeType_=(penFile,penDependency);
@@ -112,16 +114,9 @@ type
       Next: _TPENodeData_;
     end;
 
-{$endIf}
-{%endregion}
+//------------------------------------------------------------------------------
 
-
-
-
-{%endregion}
-
-
-function tLazExt_wndInspector_aFFfSE_nodeProjectInspector._treeNode_fnd_(const FileName:string):TTreeNode;
+function tLazExt_wndInspector_aFFfSE_wndNode_ProjectInspector._treeNode_fnd_(const FileName:string):TTreeNode;
 var tmp:tObject;
 begin
     result:=nil;
@@ -146,8 +141,12 @@ begin
     end;
 end;
 
+{$endIf}
+{%endregion}
 
-procedure tLazExt_wndInspector_aFFfSE_nodeProjectInspector.Select(const FileName:string);
+{%endregion}
+
+procedure tLazExt_wndInspector_aFFfSE_wndNode_ProjectInspector.Select(const FileName:string);
 var _treeNode_:TTreeNode;
 begin
     if (not Assigned(_TreeView_)) or (FileName='') then _treeNode_:=nil

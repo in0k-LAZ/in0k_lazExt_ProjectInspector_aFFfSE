@@ -6,7 +6,8 @@ object wnd_in0kLazExt_DEBUG: Twnd_in0kLazExt_DEBUG
   ClientHeight = 240
   ClientWidth = 320
   OnCreate = FormCreate
-  LCLVersion = '1.4.0.4'
+  OnDestroy = FormDestroy
+  LCLVersion = '1.6.0.1'
   object Memo1: TMemo
     AnchorSideLeft.Control = Owner
     AnchorSideTop.Control = Owner

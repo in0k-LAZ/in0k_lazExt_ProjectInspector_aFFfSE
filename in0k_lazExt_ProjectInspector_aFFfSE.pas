@@ -8,9 +8,10 @@ interface
 
 uses
   in0k_lazExt_DEBUG, in0k_lazExt_ProjectInspector_aFFfSE_REG, 
-  lazExt_ProjectInspector_aFFfSE, lazExt_wndInspector_aFFfSE_node, 
-  lazExt_wndInspector_aFFfSE_nodeProjectInspector, 
-  lazExt_wndInspector_aFFfSE_nodePackageEditor, LazarusPackageIntf;
+  lazExt_ProjectInspector_aFFfSE, lazExt_wndInspector_aFFfSE_wndNode, 
+  lazExt_wndInspector_aFFfSE_wndNode_ProjectInspector, 
+  lazExt_wndInspector_aFFfSE_wndNode_PackageEditor, in0k_lazIdeSRC_wndFuckUP, 
+  LazarusPackageIntf;
 
 implementation
 

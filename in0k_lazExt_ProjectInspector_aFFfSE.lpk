@@ -8,11 +8,14 @@
       <Version Value="11"/>
       <PathDelim Value="\"/>
       <SearchPaths>
-        <OtherUnitFiles Value="srcPKG;srcPKG\DEBUG;srcEXT\in0k-lazarusIdeSRC-SourceEditor-onActivate"/>
+        <OtherUnitFiles Value="srcEXT\in0k-lazarusIdeSRC-SourceEditor-onActivate;srcEXT\in0k-lazarusIdeSRC-wndFuckUP;srcPKG;srcPKG\DEBUG;srcPKG\wndNodes"/>
         <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>
+      <Other>
+        <CustomOptions Value="-dIn0k_lazExt_ProjectInspector_aFFfSE_debugLOG_modeON"/>
+      </Other>
     </CompilerOptions>
-    <Files Count="7">
+    <Files Count="8">
       <Item1>
         <Filename Value="srcPKG\DEBUG\in0k_lazExt_DEBUG.pas"/>
         <UnitName Value="in0k_lazExt_DEBUG"/>
@@ -27,22 +30,26 @@
         <UnitName Value="lazExt_ProjectInspector_aFFfSE"/>
       </Item3>
       <Item4>
-        <Filename Value="srcPKG\lazExt_wndInspector_aFFfSE_node.pas"/>
-        <UnitName Value="lazExt_wndInspector_aFFfSE_node"/>
+        <Filename Value="srcPKG\wndNodes\lazExt_wndInspector_aFFfSE_wndNode.pas"/>
+        <UnitName Value="lazExt_wndInspector_aFFfSE_wndNode"/>
       </Item4>
       <Item5>
-        <Filename Value="srcPKG\lazExt_wndInspector_aFFfSE_nodeProjectInspector.pas"/>
-        <UnitName Value="lazExt_wndInspector_aFFfSE_nodeProjectInspector"/>
+        <Filename Value="srcPKG\wndNodes\lazExt_wndInspector_aFFfSE_wndNode_ProjectInspector.pas"/>
+        <UnitName Value="lazExt_wndInspector_aFFfSE_wndNode_ProjectInspector"/>
       </Item5>
       <Item6>
-        <Filename Value="srcPKG\lazExt_wndInspector_aFFfSE_nodePackageEditor.pas"/>
-        <UnitName Value="lazExt_wndInspector_aFFfSE_nodePackageEditor"/>
+        <Filename Value="srcPKG\wndNodes\lazExt_wndInspector_aFFfSE_wndNode_PackageEditor.pas"/>
+        <UnitName Value="lazExt_wndInspector_aFFfSE_wndNode_PackageEditor"/>
       </Item6>
       <Item7>
         <Filename Value="srcEXT\in0k-lazarusIdeSRC-SourceEditor-onActivate\in0k_lazIdeSRC_SourceEditor_onActivate.pas"/>
         <AddToUsesPkgSection Value="False"/>
         <UnitName Value="in0k_lazIdeSRC_SourceEditor_onActivate"/>
       </Item7>
+      <Item8>
+        <Filename Value="srcEXT\in0k-lazarusIdeSRC-wndFuckUP\in0k_lazIdeSRC_wndFuckUP.pas"/>
+        <UnitName Value="in0k_lazIdeSRC_wndFuckUP"/>
+      </Item8>
     </Files>
     <RequiredPkgs Count="2">
       <Item1>
