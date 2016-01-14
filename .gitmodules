@@ -7,3 +7,6 @@
 [submodule "srcEXT/in0k-lazarusIdeSRC-wndDEBUG"]
 	path = srcEXT/in0k-lazarusIdeSRC-wndDEBUG
 	url = https://github.com/in0k-LazarusIDE-soures/in0k-lazarusIdeSRC-wndDEBUG.git
+[submodule "srcEXT/in0k-lazarusIdeSRC-wndFuckUP"]
+	path = srcEXT/in0k-lazarusIdeSRC-wndFuckUP
+	url = https://github.com/in0k-LazarusIDE-soures/in0k-lazarusIdeSRC-wndFuckUP.git

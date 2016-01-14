@@ -8,48 +8,77 @@
       <Version Value="11"/>
       <PathDelim Value="\"/>
       <SearchPaths>
-        <OtherUnitFiles Value="srcEXT\in0k-lazarusIdeSRC-SourceEditor-onActivate;srcEXT\in0k-lazarusIdeSRC-wndFuckUP;srcPKG;srcPKG\DEBUG;srcPKG\wndNodes"/>
+        <IncludeFiles Value="\;srcEXT\in0k-lazarusIdeSRC-wndDEBUG"/>
+        <OtherUnitFiles Value="srcEXT\in0k-lazarusIdeSRC-wndDEBUG;srcEXT\in0k-lazarusIdeSRC-SourceEditor-onActivate;srcEXT\in0k-lazarusIdeSRC-wndFuckUP;srcPKG;srcPKG\DEBUG;srcPKG\wndNodes"/>
         <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>
+      <Conditionals Value="// example for adding linker options on Mac OS X
+//if TargetOS='darwin' then
+//  LinkerOptions := ' -framework OpenGL';
+
+// example for adding a unit and include path on Windows
+//if SrcOS='win' then begin
+//  UnitPath += ';win';
+//  IncPath += ';win';
+//end;
+
+if undefined(In0k_lazExt_ProjectInspector_aFFfSE_debugLOG_modeON) then begin
+    In0k_lazIdeSRC_wndFuckUP_DebugLOG_mode:='1';
+end
+else begin
+    In0k_lazIdeSRC_wndFuckUP_DebugLOG_mode:='1';
+end;"/>
       <Other>
         <CustomOptions Value="-dIn0k_lazExt_ProjectInspector_aFFfSE_debugLOG_modeON"/>
       </Other>
     </CompilerOptions>
-    <Files Count="8">
+    <Files Count="11">
       <Item1>
-        <Filename Value="srcPKG\DEBUG\in0k_lazExt_DEBUG.pas"/>
-        <UnitName Value="in0k_lazExt_DEBUG"/>
-      </Item1>
-      <Item2>
-        <Filename Value="in0k_lazExt_ProjectInspector_aFFfSE_REG.pas"/>
-        <HasRegisterProc Value="True"/>
-        <UnitName Value="in0k_lazExt_ProjectInspector_aFFfSE_REG"/>
-      </Item2>
-      <Item3>
         <Filename Value="srcPKG\lazExt_ProjectInspector_aFFfSE.pas"/>
         <UnitName Value="lazExt_ProjectInspector_aFFfSE"/>
-      </Item3>
-      <Item4>
+      </Item1>
+      <Item2>
         <Filename Value="srcPKG\wndNodes\lazExt_wndInspector_aFFfSE_wndNode.pas"/>
         <UnitName Value="lazExt_wndInspector_aFFfSE_wndNode"/>
-      </Item4>
-      <Item5>
+      </Item2>
+      <Item3>
         <Filename Value="srcPKG\wndNodes\lazExt_wndInspector_aFFfSE_wndNode_ProjectInspector.pas"/>
         <UnitName Value="lazExt_wndInspector_aFFfSE_wndNode_ProjectInspector"/>
-      </Item5>
-      <Item6>
+      </Item3>
+      <Item4>
         <Filename Value="srcPKG\wndNodes\lazExt_wndInspector_aFFfSE_wndNode_PackageEditor.pas"/>
         <UnitName Value="lazExt_wndInspector_aFFfSE_wndNode_PackageEditor"/>
-      </Item6>
-      <Item7>
+      </Item4>
+      <Item5>
         <Filename Value="srcEXT\in0k-lazarusIdeSRC-SourceEditor-onActivate\in0k_lazIdeSRC_SourceEditor_onActivate.pas"/>
         <AddToUsesPkgSection Value="False"/>
         <UnitName Value="in0k_lazIdeSRC_SourceEditor_onActivate"/>
-      </Item7>
-      <Item8>
+      </Item5>
+      <Item6>
         <Filename Value="srcEXT\in0k-lazarusIdeSRC-wndFuckUP\in0k_lazIdeSRC_wndFuckUP.pas"/>
         <UnitName Value="in0k_lazIdeSRC_wndFuckUP"/>
+      </Item6>
+      <Item7>
+        <Filename Value="in0k_lazExt_REGISTER.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="in0k_lazExt_REGISTER"/>
+      </Item7>
+      <Item8>
+        <Filename Value="in0k_lazExt_DEBUG.pas"/>
+        <UnitName Value="in0k_lazExt_DEBUG"/>
       </Item8>
+      <Item9>
+        <Filename Value="srcEXT\in0k-lazarusIdeSRC-wndDEBUG\in0k_lazIdeSRC_wndDEBUG.pas"/>
+        <UnitName Value="in0k_lazIdeSRC_wndDEBUG"/>
+      </Item9>
+      <Item10>
+        <Filename Value="srcEXT\in0k-lazarusIdeSRC-wndDEBUG\in0k_lazIdeSRC_wndDEBUG.inc"/>
+        <Type Value="Binary"/>
+      </Item10>
+      <Item11>
+        <Filename Value="in0k_lazExt_SETTINGs.inc"/>
+        <Type Value="Binary"/>
+      </Item11>
     </Files>
     <RequiredPkgs Count="2">
       <Item1>
@@ -64,6 +93,7 @@
     </UsageOptions>
     <PublishOptions>
       <Version Value="2"/>
+      <DestinationDirectory Value="D:\!PROGECTs\!in0k\publishedpackage"/>
     </PublishOptions>
   </Package>
 </CONFIG>
