@@ -11,11 +11,13 @@ interface
 
 uses {$ifDef _debugLOG_}in0k_lazExt_DEBUG,{$endIf}
      ProjectIntf, LazIDEIntf,
+     sysutils,
+     Classes,
 
 
      //in0k_lazarusIdeSRC_wndDEBUG,
-     messages, Dialogs, Controls, ComCtrls,
-     SrcEditorIntf, IDECommands,  TreeFilterEdit,
+      Dialogs, Controls,
+     SrcEditorIntf, IDECommands,
      in0k_lazIdeSRC_SourceEditor_onActivate,
 
      lazExt_wndInspector_aFFfSE_wndNode,
@@ -24,23 +26,30 @@ uses {$ifDef _debugLOG_}in0k_lazExt_DEBUG,{$endIf}
 
 
 
-     Classes, Forms;
+      Forms;
 
 type
 
  tLazExt_ProjectInspector_aFFfSE=class
+  private
+   _heldCall_THREAD_  :TThread;
+   _heldCall_timeST_  :QWord;
+    procedure _heldCall_execute_;
+    procedure _heldCall_setUp_;
   protected
    _SourceEditor_onActivate_:tIn0k_lazIdeSRC_SourceEditor_onActivate;
-    procedure _SourceEditor_onActivate_EVENT_(Sender: TObject);
   protected
    _wndNodes_:tLazExt_wndInspector_aFFfSE_NodeLST;
   protected
-    function  _getFileName_fromSourceEdit:string;
-  protected
+    function  _fileName_fromActiveSourceEdit_:string;
+  protected //< ОСНОВНАЯ часть ... суть
     procedure _select_inWindow_(const fileName:string; const Form:TForm; const nodeTYPE:tLazExt_wndInspector_aFFfSE_NodeTYPE);
     procedure _select_inSCREEN_(const fileName:string);
-  protected
-    function _Event_ProjectChanged_(Sender:TObject; AProject:TLazProject):TModalResult;
+    procedure _select_;
+    procedure _select_heldCall_;
+  protected //< события, по которым надо что-то поделать
+    procedure _Event_SourceEditor_onActivate_(Sender:TObject);
+    procedure _Event_wndNodes_ProjectAddNode_(Sender:TObject);
   public
     constructor Create;
     destructor DESTROY; override;
@@ -56,10 +65,12 @@ implementation
 
 constructor tLazExt_ProjectInspector_aFFfSE.Create;
 begin
-   _wndNodes_:=tLazExt_wndInspector_aFFfSE_NodeLST.Create;
+    _heldCall_THREAD_  :=nil;
+    _heldCall_timeST_  :=0;
+
+    _wndNodes_:=tLazExt_wndInspector_aFFfSE_NodeLST.Create;
     //---
    _SourceEditor_onActivate_:=tIn0k_lazIdeSRC_SourceEditor_onActivate.Create;
-   _SourceEditor_onActivate_.onEvent:=@_SourceEditor_onActivate_EVENT_;
 end;
 
 destructor tLazExt_ProjectInspector_aFFfSE.DESTROY;
@@ -74,13 +85,14 @@ end;
 procedure tLazExt_ProjectInspector_aFFfSE.LazarusIDE_SetUP;
 begin
    _wndNodes_.CLEAR;
+   _SourceEditor_onActivate_.onEvent:=@_Event_SourceEditor_onActivate_;
    _SourceEditor_onActivate_.LazarusIDE_SetUP;
     LazarusIDE.AddHandlerOnIDEClose(@LazarusIDE_OnIDEClose);
-    LazarusIDE.AddHandlerOnProjectOpened(@_Event_ProjectChanged_,TRUE);
 end;
 
 procedure tLazExt_ProjectInspector_aFFfSE.LazarusIDE_Clean;
 begin
+   _SourceEditor_onActivate_.onEvent:=nil;
    _SourceEditor_onActivate_.LazarusIDE_Clean;
    _wndNodes_.CLEAR;
 end;
@@ -92,8 +104,9 @@ begin
     LazarusIDE_Clean;
 end;
 
+//------------------------------------------------------------------------------
 
-function tLazExt_ProjectInspector_aFFfSE._getFileName_fromSourceEdit:string;
+function tLazExt_ProjectInspector_aFFfSE._fileName_fromActiveSourceEdit_:string;
 var tmpSourceEditor:TSourceEditorInterface;
 begin
     result:='';
@@ -105,35 +118,6 @@ begin
     end;
 end;
 
-
-//------------------------------------------------------------------------------
-
-procedure tLazExt_ProjectInspector_aFFfSE._SourceEditor_onActivate_EVENT_(Sender:TObject);
-begin
-    {$ifDef _debugLOG_}
-    DEBUG('_SourceEditor_onActivate_', '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
-    {$endIf}
-    if Assigned(tIn0k_lazIdeSRC_SourceEditor_onActivate(Sender).SourceEditor)
-    then begin
-       _select_inSCREEN_(tIn0k_lazIdeSRC_SourceEditor_onActivate(Sender).SourceEditor.FileName);
-    end;
-    {$ifDef _debugLOG_}
-    DEBUG('_SourceEditor_onActivate_', '<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<');
-    {$endIf}
-end;
-
-function tLazExt_ProjectInspector_aFFfSE._Event_ProjectChanged_(Sender:TObject; AProject:TLazProject):TModalResult;
-begin
-    {$ifDef _debugLOG_}
-    DEBUG('_Event_ProjectChanged_', '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
-    {$endIf}
-    result:=mrOk;
-   _select_inSCREEN_(_getFileName_fromSourceEdit);
-    {$ifDef _debugLOG_}
-    DEBUG('_Event_ProjectChanged_', '<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<');
-    {$endIf}
-end;
-
 //------------------------------------------------------------------------------
 
 procedure tLazExt_ProjectInspector_aFFfSE._select_inWindow_(const fileName:string; const Form:TForm; const nodeTYPE:tLazExt_wndInspector_aFFfSE_NodeTYPE);
@@ -141,11 +125,15 @@ var tmp:tLazExt_wndInspector_aFFfSE_Node;
 begin
     tmp:=_wndNodes_.Nodes_GET(Form,nodeTYPE);
     if Assigned(tmp) then begin //< перестраховка
-        {$ifDef _debugLOG_}
-        DEBUG('do SELECT', 'form'+addr2txt(Form)+' fileName:"'+fileName+'"');
-        {$endIf}
+        {todo: шлифануть}
+        tmp.onAddition:=@_Event_wndNodes_ProjectAddNode_; //< по идее не тут место, но куда лучше воткнуть ... устал думать на сегодня
         tmp.Select(fileName);
+    end
+    {$ifDef _debugLOG_}
+    else begin
+        DEBUG('do _select_inWindow_', 'SKIP');
     end;
+    {$endIf}
 end;
 
 procedure tLazExt_ProjectInspector_aFFfSE._select_inSCREEN_(const fileName:string);
@@ -167,6 +155,101 @@ begin
         DEBUG('do _select_inSCREEN_', 'SKIP');
     end;
     {$endIf}
+end;
+
+procedure tLazExt_ProjectInspector_aFFfSE._select_;
+var fileName:string;
+begin
+    fileName:=_fileName_fromActiveSourceEdit_;
+    if fileName<>'' then _select_inSCREEN_(fileName);
+end;
+
+procedure tLazExt_ProjectInspector_aFFfSE._select_heldCall_;
+begin
+    //
+    // зачем так сложно? источник проблем окно "Project Inspector"
+    // # обновление идет ПОСЛЕ обновления "SourceEdit"
+    // # в TreeView объекты сначала добавляются а потом "инициализируются"
+    //
+    // поэтому, даем возможность отработать алгоритмам, и тока потом приcтупаем
+    // к нашим непосредственным задачам, надеясь что деятельность IDE закончена
+    //
+    TThread.Synchronize(nil,@_heldCall_setUp_);
+end;
+
+//------------------------------------------------------------------------------
+
+procedure tLazExt_ProjectInspector_aFFfSE._Event_SourceEditor_onActivate_(Sender:TObject);
+begin
+    {$ifDef _debugLOG_}
+    DEBUG('_Event_SourceEditor_onActivate_', '>>>');
+    {$endIf}
+    if Assigned(tIn0k_lazIdeSRC_SourceEditor_onActivate(Sender).SourceEditor)
+    then begin
+        _select_heldCall_;
+    end;
+end;
+
+procedure tLazExt_ProjectInspector_aFFfSE._Event_wndNodes_ProjectAddNode_(Sender:TObject);
+begin
+    {$ifDef _debugLOG_}
+    DEBUG('_Event_wndNodes_ProjectAddNode_', '>>>');
+    {$endIf}
+   _select_heldCall_;
+end;
+
+//------------------------------------------------------------------------------
+
+{$region --- _THeldCallTHREAD_ ------------------------------------ /fold}
+
+type
+_THeldCallTHREAD_=class(TThread)
+  private
+   _owner_:tLazExt_ProjectInspector_aFFfSE;
+  public
+    Constructor Create(Owner:tLazExt_ProjectInspector_aFFfSE);
+  protected
+    procedure Execute; override;
+  end;
+
+Constructor _THeldCallTHREAD_.Create(Owner:tLazExt_ProjectInspector_aFFfSE);
+begin
+    inherited Create(true);
+    FreeOnTerminate:=TRUE;
+   _owner_:=Owner;
+    Start;
+end;
+
+procedure _THeldCallTHREAD_.Execute;
+begin
+    repeat
+        ThreadSwitch;
+        try // собственно выполняем МЕТОД
+            Synchronize(@ _owner_._heldCall_execute_);
+            // какая-то странная и по ходу излишняя перестраховка
+            if _owner_._heldCall_THREAD_<>self then Terminate;
+        except Terminate; end;
+    until Terminated;
+end;
+
+{$endregion}
+
+procedure tLazExt_ProjectInspector_aFFfSE._heldCall_execute_;
+begin // call only `Synchronize(@_heldCall_execute_)`
+    if GetTickCount64-_heldCall_timeST_<100 then begin
+        if Assigned(_heldCall_THREAD_) then _heldCall_THREAD_.Terminate;
+       _heldCall_THREAD_:=nil;
+       _heldCall_timeST_:=0;
+       _select_;
+    end;
+end;
+
+procedure tLazExt_ProjectInspector_aFFfSE._heldCall_setUp_;
+begin // call only `Synchronize(@_heldCall_setUp_)`
+   _heldCall_timeST_:=GetTickCount64;
+    if not Assigned(_heldCall_THREAD_) then begin
+       _heldCall_THREAD_:=_THeldCallTHREAD_.Create(self);
+    end;
 end;
 
 end.
