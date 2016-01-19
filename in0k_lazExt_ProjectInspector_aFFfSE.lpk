@@ -32,7 +32,7 @@ end;"/>
         <CustomOptions Value="-dIn0k_lazExt_ProjectInspector_aFFfSE_debugLOG_modeON"/>
       </Other>
     </CompilerOptions>
-    <Files Count="12">
+    <Files Count="11">
       <Item1>
         <Filename Value="in0k_lazExt_SETTINGs.inc"/>
         <Type Value="Binary"/>
@@ -79,10 +79,6 @@ end;"/>
         <Filename Value="srcEXT\in0k-lazarusIdeSRC-wndDEBUG\in0k_lazIdeSRC_wndDEBUG.inc"/>
         <Type Value="Binary"/>
       </Item11>
-      <Item12>
-        <Filename Value="text.txt"/>
-        <Type Value="Binary"/>
-      </Item12>
     </Files>
     <RequiredPkgs Count="2">
       <Item1>
