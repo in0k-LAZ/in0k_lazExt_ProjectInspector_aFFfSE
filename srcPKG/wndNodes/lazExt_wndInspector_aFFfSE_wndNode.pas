@@ -11,6 +11,7 @@ interface
 
 uses {$ifDef _debugLOG_}in0k_lazExt_DEBUG, sysutils,{$endIf}
      Classes, Forms, ComCtrls, TreeFilterEdit,   Controls, Graphics,
+     SrcEditorIntf,
      LCLVersion, //< в зависимости от версий, разные способы работы
      in0k_lazIdeSRC_wndFuckUP;
 
@@ -31,6 +32,9 @@ type
     function  _do_treeView_find_  :tTreeView;
     function  _do_treeNode_find_  (const FileName:string):TTreeNode;
     procedure _do_treeView_select_(const treeNode:TTreeNode);
+  protected
+    function  _fileName_fromActiveSourceEdit_:string;
+    function  _treeNode_isCurrentActive_(const treeNode:TTreeNode):boolean;
 
   {%region --- Слежение ра развернутыми узлами --- /fold}
   private
@@ -55,6 +59,7 @@ type
    _ide_object_VTV_onAdvancedCustomDrawItem_original_:TTVAdvancedCustomDrawItemEvent;
     procedure _VTV_onAdvancedCustomDrawItem_myCustom_(Sender:TCustomTreeView; Node:TTreeNode; State:TCustomDrawState; Stage:TCustomDrawStage; var PaintImages,DefaultDraw:Boolean);
 
+    procedure _VTV_onAdvancedCustomDrawItem_myCustom_selected(const Sender:TCustomTreeView; const Node:TTreeNode);
 
   private //< событие для радителя ... "узел добавлен"
    _owner_onAdd_:TNotifyEvent;
@@ -334,16 +339,67 @@ begin
     //--- то что было
     if Assigned(_ide_object_VTV_onAdvancedCustomDrawItem_original_) then _ide_object_VTV_onAdvancedCustomDrawItem_original_(Sender,Node,State,Stage,PaintImages,DefaultDraw);
     //--- моя добавка
-    if (_expandedNodesTracking_WORK_)and(Stage=cdPostPaint) then begin
-        if not _expandedNodesTracking_state_(node) then begin
-            r:=Node.DisplayRect(true);
-            y:=(r.Bottom-r.Top) div 4;
-            Sender.Canvas.Pen.Color:=clgreen;
-            Sender.Canvas.Line(r.Left,r.Top,r.Left,r.Top+y);
-            Sender.Canvas.Line(r.Left,r.Top,r.Left+y,r.Top);
+    if (_expandedNodesTracking_WORK_) then begin
+        if Stage=cdPostPaint then begin
+            if not _expandedNodesTracking_state_(node) then begin
+                r:=Node.DisplayRect(true);
+                y:=(r.Bottom-r.Top) div 4;
+                Sender.Canvas.Pen.Color:=clgreen;
+                Sender.Canvas.Line(r.Left,r.Top,r.Left,r.Top+y);
+                Sender.Canvas.Line(r.Left,r.Top,r.Left+y,r.Top);
+            end;
+        end;
+    end;
+    //--- усиливаем выделение текущего файла при просмотре БЕЗ фокуса
+    if Stage=cdPostPaint then begin
+       _VTV_onAdvancedCustomDrawItem_myCustom_selected(Sender,Node);
+    end;
+    {i
+    f not Sender.Focused then begin
+        if node.Selected then begin
+           r:=Node.DisplayRect(FALSE);
+           y:=(r.Bottom+r.Top) div 2;
+           Sender.Canvas.Pen.Color:=clgreen;
+           Sender.Canvas.Line(r.Left,y,r.Right,y);
+        end;
+    end; }
+end;
+
+
+function tLazExt_wndInspector_aFFfSE_Node._fileName_fromActiveSourceEdit_:string;
+var tmpSourceEditor:TSourceEditorInterface;
+begin
+    result:='';
+    if Assigned(SourceEditorManagerIntf) then begin //< запредельной толщины презерватив
+        tmpSourceEditor:=SourceEditorManagerIntf.ActiveEditor;
+        if Assigned(tmpSourceEditor) then begin //< чуть потоньше, но тоже толстоват
+            result:=tmpSourceEditor.FileName;
         end;
     end;
 end;
+
+
+function tLazExt_wndInspector_aFFfSE_Node._treeNode_isCurrentActive_(const treeNode:TTreeNode):boolean;
+begin
+    result:=_fileName_fromActiveSourceEdit_=treeNode_NAME(treeNode);
+end;
+
+procedure tLazExt_wndInspector_aFFfSE_Node._VTV_onAdvancedCustomDrawItem_myCustom_selected(const Sender:TCustomTreeView; const Node:TTreeNode);
+var r:TRect;
+    y:Integer;
+begin
+    //if not Sender.Focused then begin
+        if _treeNode_isCurrentActive_(Node) then begin
+           r:=Node.DisplayRect(TRUE);
+           Sender.Canvas.Pen.Color:=clgreen;
+           Sender.Canvas.Frame(R);
+           y:=(r.Bottom+r.Top) div 2;
+           Sender.Canvas.Line(0,y,r.Left,y);
+           Sender.Canvas.Line(r.Right,y,Sender.Canvas.Width,y);
+        end;
+    //end;
+end;
+
 
 {%region --- Слежение ра развернутыми узлами ---------------------- /fold}
 
