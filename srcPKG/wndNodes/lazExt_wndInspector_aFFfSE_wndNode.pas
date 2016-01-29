@@ -29,6 +29,7 @@ type
     procedure treeView_select(const Owner:tTreeView; const treeNode:TTreeNode);
   protected
    _treeView_:tTreeView;
+   _slctNode_:TTreeNode;
     function  _do_treeView_find_  :tTreeView;
     function  _do_treeNode_find_  (const FileName:string):TTreeNode;
     procedure _do_treeView_select_(const treeNode:TTreeNode);
@@ -60,6 +61,7 @@ type
     procedure _VTV_onAdvancedCustomDrawItem_myCustom_(Sender:TCustomTreeView; Node:TTreeNode; State:TCustomDrawState; Stage:TCustomDrawStage; var PaintImages,DefaultDraw:Boolean);
   private //< рисование ДОП примитивов
     procedure _VTV_onAdvancedCustomDrawItem_myCustom_clspMARK(const Sender:TCustomTreeView; const Node:TTreeNode);
+    procedure _VTV_onAdvancedCustomDrawItem_myCustom_slctFLDR_(const Sender:TCustomTreeView; const Node:TTreeNode);
     procedure _VTV_onAdvancedCustomDrawItem_myCustom_selected(const Sender:TCustomTreeView; const Node:TTreeNode);
   private //< событие для радителя ... "узел добавлен"
    _owner_onAdd_:TNotifyEvent;
@@ -93,6 +95,7 @@ begin
    _expandedNodesTracking_WORK_:=FALSE;
    _expandedNodesTracking_List_:=TStringList.Create;
    _treeView_:=nil;
+   _slctNode_:=nil;
 end;
 
 destructor tLazExt_wndInspector_aFFfSE_Node.DESTROY;
@@ -197,6 +200,7 @@ end;
 
 procedure tLazExt_wndInspector_aFFfSE_Node._do_treeView_select_(const treeNode:TTreeNode);
 begin
+   _slctNode_:=treeNode;
     if Assigned(Form) and Assigned(_treeView_) and Assigned(treeNode)
     then begin
         treeView_select(_treeView_,treeNode);
@@ -368,6 +372,13 @@ begin
     if Stage=cdPostPaint then begin
        _VTV_onAdvancedCustomDrawItem_myCustom_selected(Sender,Node);
     end;
+    //----
+    if (Stage=cdPostPaint)and(Assigned(_slctNode_))
+       and(_slctNode_.HasAsParent(Node))
+       and(not Node.Expanded)
+    then begin
+       _VTV_onAdvancedCustomDrawItem_myCustom_slctFLDR_(Sender,Node);
+    end;
 end;
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -377,6 +388,7 @@ procedure tLazExt_wndInspector_aFFfSE_Node._VTV_onAdvancedCustomDrawItem_myCusto
 var r:TRect;
     y:Integer;
 begin
+    {// рисование КВАДРАТИКА
     r:=Node.DisplayRect(true);
     y:=(r.Bottom-r.Top) div 4;
     // хочу получить квадратик )))
@@ -385,8 +397,61 @@ begin
     r.Bottom:=r.Top+y;
     // ---
     Sender.Canvas.Pen.Color:=clgreen;
-    Sender.Canvas.Frame(R);
+    Sender.Canvas.Frame(R);}
+    {рисование ТРЕУГОЛЬНИКА}
+    r:=Node.DisplayRect(true);
+    y:=((r.Bottom-r.Top) div 4);
+    y:=y-1;
+    if y<=0 then y:=1;
+    // ---
+   { r.Right:=r.Left  -2;//1;
+    r.Left :=r.Left-y-2;//+1;
+    r.Top  :=r.Top+1;
+    r.Bottom:=r.Top+y;
+    Sender.Canvas.Pen.Color:=clHighlight;// clgreen;
+    Sender.Canvas.Line(r.Left,r.Top, r.Right,r.Top);
+    Sender.Canvas.Line(r.Right,r.Top, r.Right,r.Bottom);
+    Sender.Canvas.Line(r.Right,r.Bottom, r.Left,r.Top);    }
+
+     r.Left :=r.Left+1;
+     r.Right:=r.Left+y;
+     //r.Top  :=r.Top+1;
+     r.Bottom:=r.Top+y;
+     r.Top:=r.Top+1;
+     r.Bottom:=r.Bottom+1;
+     Sender.Canvas.Pen.Color:=clHighlight;// clgreen;
+     Sender.Canvas.Line(r.Left,r.Top,r.Right,r.Top);
+     //Sender.Canvas.Line(r.Right,r.Top,r.Left,r.Bottom);
+     Sender.Canvas.Line(r.Left,r.Bottom,r.Left,r.Top);
 end;
+
+procedure tLazExt_wndInspector_aFFfSE_Node._VTV_onAdvancedCustomDrawItem_myCustom_slctFLDR_(const Sender:TCustomTreeView; const Node:TTreeNode);
+var r:TRect;
+    y:Integer;
+begin
+    if Assigned(_slctNode_) and _slctNode_.HasAsParent(Node) and(not Node.Expanded) then begin
+        r:=Node.DisplayRect(TRUE);
+        Sender.Canvas.Pen.Color:=clgreen;
+        Sender.Canvas.Frame(R);
+        y:=(r.Bottom+r.Top) div 2;
+        //Sender.Canvas.Line(0,y,r.Left,y);
+        Sender.Canvas.Line(r.Right,y,Sender.Canvas.Width,y);
+
+      { r:=Node.DisplayRect(true);
+        y:=((r.Bottom-r.Top) div 4);
+        y:=y-1;
+        if y<=0 then y:=1;
+
+         r.Left :=r.Left+1;
+         r.Right:=r.Left+y;
+         r.Bottom:=r.Bottom-1;
+         r.Top:=r.Bottom-y;
+         Sender.Canvas.Pen.Color:=clRed;
+         Sender.Canvas.Line(r.Left,r.Bottom,r.Left, r.Top);
+         Sender.Canvas.Line(r.Left,r.Bottom,r.Right,r.Bottom);}
+    end;
+end;
+
 
 // рисование: Усиливаем выделение АКТИВНОГО
 procedure tLazExt_wndInspector_aFFfSE_Node._VTV_onAdvancedCustomDrawItem_myCustom_selected(const Sender:TCustomTreeView; const Node:TTreeNode);
@@ -398,7 +463,7 @@ begin
         Sender.Canvas.Pen.Color:=clgreen;
         Sender.Canvas.Frame(R);
         y:=(r.Bottom+r.Top) div 2;
-        Sender.Canvas.Line(0,y,r.Left,y);
+        //Sender.Canvas.Line(0,y,r.Left,y);
         Sender.Canvas.Line(r.Right,y,Sender.Canvas.Width,y);
     end;
 end;
