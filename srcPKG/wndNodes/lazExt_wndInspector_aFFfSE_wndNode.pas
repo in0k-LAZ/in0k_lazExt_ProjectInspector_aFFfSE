@@ -209,9 +209,9 @@ end;
 
 //------------------------------------------------------------------------------
 
-{$if     lcl_fullversion = 1060001 }
+{$if     (lcl_major=1) and (lcl_minor=4)}
     {$define fuckUp_TreeViewNodeData_01}
-{$elseif lcl_fullversion = 1060002 }
+{$elseif (lcl_major=1) and (lcl_minor=6)}
     {$define fuckUp_TreeViewNodeData_01}
 {$else}
     {$WARNING 'NOT Tested in this LazarusIDE version'}

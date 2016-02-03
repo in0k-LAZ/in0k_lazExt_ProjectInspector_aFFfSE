@@ -3,30 +3,22 @@ unit lazExt_ProjectInspector_aFFfSE;
 {$mode objfpc}{$H+}
 
 interface
-
 {$I in0k_lazExt_SETTINGs.inc}
 {$ifDef lazExt_ProjectInspector_aFFfSE__EventLOG_mode}
     {$define _debugLOG_}
 {$endIf}
 
-uses {$ifDef _debugLOG_}in0k_lazExt_DEBUG,{$endIf}
-     ProjectIntf, LazIDEIntf,
-     sysutils,
-     Classes,
-
-
-     //in0k_lazarusIdeSRC_wndDEBUG,
-      Dialogs, Controls,
-     SrcEditorIntf, IDECommands,
+uses Classes, Dialogs, Controls, Forms,
+     {$ifDef _debugLOG_}in0k_lazExt_DEBUG,{$endIf}
+     ProjectIntf, LazIDEIntf, SrcEditorIntf, IDECommands,
+     LCLIntf, //< это для GetTickCount64
+     //---
      in0k_lazIdeSRC_SourceEditor_onActivate,
+     //---
 
      lazExt_wndInspector_aFFfSE_wndNode,
      lazExt_wndInspector_aFFfSE_wndNode_ProjectInspector,
-     lazExt_wndInspector_aFFfSE_wndNode_PackageEditor,
-
-
-
-      Forms;
+     lazExt_wndInspector_aFFfSE_wndNode_PackageEditor;
 
 type
 
@@ -233,6 +225,8 @@ begin
 end;
 
 {$endregion}
+
+//GetTickCount
 
 procedure tLazExt_ProjectInspector_aFFfSE._heldCall_execute_;
 begin // call only `Synchronize(@_heldCall_execute_)`

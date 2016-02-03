@@ -23,9 +23,9 @@ implementation
 
 {%region -- СПОСОБ определения что "ФОРМА" является МОЯ ---------- /fold }
 
-{$if     lcl_fullversion = 1060001 }
+{$if     (lcl_major=1) and (lcl_minor=4)}
     {$define fuckUp_PackageEditor_OfMyType_01}
-{$elseif lcl_fullversion = 1060002}
+{$elseif (lcl_major=1) and (lcl_minor=6)}
     {$define fuckUp_PackageEditor_OfMyType_01}
 {$else} // --- СПОСОБ определения что "ФОРМА" является МОИМ клиентом
     {$WARNING 'fuckUp_PackageEditor_OfMyType NOT Tested in this LazarusIDE version'}
