@@ -9,7 +9,7 @@
       <PathDelim Value="\"/>
       <SearchPaths>
         <IncludeFiles Value="\;srcEXT\in0k-lazarusIdeSRC-wndDEBUG"/>
-        <OtherUnitFiles Value="srcEXT\in0k-lazarusIdeSRC-wndDEBUG;srcEXT\in0k-lazarusIdeSRC-SourceEditor-onActivate;srcEXT\in0k-lazarusIdeSRC-wndFuckUP;srcPKG;srcPKG\DEBUG;srcPKG\wndNodes"/>
+        <OtherUnitFiles Value="srcEXT\in0k-lazarusIdeSRC-wndDEBUG;srcEXT\in0k-lazarusIdeSRC-SourceEditor-onActivate;srcEXT\in0k-lazarusIdeSRC-FuckUpForm;srcPKG;srcPKG\DEBUG;srcPKG\wndNodes"/>
         <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>
       <Conditionals Value="// example for adding linker options on Mac OS X
@@ -64,20 +64,20 @@ end;"/>
         <UnitName Value="in0k_lazIdeSRC_SourceEditor_onActivate"/>
       </Item7>
       <Item8>
-        <Filename Value="srcEXT\in0k-lazarusIdeSRC-wndFuckUP\in0k_lazIdeSRC_FuckUpForm.pas"/>
-        <UnitName Value="in0k_lazIdeSRC_FuckUpForm"/>
-      </Item8>
-      <Item9>
         <Filename Value="in0k_lazExt_DEBUG.pas"/>
         <UnitName Value="in0k_lazExt_DEBUG"/>
-      </Item9>
-      <Item10>
+      </Item8>
+      <Item9>
         <Filename Value="srcEXT\in0k-lazarusIdeSRC-wndDEBUG\in0k_lazIdeSRC_wndDEBUG.pas"/>
         <UnitName Value="in0k_lazIdeSRC_wndDEBUG"/>
-      </Item10>
-      <Item11>
+      </Item9>
+      <Item10>
         <Filename Value="srcEXT\in0k-lazarusIdeSRC-wndDEBUG\in0k_lazIdeSRC_wndDEBUG.inc"/>
         <Type Value="Binary"/>
+      </Item10>
+      <Item11>
+        <Filename Value="srcEXT\in0k-lazarusIdeSRC-FuckUpForm\in0k_lazIdeSRC_FuckUpForm.pas"/>
+        <UnitName Value="in0k_lazIdeSRC_FuckUpForm"/>
       </Item11>
     </Files>
     <RequiredPkgs Count="2">

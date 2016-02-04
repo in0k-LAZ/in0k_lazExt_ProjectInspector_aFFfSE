@@ -226,8 +226,6 @@ end;
 
 {$endregion}
 
-//GetTickCount
-
 procedure tLazExt_ProjectInspector_aFFfSE._heldCall_execute_;
 begin // call only `Synchronize(@_heldCall_execute_)`
     if GetTickCount64-_heldCall_timeST_<100 then begin
