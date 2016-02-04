@@ -64,8 +64,8 @@ end;"/>
         <UnitName Value="in0k_lazIdeSRC_SourceEditor_onActivate"/>
       </Item7>
       <Item8>
-        <Filename Value="srcEXT\in0k-lazarusIdeSRC-wndFuckUP\in0k_lazIdeSRC_wndFuckUP.pas"/>
-        <UnitName Value="in0k_lazIdeSRC_wndFuckUP"/>
+        <Filename Value="srcEXT\in0k-lazarusIdeSRC-wndFuckUP\in0k_lazIdeSRC_FuckUpForm.pas"/>
+        <UnitName Value="in0k_lazIdeSRC_FuckUpForm"/>
       </Item8>
       <Item9>
         <Filename Value="in0k_lazExt_DEBUG.pas"/>
@@ -94,6 +94,8 @@ end;"/>
     <PublishOptions>
       <Version Value="2"/>
       <DestinationDirectory Value="D:\!PROGECTs\!in0k\publishedpackage"/>
+      <IncludeFilterSimpleSyntax Value="False"/>
+      <IncludeFileFilter Value="(*/)+(*.(pas|pp|inc|lpr|lfm|lrs|lpi|lpk|xml|sh))"/>
     </PublishOptions>
   </Package>
 </CONFIG>
