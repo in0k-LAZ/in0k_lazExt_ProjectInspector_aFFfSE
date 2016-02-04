@@ -7,17 +7,22 @@ interface
 {$ifDef lazExt_ProjectInspector_aFFfSE__EventLOG_mode}
     {$define _debugLOG_}
 {$endIf}
+{$if declared(in0k_lazExt_DEBUG)}
+{$endIf}
 
 
 uses {$ifDef _debugLOG_}in0k_lazExt_DEBUG, sysutils,{$endIf}
      Classes, Forms, ComCtrls, TreeFilterEdit,   Controls, Graphics,
      SrcEditorIntf,
+
+
+
      LCLVersion, //< в зависимости от версий, разные способы работы
-     in0k_lazIdeSRC_wndFuckUP;
+     in0k_lazIdeSRC_FuckUpForm;
 
 type
 
- tLazExt_wndInspector_aFFfSE_Node=class(tIn0k_lazIdeSRC_wndFuckUP_Node)
+ tLazExt_wndInspector_aFFfSE_Node=class(tIn0k_lazIdeSRC_FuckUpForm)
   public
     class function OfMyType(const testForm:TCustomForm):boolean; virtual; abstract;
   protected
@@ -68,18 +73,18 @@ type
   public
     property onAddition:TNotifyEvent read _owner_onAdd_ write _owner_onAdd_;
   public
-    constructor Create(const aForm:TCustomForm); override;
+    constructor Create{(const aForm:TCustomForm)}; override;
     destructor DESTROY; override;
   public
-    procedure FuckUP_SET; override;
-    procedure FuckUP_CLR; override;
+    procedure FuckUP_onSET; override;
+    procedure FuckUP_onCLR; override;
   public
     procedure Select(const FileName:string); virtual;
     procedure reStore_EXPAND;                virtual;
   end;
  tLazExt_wndInspector_aFFfSE_NodeTYPE=class of tLazExt_wndInspector_aFFfSE_Node;
 
- tLazExt_wndInspector_aFFfSE_NodeLST=class(tIn0k_lazIdeSRC_wndFuckUP)
+ tLazExt_wndInspector_aFFfSE_NodeLST=class(tIn0k_lazIdeSRC_FuckUpFrms_LIST)
   public
    procedure CLEAR;
    function  Nodes_GET(const Form:TCustomForm; const nodeTYPE:tLazExt_wndInspector_aFFfSE_NodeTYPE):tLazExt_wndInspector_aFFfSE_Node;
@@ -89,9 +94,9 @@ implementation
 
 {$region -- tLazExt_wndInspector_aFFfSE_NodeLST - /fold}
 
-constructor tLazExt_wndInspector_aFFfSE_Node.Create(const aForm:TCustomForm);
+constructor tLazExt_wndInspector_aFFfSE_Node.Create{(const aForm:TCustomForm)};
 begin
-    inherited Create(aForm);
+    inherited;// Create(aForm);
    _expandedNodesTracking_WORK_:=FALSE;
    _expandedNodesTracking_List_:=TStringList.Create;
    _treeView_:=nil;
@@ -106,7 +111,7 @@ end;
 
 //------------------------------------------------------------------------------
 
-procedure tLazExt_wndInspector_aFFfSE_Node.FuckUP_SET;
+procedure tLazExt_wndInspector_aFFfSE_Node.FuckUP_onSET;
 begin
     inherited;
     if Assigned(Form) then begin
@@ -125,7 +130,7 @@ begin
     end;
 end;
 
-procedure tLazExt_wndInspector_aFFfSE_Node.FuckUP_CLR;
+procedure tLazExt_wndInspector_aFFfSE_Node.FuckUP_onCLR;
 begin
     if Assigned(_treeView_) then begin
         _treeView_.OnAddition:=_ide_object_VTV_onAddition_original_;
@@ -571,12 +576,12 @@ end;
 
 procedure tLazExt_wndInspector_aFFfSE_NodeLST.CLEAR;
 begin
-   _nodes_CLR_;
+   _nodes__CLR_;
 end;
 
 function  tLazExt_wndInspector_aFFfSE_NodeLST.Nodes_GET(const Form:TCustomForm; const nodeTYPE:tLazExt_wndInspector_aFFfSE_NodeTYPE):tLazExt_wndInspector_aFFfSE_Node;
 begin
-    result:=tLazExt_wndInspector_aFFfSE_Node(_nodes_GET_(Form,nodeTYPE));
+    result:=tLazExt_wndInspector_aFFfSE_Node(Forms_GET(Form,nodeTYPE));
 end;
 
 {$endregion}
