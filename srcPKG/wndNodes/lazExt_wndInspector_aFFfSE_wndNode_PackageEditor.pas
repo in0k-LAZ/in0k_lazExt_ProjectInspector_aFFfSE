@@ -1,16 +1,13 @@
 unit lazExt_wndInspector_aFFfSE_wndNode_PackageEditor;
+//<  Специфика обработки окна `PackageEditor`
 
 {$mode objfpc}{$H+}
-
 interface
-{$I in0k_lazExt_SETTINGs.inc}
-{$ifDef lazExt_ProjectInspector_aFFfSE__EventLOG_mode}
-    {$define _debugLOG_}
-{$endIf}
+{$i in0k_lazExt_SETTINGs.inc} //< настройки компанента-Расширения.
 
-uses {$ifDef _debugLOG_}in0k_lazExt_DEBUG,{$endIf}
-    Classes, Forms, LCLVersion,
-    lazExt_wndInspector_aFFfSE_wndNode;
+uses lazExt_wndInspector_aFFfSE_wndNode,
+     LCLVersion, //< тут лежит версия лазаруса
+     Forms;
 
 type
 
@@ -23,9 +20,9 @@ implementation
 
 {%region -- СПОСОБ определения что "ФОРМА" является МОЯ ---------- /fold }
 
-{$if     (lcl_major=1) and (lcl_minor=4)}
+{$if     (lcl_major=1) and (lcl_minor=4) and (lcl_release=4)}
     {$define fuckUp_PackageEditor_OfMyType_01}
-{$elseif (lcl_major=1) and (lcl_minor=6)}
+{$elseif (lcl_major=1) and (lcl_minor=6) and (lcl_release=0) and (lcl_patch=2)}
     {$define fuckUp_PackageEditor_OfMyType_01}
 {$else} // --- СПОСОБ определения что "ФОРМА" является МОИМ клиентом
     {$WARNING 'fuckUp_PackageEditor_OfMyType NOT Tested in this LazarusIDE version'}
@@ -34,14 +31,12 @@ implementation
 
 {%region --- fuckUp_PackageEditor_OfMyType_01 --- /fold}
 {$ifDef fuckUp_PackageEditor_OfMyType_01}
-const
+const //< тут будм проверять ТУПО по имени класса формы
  cFormClassName='TPackageEditorForm';
 {$endIf}
 {%endregion}
 
 {%endregion}
-
-//------------------------------------------------------------------------------
 
 class function tLazExt_wndInspector_aFFfSE_wndNode_PackageEditor.OfMyType(const testForm:TCustomForm):boolean;
 begin

@@ -117,6 +117,9 @@ var tmp:tLazExt_wndInspector_aFFfSE_Node;
 begin
     tmp:=_wndNodes_.Nodes_GET(Form,nodeTYPE);
     if Assigned(tmp) then begin //< перестраховка
+        {$ifDef _debugLOG_}
+        DEBUG('do _select_inWindow_', '>>>');
+        {$endIf}
         {todo: шлифануть}
         tmp.onAddition:=@_Event_wndNodes_ProjectAddNode_; //< по идее не тут место, но куда лучше воткнуть ... устал думать на сегодня
         tmp.Select(fileName);
@@ -232,6 +235,9 @@ begin // call only `Synchronize(@_heldCall_execute_)`
         if Assigned(_heldCall_THREAD_) then _heldCall_THREAD_.Terminate;
        _heldCall_THREAD_:=nil;
        _heldCall_timeST_:=0;
+       {$ifDef _debugLOG_}
+       DEBUG('_select_', '>>>');
+       {$endIf}
        _select_;
     end;
 end;
