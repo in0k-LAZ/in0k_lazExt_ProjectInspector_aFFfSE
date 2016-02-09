@@ -26,6 +26,8 @@ type
     procedure FuckUP_onSET; override;
     procedure FuckUP_onCLR; override;
   protected
+    function  _ide_ActiveSourceEdit_fileName_:string;
+  protected
    _treeView_:tTreeView; //< дерево с которым работаем
    _slctNode_:TTreeNode; //< последний отмеченный узел
   protected
@@ -36,9 +38,6 @@ type
     //    function  _do_treeView_find_  :tTreeView;
     function  _do_treeNode_find_  (const FileName:string):TTreeNode;
     procedure _do_treeView_select_(const treeNode:TTreeNode);
-  protected
-    function  _fileName_fromActiveSourceEdit_:string;
-    function  _treeNode_isCurrentActive_(const treeNode:TTreeNode):boolean;
 
   {%region --- Слежение ра развернутыми узлами --- /fold}
   private
@@ -68,6 +67,8 @@ type
     procedure _VTV_onAdvancedCustomDrawItem_myCustom_clspMARK(const Sender:TCustomTreeView; const Node:TTreeNode);
     procedure _VTV_onAdvancedCustomDrawItem_myCustom_slctFLDR_(const Sender:TCustomTreeView; const Node:TTreeNode);
     procedure _VTV_onAdvancedCustomDrawItem_myCustom_selected(const Sender:TCustomTreeView; const Node:TTreeNode);
+  protected
+    function  _treeNode_isCurrentActive_(const treeNode:TTreeNode):boolean;
   private //< событие для радителя ... "узел добавлен"
    _owner_onAdd_:TNotifyEvent;
   public
@@ -147,7 +148,7 @@ end;
 {$endif}
 {%endregion}
 
-//--- реализации способов ------------------------------------------------------
+// - - - реализации способов - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 {%region --- fuckUp_TreeView_byNAME_01 ---------------------------- /fold}
 {$ifDef fuckUp_TreeView_byNAME_01}
@@ -172,7 +173,7 @@ end;
 {$endIf}
 {%endregion}
 
-//------------------------------------------------------------------------------
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 function tLazExt_wndInspector_aFFfSE_Node.treeView_FIND(const ownerWnd:TCustomForm):tTreeView;
 begin //< тупо идем по ВСЕМ контролам в форме ... и исчем по имени (((
@@ -204,7 +205,7 @@ end;
 {$endif}
 {%endregion}
 
-//--- реализации способов ------------------------------------------------------
+// - - - реализации способов - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 {%region --- fuckUp_TreeViewNodeData_01 --------------------------- /fold}
 {$ifDef fuckUp_TreeViewNodeData_01}
@@ -256,7 +257,7 @@ end;
 {$endIf}
 {%endregion}
 
-//------------------------------------------------------------------------------
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 function tLazExt_wndInspector_aFFfSE_Node.treeNode_NAME(const treeNode:TTreeNode):string;
 begin
@@ -310,7 +311,8 @@ end;
 
 //------------------------------------------------------------------------------
 
-function tLazExt_wndInspector_aFFfSE_Node._fileName_fromActiveSourceEdit_:string;
+// имя файла, открытово в ТЕКУЩЕМ АКТИВНОМ редакторе IDE
+function tLazExt_wndInspector_aFFfSE_Node._ide_ActiveSourceEdit_fileName_:string;
 var tmpSourceEditor:TSourceEditorInterface;
 begin
     result:='';
@@ -322,9 +324,11 @@ begin
     end;
 end;
 
+//------------------------------------------------------------------------------
+
 function tLazExt_wndInspector_aFFfSE_Node._treeNode_isCurrentActive_(const treeNode:TTreeNode):boolean;
 begin
-    result:=_fileName_fromActiveSourceEdit_=treeNode_NAME(treeNode);
+    result:=_ide_ActiveSourceEdit_fileName_=treeNode_NAME(treeNode);
 end;
 
 //------------------------------------------------------------------------------
@@ -384,15 +388,20 @@ end;
 procedure tLazExt_wndInspector_aFFfSE_Node._do_treeView_select_(const treeNode:TTreeNode);
 begin
    _slctNode_:=treeNode;
-
     if Assigned(Form) and Assigned(_treeView_) and Assigned(treeNode) and (not treeNode.Selected) then begin
-        with Owner do begin
+        if
+        with _treeView_ do begin
             BeginUpdate;
             expandedNodesTracking_reStore;
             ClearSelection;
             Selected:=treeNode;
             EndUpdate;
         end;
+
+       _treeView_.Invalidate;
+        treeNode.Update;
+
+
         {$ifDef _debugLOG_}
         DEBUG('treeView_select','SELECT'+addr2txt(treeNode)+' "'+treeNode_NAME(treeNode)+'"');
         {$endIf}
@@ -413,10 +422,10 @@ begin
 
 
 
-    if Assigned(Form) and Assigned(_treeView_) and Assigned(treeNode)
+    {if Assigned(Form) and Assigned(_treeView_) and Assigned(treeNode)
     then begin
         treeView_select(_treeView_,treeNode);
-    end;
+    end; }
 end;
 
 
