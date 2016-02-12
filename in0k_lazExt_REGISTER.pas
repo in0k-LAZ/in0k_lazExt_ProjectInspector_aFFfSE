@@ -4,18 +4,24 @@ unit in0k_lazExt_REGISTER;
 
 interface
 
-{$i in0k_lazExt_SETTINGs.inc}
+{$i in0k_lazExt_SETTINGs.inc} //< настройки компанента-Расширения.
 
-{$ifDef lazExt_ProjectInspector_aFFfSE__EventLOG_mode}
-    {$define _debugLOG_}
-{$endIf}
-
-uses {$ifDef _debugLOG_}in0k_lazExt_DEBUG,{$endIf}
+uses {$ifDef lazExt_ProjectInspector_aFFfSE__DebugLOG_mode}in0k_lazExt_DEBUG,{$endIf}
      lazExt_ProjectInspector_aFFfSE;
 
 procedure REGISTER;
 
 implementation
+
+{%region --- возня с ДЕБАГОМ -------------------------------------- /fold}
+{$if declared(in0k_lazIde_DEBUG)}
+    // `in0k_lazIde_DEBUG` - это функция ИНДИКАТОР что используется DEBUG
+    //                       а также и моя "система имен и папок"
+    {$define _debugLOG_}     //< типа да ... можно делать ДЕБАГ отметки
+{$else}
+    {$undef _debugLOG_}
+{$endIf}
+{%endregion}
 
 var _extEBJ_:tLazExt_ProjectInspector_aFFfSE;
 

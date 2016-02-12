@@ -5,13 +5,9 @@ unit lazExt_wndInspector_aFFfSE_wndNode;
 interface
 {$i in0k_lazExt_SETTINGs.inc} //< настройки компанента-Расширения.
 
-uses {$ifDef lazExt_ProjectInspector_aFFfSE__EventLOG_mode}in0k_lazExt_DEBUG,sysutils,{$endIf}
-
+uses {$ifDef lazExt_ProjectInspector_aFFfSE__DebugLOG_mode}in0k_lazExt_DEBUG,{$endIf}
      Classes, Forms, ComCtrls, TreeFilterEdit,   Controls, Graphics,
      SrcEditorIntf,
-
-
-
      LCLVersion, //< в зависимости от версий, разные способы работы
      in0k_lazIdeSRC_FuckUpForm;
 
@@ -70,37 +66,39 @@ type
   protected
     function  _treeNode_isCurrentActive_(const treeNode:TTreeNode):boolean;
   private //< событие для радителя ... "узел добавлен"
-   _owner_onAdd_:TNotifyEvent;
-  public
-    property onAddition:TNotifyEvent read _owner_onAdd_ write _owner_onAdd_;
+   _owner_onNodeAdd_:TNotifyEvent;
   public
     constructor Create{(const aForm:TCustomForm)}; override;
     destructor DESTROY; override;
   public
+    property  ownerEvent_onNodeAdd:TNotifyEvent read _owner_onNodeAdd_ write _owner_onNodeAdd_;
     procedure Select(const FileName:string); virtual;
     procedure reStore_EXPAND;                virtual;
   end;
  tLazExt_wndInspector_aFFfSE_NodeTYPE=class of tLazExt_wndInspector_aFFfSE_Node;
 
  tLazExt_wndInspector_aFFfSE_NodeLST=class(tIn0k_lazIdeSRC_FuckUpFrms_LIST)
+  private //< событие для радителя ... "узел добавлен"
+   _owner_onNodeAdd_:TNotifyEvent;
   public
-   procedure CLEAR;
-   function  Nodes_GET(const Form:TCustomForm; const nodeTYPE:tLazExt_wndInspector_aFFfSE_NodeTYPE):tLazExt_wndInspector_aFFfSE_Node;
+    property  ownerEvent_onNodeAdd:TNotifyEvent read _owner_onNodeAdd_ write _owner_onNodeAdd_;
+    procedure CLEAR;
+    function  Nodes_GET(const Form:TCustomForm; const nodeTYPE:tLazExt_wndInspector_aFFfSE_NodeTYPE):tLazExt_wndInspector_aFFfSE_Node;
   end;
 
 implementation
 
 {%region --- возня с ДЕБАГОМ -------------------------------------- /fold}
-{$if defined(lazExt_ProjectInspector_aFFfSE__EventLOG_mode) AND declared(in0k_lazIde_DEBUG)}
-    // `in0k_lazIde_DEBUG` - это функция ИНДИКАТОР что используется
-    //                       моя "система имен и папок"
+{$if declared(in0k_lazIde_DEBUG)}
+    // `in0k_lazIde_DEBUG` - это функция ИНДИКАТОР что используется DEBUG
+    //                       а также и моя "система имен и папок"
     {$define _debugLOG_}     //< типа да ... можно делать ДЕБАГ отметки
 {$else}
     {$undef _debugLOG_}
 {$endIf}
 {%endregion}
 
-{$region -- tLazExt_wndInspector_aFFfSE_NodeLST - /fold}
+{$region -- tLazExt_wndInspector_aFFfSE_Node ---------------------- /fold}
 
 constructor tLazExt_wndInspector_aFFfSE_Node.Create{(const aForm:TCustomForm)};
 begin
@@ -327,7 +325,7 @@ end;
 //------------------------------------------------------------------------------
 
 function tLazExt_wndInspector_aFFfSE_Node._treeNode_isCurrentActive_(const treeNode:TTreeNode):boolean;
-begin
+begin {todo: подумать, а может Compare?}
     result:=_ide_ActiveSourceEdit_fileName_=treeNode_NAME(treeNode);
 end;
 
@@ -388,17 +386,18 @@ end;
 procedure tLazExt_wndInspector_aFFfSE_Node._do_treeView_select_(const treeNode:TTreeNode);
 begin
    _slctNode_:=treeNode;
-    if Assigned(Form) and Assigned(_treeView_) and Assigned(treeNode) and (not treeNode.Selected) then begin
-        if
-        with _treeView_ do begin
-            BeginUpdate;
-            expandedNodesTracking_reStore;
-            ClearSelection;
-            Selected:=treeNode;
-            EndUpdate;
+    if Assigned(Form) and Assigned(_treeView_) and Assigned(treeNode) then begin
+        if not treeNode.Selected then begin
+            with _treeView_ do begin
+                BeginUpdate;
+                expandedNodesTracking_reStore;
+                ClearSelection;
+                Selected:=treeNode;
+                EndUpdate;
+            end;
         end;
 
-       _treeView_.Invalidate;
+        //_treeView_.Invalidate;
         treeNode.Update;
 
 
@@ -688,7 +687,7 @@ begin
     //--- вызов ОРИГИНАЛЬНОГО обработчика, то что было изначально
     if Assigned(_ide_object_VTV_onAddition_original_) then _ide_object_VTV_onAddition_original_(Sender,Node);
     //--- моя "нагрузка" ----------------------------------------
-    if Assigned(_owner_onAdd_) then _owner_onAdd_(self);
+    if Assigned(_owner_onNodeAdd_) then _owner_onNodeAdd_(self);
 end;
 
 // при рисовании узла у дерева
@@ -724,7 +723,7 @@ end;
 
 {$endregion}
 
-{$region -- tLazExt_wndInspector_aFFfSE_NodeLST - /fold}
+{$region -- tLazExt_wndInspector_aFFfSE_NodeLST ------------------- /fold}
 
 procedure tLazExt_wndInspector_aFFfSE_NodeLST.CLEAR;
 begin
@@ -733,10 +732,8 @@ end;
 
 function  tLazExt_wndInspector_aFFfSE_NodeLST.Nodes_GET(const Form:TCustomForm; const nodeTYPE:tLazExt_wndInspector_aFFfSE_NodeTYPE):tLazExt_wndInspector_aFFfSE_Node;
 begin
-    {$ifDef _debugLOG_}
-    DEBUG('Nodes_GET','Nodes_GETNodes_GETNodes_GETNodes_GETNodes_GETNodes_GETNodes_GET');
-    {$endIf}
     result:=tLazExt_wndInspector_aFFfSE_Node(fuckUpForms_GET(Form,nodeTYPE));
+    result.ownerEvent_onNodeAdd:=_owner_onNodeAdd_; //< чет не знаю куда еще воткнуть :-(
 end;
 
 {$endregion}
