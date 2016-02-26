@@ -24,18 +24,20 @@ implementation
     {$define fuckUp_ProjectInspector_OfMyType_01}
 {$elseif (lcl_major=1) and (lcl_minor=6) and (lcl_release=0) and (lcl_patch=2)}
     {$define fuckUp_ProjectInspector_OfMyType_01}
+{$elseif (lcl_major=1) and (lcl_minor=6) and (lcl_release=0) and (lcl_patch=4)}
+    {$define fuckUp_ProjectInspector_OfMyType_01}
 {$else} // --- СПОСОБ определения что "ФОРМА" является МОИМ клиентом
-    {$WARNING 'fuckUp_ProjectInspector_OfMyType NOT Tested in this LazarusIDE version'}
+    {$WARNING 'NOT Tested in this LazarusIDE version'}
     {$define fuckUp_ProjectInspector_OfMyType_01}
 {$endif}
+
+{%endregion}
 
 {%region --- fuckUp_ProjectInspector_OfMyType_01 --- /fold}
 {$ifDef fuckUp_ProjectInspector_OfMyType_01}
 const //< тут будм проверять ТУПО по имени класса формы
  cFormClassName='TProjectInspectorForm';
 {$endIf}
-{%endregion}
-
 {%endregion}
 
 class function tLazExt_wndInspector_aFFfSE_wndNode_ProjectInspector.OfMyType(const testForm:TCustomForm):boolean;

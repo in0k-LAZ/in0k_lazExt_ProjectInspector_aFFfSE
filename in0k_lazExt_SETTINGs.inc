@@ -13,6 +13,18 @@
 {$define lazExt_ProjectInspector_aFFfSE__wndInspector_B2SP__WinAPI_mode}
 
 
+{$define lazExt_ProjectInspector_aFFfSE__treeView_autoExpand}
+
+
+{$define lazExt_ProjectInspector_aFFfSE__treeView_expandedTracking_mode_01}
+
+{.$define lazExt_ProjectInspector_aFFfSE__treeView_expandedTracking_mode_02}
+
+{$define lazExt_ProjectInspector_aFFfSE__treeView_mark_ActiveFile}
+
+{$define lazExt_ProjectInspector_aFFfSE__treeView_mark_autoCollapseNode}
+
+
 //--- # режим ДЕБАГ ------------------------------------------------------------
 //  Позволяет просматривать лог событий в отдельном окне из IDE
 //  View -> IDE Internals -> [eventLog] lazExt_ProjectInspector_aFFfSE

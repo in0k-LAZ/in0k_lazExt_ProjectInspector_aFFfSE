@@ -5,7 +5,8 @@ unit lazExt_wndInspector_aFFfSE_wndNode_PackageEditor;
 interface
 {$i in0k_lazExt_SETTINGs.inc} //< настройки компанента-Расширения.
 
-uses lazExt_wndInspector_aFFfSE_wndNode,
+uses {$ifDef lazExt_ProjectInspector_aFFfSE__DebugLOG_mode}in0k_lazExt_DEBUG,{$endIf}
+     lazExt_wndInspector_aFFfSE_wndNode,
      LCLVersion, //< тут лежит версия лазаруса
      Forms;
 
@@ -18,14 +19,26 @@ type
 
 implementation
 
+{%region --- возня с ДЕБАГОМ -------------------------------------- /fold}
+{$if declared(in0k_lazIde_DEBUG)}
+    // `in0k_lazIde_DEBUG` - это функция ИНДИКАТОР что используется DEBUG
+    //                       а также и моя "система имен и папок"
+    {$define _debugLOG_}     //< типа да ... можно делать ДЕБАГ отметки
+{$else}
+    {$undef _debugLOG_}
+{$endIf}
+{%endregion}
+
 {%region -- СПОСОБ определения что "ФОРМА" является МОЯ ---------- /fold }
 
 {$if     (lcl_major=1) and (lcl_minor=4) and (lcl_release=4)}
     {$define fuckUp_PackageEditor_OfMyType_01}
 {$elseif (lcl_major=1) and (lcl_minor=6) and (lcl_release=0) and (lcl_patch=2)}
     {$define fuckUp_PackageEditor_OfMyType_01}
+{$elseif (lcl_major=1) and (lcl_minor=6) and (lcl_release=0) and (lcl_patch=4)}
+    {$define fuckUp_PackageEditor_OfMyType_01}
 {$else} // --- СПОСОБ определения что "ФОРМА" является МОИМ клиентом
-    {$WARNING 'fuckUp_PackageEditor_OfMyType NOT Tested in this LazarusIDE version'}
+    {$WARNING 'NOT Tested in this LazarusIDE version'}
     {$define fuckUp_PackageEditor_OfMyType_01}
 {$endif}
 
@@ -40,7 +53,7 @@ const //< тут будм проверять ТУПО по имени класс
 
 class function tLazExt_wndInspector_aFFfSE_wndNode_PackageEditor.OfMyType(const testForm:TCustomForm):boolean;
 begin
-    {$ifDef fuckUp_PackageEditor_OfMyType_01}
+    {$if Defined(fuckUp_PackageEditor_OfMyType_01)}
     result:=testForm.ClassNameIs(cFormClassName);
     {$else}
     result:=false;

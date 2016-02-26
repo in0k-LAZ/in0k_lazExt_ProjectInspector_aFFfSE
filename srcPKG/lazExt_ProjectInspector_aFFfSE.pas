@@ -243,11 +243,13 @@ begin
     if fileName<>'' then begin
         for i:=0 to Screen.FormCount-1 do begin
             tmp:=Screen.Forms[i];
-            if tLazExt_wndInspector_aFFfSE_wndNode_ProjectInspector.OfMyType(tmp)
-            then _select_inWindow_(fileName,tmp,tLazExt_wndInspector_aFFfSE_wndNode_ProjectInspector)
+            if tLazExt_wndInspector_aFFfSE_wndNode_ProjectInspector.OfMyType(tmp) then begin
+               _select_inWindow_(fileName,tmp,tLazExt_wndInspector_aFFfSE_wndNode_ProjectInspector)
+            end
            else
-            if tLazExt_wndInspector_aFFfSE_wndNode_PackageEditor.OfMyType(tmp)
-            then _select_inWindow_(fileName,tmp,tLazExt_wndInspector_aFFfSE_wndNode_PackageEditor);
+            if tLazExt_wndInspector_aFFfSE_wndNode_PackageEditor.OfMyType(tmp) then begin
+               _select_inWindow_(fileName,tmp,tLazExt_wndInspector_aFFfSE_wndNode_PackageEditor);
+            end;
         end;
     end
     {$ifDef _debugLOG_}

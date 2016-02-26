@@ -1,15 +1,88 @@
 unit lazExt_wndInspector_aFFfSE_wndNode;
 
 {$mode objfpc}{$H+}
-
 interface
+{%region --- Описание НАСТРОЕК уровня КОМПИЛЯЦИИ ----------------- /fold }
+
+//// ВНИМАНИЕ !!!
+//// настройки могут быть ПЕРЕОПРЕДЕЛЕНЫ ниже при подключении
+//// файла настроек "компанента-Расширения" (`in0k_lazExt_SETTINGs.inc`).
+
+//--- # treeView_autoExpand ----------------------------------------------------
+// Автоматически РАЗВОРАЧИВАТЬ узлы при выделении
+//
+//{$define lazExt_ProjectInspector_aFFfSE__treeView_autoExpand}
+//
+//------------------------------------------------------------------------------
+
+
+//--- # DebugLOG_mode ----------------------------------------------------------
+// Режим логирования.
+//  В код включаются вызовы `DEBUG` с описанием текущих событий и состояний.
+//
+//{$define in0k_lazIdeSRC_FuckUpForm__DebugLOG_mode}
+//
+//------------------------------------------------------------------------------
+
+{%endregion}
 {$i in0k_lazExt_SETTINGs.inc} //< настройки компанента-Расширения.
 
 uses {$ifDef lazExt_ProjectInspector_aFFfSE__DebugLOG_mode}in0k_lazExt_DEBUG,{$endIf}
      Classes, Forms, ComCtrls, TreeFilterEdit,   Controls, Graphics,
-     SrcEditorIntf,
+     SrcEditorIntf,  Dialogs,
      LCLVersion, //< в зависимости от версий, разные способы работы
      in0k_lazIdeSRC_FuckUpForm;
+
+
+
+{%region --- применение "НАСТРОЕК уровня КОМПИЛЯЦИИ" ------------- /fold }
+
+{$unDef _fuckUp__ide_object_WND_onActivate_}
+{$unDef _fuckUp__ide_object_WND_onDeActivate_}
+{$unDef _fuckUp__ide_object_VTV_onAdvancedCustomDrawItem_}
+
+
+
+{$ifDef lazExt_ProjectInspector_aFFfSE__treeView_expandedTracking_mode_01}
+    {$define _fuckUp__ide_object_WND_onActivate_}
+    {$define _fuckUp__ide_object_WND_onDeActivate_}
+{$endIf}
+
+{$ifDef lazExt_ProjectInspector_aFFfSE__treeView_expandedTracking_mode_02}
+    {$undef  _future_treeView_expandedTracking_mode_01}
+    {$define _future_treeView_expandedTracking_mode_02}
+{$endIf}
+
+{$if not (
+        defined(lazExt_ProjectInspector_aFFfSE__treeView_expandedTracking_mode_01)
+        or
+        defined(lazExt_ProjectInspector_aFFfSE__treeView_expandedTracking_mode_02)
+         )
+}//< БЕЗ слежения это НЕвозможно
+    {$unDef lazExt_ProjectInspector_aFFfSE__treeView_mark_autoCollapseNode}
+{$endIf}
+
+
+{$ifDef lazExt_ProjectInspector_aFFfSE__treeView_mark_ActiveFile}
+    {$define _fuckUp__ide_object_VTV_onAdvancedCustomDrawItem_}
+{$endIf}
+{$ifDef lazExt_ProjectInspector_aFFfSE__treeView_mark_autoCollapseNode}
+    {$define _fuckUp__ide_object_VTV_onAdvancedCustomDrawItem_}
+{$endIf}
+
+
+//{$ifunDef _fuckUp__ide_object_VTV_onAdvancedCustomDrawItem_}
+//    {$undef lazExt_ProjectInspector_aFFfSE__treeView_mark_autoCollapseNode}
+//{$endIf}
+
+
+
+
+{%endregion}
+
+
+
+
 
 type
 
@@ -22,20 +95,27 @@ type
     procedure FuckUP_onSET; override;
     procedure FuckUP_onCLR; override;
   protected
-    function  _ide_ActiveSourceEdit_fileName_:string;
+    function _ide_ActiveSourceEdit_fileName_:string;
   protected
    _treeView_:tTreeView; //< дерево с которым работаем
-   _slctNode_:TTreeNode; //< последний отмеченный узел
+    procedure _treeView_SET_(const value:tTreeView);
+    procedure _treeView_set_DO_autoExpand_;
   protected
+   _slctNode_:TTreeNode; //< последний отмеченный узел
+   _slctFile_:string;    //< последний отмеченный узел (имя файла) нужен для отлова событый связанных с "перевставкой узлов"
+    procedure _slctNode_SET_(const value:TTreeNode);
+    procedure _slctNode_do_selectInTREE_;
     //function  treeView_findByNAME(const OwnerWnd:TCustomForm; const treeNAME:string):tTreeView;
     //function  treeNode_find  (const Owner:tTreeView; const FileName:string):TTreeNode;
-    procedure treeView_select(const Owner:tTreeView; const treeNode:TTreeNode);
+    //procedure treeView_select(const Owner:tTreeView; const treeNode:TTreeNode);
   protected
+
     //    function  _do_treeView_find_  :tTreeView;
-    function  _do_treeNode_find_  (const FileName:string):TTreeNode;
-    procedure _do_treeView_select_(const treeNode:TTreeNode);
+    //function  _do_treeNode_find_  (const FileName:string):TTreeNode;
+//    procedure _do_treeView_select_(const treeNode:TTreeNode);
 
   {%region --- Слежение ра развернутыми узлами --- /fold}
+    {$ifDef lazExt_ProjectInspector_aFFfSE__treeView_expandedTracking_mode_01}
   private
    _expandedNodesTracking_WORK_:boolean;           //< система ВКЛЮЧЕНА
    _expandedNodesTracking_List_:TStringList;       //<
@@ -46,23 +126,42 @@ type
   protected
     procedure  expandedNodesTracking_reStore;
     procedure  expandedNodesTracking_workOFF;
+    procedure  expandedNodesTracking_workON;
+    {$endIf}
   {%endregion}
 
   {%region --- сабЕвентинг событий форма и её компанентов --------- /fold}
+  {$ifDef _fuckUp__ide_object_WND_onActivate_}
   private //< ФакАпим получение фокуса формой
    _ide_object_WND_onActivate_original_:TNotifyEvent;
     procedure _WND_onActivate_myCustom_(Sender:TObject);
-  private //< ФакАпим добавление нового узла в дерево
+  {$endIf}
+  {$ifDef _fuckUp__ide_object_WND_onDeActivate_}
+  private //< ФакАпим потерю фокуса формой
+   _ide_object_WND_onDeActivate_original_:TNotifyEvent;
+    procedure _WND_onDeActivate_myCustom_(Sender:TObject);
+  {$endIf}
+  private //< ФакАпим ДОБАВЛЕНИЕ нового узла в дерево
    _ide_object_VTV_onAddition_original_:TTVExpandedEvent;
     procedure _VTV_onAddition_myCustom_(Sender:TObject; Node:TTreeNode);
-  private //< ФакАпим добавление нового узла в дерево
+  private //< ФакАпим УДАЛЕНИЕ узла из дерева
+   _ide_object_VTV_onDeletion_original_:TTVExpandedEvent;
+    procedure _VTV_onDeletion_myCustom_(Sender:TObject; Node:TTreeNode);
+  {$ifDef _fuckUp__ide_object_VTV_onAdvancedCustomDrawItem_}
+  private //< ФакАпим РИСОВАНИЕ
    _ide_object_VTV_onAdvancedCustomDrawItem_original_:TTVAdvancedCustomDrawItemEvent;
     procedure _VTV_onAdvancedCustomDrawItem_myCustom_(Sender:TCustomTreeView; Node:TTreeNode; State:TCustomDrawState; Stage:TCustomDrawStage; var PaintImages,DefaultDraw:Boolean);
-  {%endregion}
   private //< рисование ДОП примитивов
-    procedure _VTV_onAdvancedCustomDrawItem_myCustom_clspMARK(const Sender:TCustomTreeView; const Node:TTreeNode);
+    {$ifDef lazExt_ProjectInspector_aFFfSE__treeView_mark_ActiveFile}
+    procedure _VTV_drawMARK_selected_(const Sender:TCustomTreeView; const Node:TTreeNode; const Color:TColor);
+    procedure _VTV_onAdvancedCustomDrawItem_myCustom_selected_(const Sender:TCustomTreeView; const Node:TTreeNode);
     procedure _VTV_onAdvancedCustomDrawItem_myCustom_slctFLDR_(const Sender:TCustomTreeView; const Node:TTreeNode);
-    procedure _VTV_onAdvancedCustomDrawItem_myCustom_selected(const Sender:TCustomTreeView; const Node:TTreeNode);
+    {$endif}
+    {$ifDef lazExt_ProjectInspector_aFFfSE__treeView_mark_autoCollapseNode}
+    procedure _VTV_onAdvancedCustomDrawItem_myCustom_clspMARK(const Sender:TCustomTreeView; const Node:TTreeNode);
+    {$endif}
+  {$endIf}
+  {%endregion}
   protected
     function  _treeNode_isCurrentActive_(const treeNode:TTreeNode):boolean;
   private //< событие для радителя ... "узел добавлен"
@@ -103,16 +202,28 @@ implementation
 constructor tLazExt_wndInspector_aFFfSE_Node.Create{(const aForm:TCustomForm)};
 begin
     inherited;
+    {$ifDef lazExt_ProjectInspector_aFFfSE__treeView_expandedTracking_mode_01}
    _expandedNodesTracking_WORK_:=FALSE;
    _expandedNodesTracking_List_:=TStringList.Create;
+    {$endIf}
+    //---
    _treeView_:=nil;
    _slctNode_:=nil;
+   _slctFile_:='';
+    //---
+   _ide_object_VTV_onAddition_original_:=NIL;
+   _ide_object_VTV_onDeletion_original_:=NIL;
+    {$ifDef _fuckUp__ide_object_VTV_onAdvancedCustomDrawItem_}
+   _ide_object_VTV_onAdvancedCustomDrawItem_original_:=nil;
+    {$endIf}
 end;
 
 destructor tLazExt_wndInspector_aFFfSE_Node.DESTROY;
 begin
     inherited;
+    {$ifDef lazExt_ProjectInspector_aFFfSE__treeView_expandedTracking_mode_01}
    _expandedNodesTracking_List_.FREE;
+    {$endIf}
 end;
 
 //
@@ -140,9 +251,11 @@ end;
     {$define fuckUp_TreeView_byNAME_01}
 {$elseif (lcl_major=1) and (lcl_minor=6) and (lcl_release=0) and (lcl_patch=2)}
     {$define fuckUp_TreeView_byNAME_01}
-{$else} //< способ по умолчанию
+{$elseif (lcl_major=1) and (lcl_minor=6) and (lcl_release=0) and (lcl_patch=4)}
     {$define fuckUp_TreeView_byNAME_01}
+{$else} //< способ по умолчанию
     {$WARNING 'NOT Tested in this LazarusIDE version'}
+    {$define fuckUp_TreeView_byNAME_01}
 {$endif}
 {%endregion}
 
@@ -176,7 +289,7 @@ end;
 function tLazExt_wndInspector_aFFfSE_Node.treeView_FIND(const ownerWnd:TCustomForm):tTreeView;
 begin //< тупо идем по ВСЕМ контролам в форме ... и исчем по имени (((
     {$ifDef fuckUp_TreeView_byNAME_01}
-    result:=_treeView_findByNAME_(ownerWnd); {$note 'treeView_FIND use fuckUp_TreeView_byNAME_01'}
+    result:=_treeView_findByNAME_(ownerWnd);
     {$else}
     result:=nil
     {$endIf}
@@ -197,9 +310,11 @@ end;
     {$define fuckUp_TreeViewNodeData_01}
 {$elseif (lcl_major=1) and (lcl_minor=6) and (lcl_release=0) and (lcl_patch=2)}
     {$define fuckUp_TreeViewNodeData_01}
-{$else} //< способ по умолчанию
+{$elseif (lcl_major=1) and (lcl_minor=6) and (lcl_release=0) and (lcl_patch=4)}
     {$define fuckUp_TreeViewNodeData_01}
+{$else} //< способ по умолчанию
     {$WARNING 'NOT Tested in this LazarusIDE version'}
+    {$define fuckUp_TreeViewNodeData_01}
 {$endif}
 {%endregion}
 
@@ -259,11 +374,17 @@ end;
 
 function tLazExt_wndInspector_aFFfSE_Node.treeNode_NAME(const treeNode:TTreeNode):string;
 begin
-    {$ifDef fuckUp_TreeViewNodeData_01}
-    result:=_treeNode_NAME_(treeNode); {$note 'treeNode_NAME use fuckUp_TreeViewNodeData_01'}
-    {$else}
-    result:=treeNode.Text;
-    {$endIf}
+    {$ifDef lazExt_ProjectInspector_aFFfSE__DebugLOG_mode}
+        if not Assigned(treeNode) then DEBUG('ERROR-ERROR-ERROR','in treeNode_NAME treeNode=NIL');
+    {$endif}
+    if Assigned(treeNode) then begin
+        {$ifDef fuckUp_TreeViewNodeData_01}
+        result:=_treeNode_NAME_(treeNode);
+        {$else}
+        result:=treeNode.Text;
+        {$endIf}
+    end
+    else result:='';
 end;
 
 //
@@ -276,16 +397,28 @@ begin
     {todo: подумать об окошке с просьбой сообщить мне и удалить компонент}
     if Assigned(Form) then begin //< гм ... по идее другово и не может быть
         //---
+        {$ifDef _fuckUp__ide_object_WND_onActivate_}
        _ide_object_WND_onActivate_original_:=Form.OnActivate;
         Form.OnActivate:=@_WND_onActivate_myCustom_;
+        {$endIf}
         //---
-       _treeView_:=treeView_FIND(FORM);
+        {$ifDef _fuckUp__ide_object_WND_onDeActivate_}
+       _ide_object_WND_onDeActivate_original_:=Form.OnDeactivate;
+        Form.OnDeactivate:=@_WND_onDeActivate_myCustom_;
+        {$endIf}
+        //---
+       _treeView_SET_(treeView_FIND(FORM));
         if Assigned(_treeView_) then begin
             _ide_object_VTV_onAddition_original_:=_treeView_.OnAddition;
             _treeView_.OnAddition:=@_VTV_onAddition_myCustom_;
              //---
+            _ide_object_VTV_onDeletion_original_:=_treeView_.OnDeletion;
+            _treeView_.OnDeletion:=@_VTV_onDeletion_myCustom_;
+             //---
+             {$ifDef _fuckUp__ide_object_VTV_onAdvancedCustomDrawItem_}
             _ide_object_VTV_onAdvancedCustomDrawItem_original_:=_treeView_.OnAdvancedCustomDrawItem;
             _treeView_.OnAdvancedCustomDrawItem:=@_VTV_onAdvancedCustomDrawItem_myCustom_;
+             {$endIf}
         end
         else begin //< это ОГРОМНЫЙ касяк ... надо чтобы мне сообщили
             {todo: окошко с просьбой сообщить мне и удалить компонент}
@@ -297,12 +430,19 @@ procedure tLazExt_wndInspector_aFFfSE_Node.FuckUP_onCLR;
 begin
     if Assigned(_treeView_) then begin
         _treeView_.OnAddition:=_ide_object_VTV_onAddition_original_;
+         {$ifDef _fuckUp__ide_object_VTV_onAdvancedCustomDrawItem_}
         _treeView_.OnAdvancedCustomDrawItem:=_ide_object_VTV_onAdvancedCustomDrawItem_original_;
+         {$endIf}
     end;
    _treeView_:=nil;
     //---
     if Assigned(Form) then begin
-        Form.OnActivate:=_ide_object_WND_onActivate_original_;
+        {$ifDef _fuckUp__ide_object_WND_onActivate_}
+        Form.OnActivate  :=_ide_object_WND_onActivate_original_;
+        {$endIf}
+        {$ifDef _fuckUp__ide_object_WND_onDeActivate_}
+        Form.OnDeactivate:=_ide_object_WND_onDeActivate_original_;
+        {$endIf}
     end;
     inherited;
 end;
@@ -335,11 +475,53 @@ end;
 procedure tLazExt_wndInspector_aFFfSE_Node.Select(const FileName:string);
 var treeNode:TTreeNode;
 begin
-    treeNode:=_do_treeNode_find_(FileName);
+    {$ifDef _debugLOG_}
+    DEBUG('SELECT in INSPECTOR','>>> "'+self.Form.Caption+'"');
+    {$endIf}
+    treeNode:=NIL;
+    if Assigned(Form) and Assigned(_treeView_) then begin
+        // сначала ИСЧЕМ узел с указанным именем
+        treeNode:=_treeView_.Items.GetFirstNode;
+        while Assigned(treeNode) do begin
+            if FileName=treeNode_NAME(treeNode) then BREAK; //< нашли родимого
+            treeNode:=treeNode.GetNext;
+        end;
+        // если НИЧЕГО не нашли проверим ...
+        // может мы сюда попали после "перевставки узлов" или "удалении" и т.д.
+        if (not Assigned(treeNode))and (not Assigned(_slctNode_)) and (_slctFile_<>'') then begin
+           _slctNode_:=_treeView_.Items.GetFirstNode;
+            while Assigned(_slctNode_) do begin
+                if _slctFile_=treeNode_NAME(_slctNode_) then BREAK; //< нашли родимого
+               _slctNode_:=_slctNode_.GetNext;
+            end;
+            {$ifdef _fuckUp__ide_object_VTV_onAdvancedCustomDrawItem_} //< это важно ТОЛЬКО при подрисовке
+            if Assigned(_slctNode_)
+            then _slctNode_.Update
+            else _treeView_.Update;
+            {$endIf};
+        end;
+    end{$ifDef _debugLOG_}
+    else begin
+        if not Assigned(Form) then DEBUG('ERROR 001','Form is NULL')
+       else
+        if not Assigned(_treeView_) then DEBUG('ERROR 002','_treeView_ is NULL');
+    end{$endIf};
+    // собсно, то ради чего всё и затевалось
     if Assigned(treeNode) then begin
         // основная часть ... переместить фокус (выделение) на найденный узел
-       _do_treeView_select_(treeNode);
-    end;
+       _slctNode_SET_(treeNode);
+    end
+    {$ifdef _fuckUp__ide_object_VTV_onAdvancedCustomDrawItem_} //< это важно ТОЛЬКО при подрисовке
+    // если мы НЕ рисуем ... то парить комп НЕ надо
+    else begin
+        if Assigned(_slctNode_) then begin
+            _slctNode_.Update; //< возможно мы перешли в другое окно
+        end;
+    end{$endIf};
+    //---------------------------------
+    {$ifDef _debugLOG_}
+    DEBUG('SELECT in INSPECTOR','<<<-----<<<');
+    {$endIf}
 end;
 
 procedure tLazExt_wndInspector_aFFfSE_Node.reStore_EXPAND;
@@ -349,151 +531,165 @@ end;
 
 //------------------------------------------------------------------------------
 
-{function  tLazExt_wndInspector_aFFfSE_Node._do_treeView_find_:tTreeView;
+procedure tLazExt_wndInspector_aFFfSE_Node._treeView_SET_(const value:tTreeView);
 begin
-    result:=nil;
-    if Assigned(Form) then result:=treeView_FIND(Form);
-    {$ifDef _debugLOG_}
-    if Assigned(result)
-    then DEBUG('_do_treeView_find_',result.ClassName+':'+result.Name+addr2txt(Result))
-    else DEBUG('_do_treeView_find_','NOT found !!!');
-    {$endIf}
-end;}
-
-function  tLazExt_wndInspector_aFFfSE_Node._do_treeNode_find_(const FileName:string):TTreeNode;
-begin
-    result:=nil;
-    if Assigned(Form) and Assigned(_treeView_) then begin
-        result:=_treeView_.Items.GetFirstNode;
-        while Assigned(result) do begin
-            if FileName=treeNode_NAME(result) then BREAK; //< нашли родимого
-            result:=result.GetNext;
-        end;
+   _treeView_:=value;
+    if Assigned(_treeView_) then begin
+       _treeView_set_DO_autoExpand_;
     end;
-    {$ifDef _debugLOG_}
-    if Assigned(result) then DEBUG('_do_treeNode_find_', addr2txt(Result)+':'+Result.Text)
-    else begin
-       if not Assigned(Form) then DEBUG('ERROR 001','Form is NULL')
-      else
-       if not Assigned(_treeView_) then DEBUG('ERROR 002','_treeView_ is NULL')
-      else begin
-       DEBUG('_do_treeNode_find_','NOT found !!! "'+FileName+'"');
-       end;
-    end
-    {$endIf};
 end;
 
-procedure tLazExt_wndInspector_aFFfSE_Node._do_treeView_select_(const treeNode:TTreeNode);
+procedure tLazExt_wndInspector_aFFfSE_Node._treeView_set_DO_autoExpand_;
 begin
-   _slctNode_:=treeNode;
-    if Assigned(Form) and Assigned(_treeView_) and Assigned(treeNode) then begin
-        if not treeNode.Selected then begin
+    {$ifDef lazExt_ProjectInspector_aFFfSE__treeView_autoExpand}
+      _treeView_.Options:=_treeView_.Options+[tvoAutoExpand];
+    {$else}
+      _treeView_.Options:=_treeView_.Options-[tvoAutoExpand];
+    {$endIf}
+end;
+
+//------------------------------------------------------------------------------
+
+procedure tLazExt_wndInspector_aFFfSE_Node._slctNode_SET_(const value:TTreeNode);
+begin
+    {$ifDef _debugLOG_}
+       DEBUG('SELECT', addr2txt(value)+':"'+treeNode_NAME(value)+'"');
+    {$endIf}
+   _slctNode_:=value;
+   _slctFile_:=treeNode_NAME(_slctNode_);
+    //--- воот ... теперь пошлу тут разные фичи ----------------------------
+    {$ifdef lazExt_ProjectInspector_aFFfSE__treeView_expandedTracking_mode_01}
+    expandedNodesTracking_reStore;
+    {$endIf}
+    // это БЕЗ условная фича, ради неё и писался этот компанент
+   _slctNode_do_selectInTREE_;
+    //---
+    {$ifdef _fuckUp__ide_object_VTV_onAdvancedCustomDrawItem_} //< это важно ТОЛЬКО при подрисовке
+   _slctNode_.Update;
+    {$endIf}
+end;
+
+
+// переместить ВЫДЕЛЕНИЕ на _slctNode_ узел
+procedure tLazExt_wndInspector_aFFfSE_Node._slctNode_do_selectInTREE_;
+begin
+    if Assigned(Form) and Assigned(_treeView_) and Assigned(_slctNode_) then begin
+        if not _slctNode_.Selected then begin //< ну будем гонять попусту
             with _treeView_ do begin
                 BeginUpdate;
-                expandedNodesTracking_reStore;
                 ClearSelection;
-                Selected:=treeNode;
+                Selected:=_slctNode_;
                 EndUpdate;
             end;
         end;
-
-        //_treeView_.Invalidate;
-        treeNode.Update;
-
-
-        {$ifDef _debugLOG_}
-        DEBUG('treeView_select','SELECT'+addr2txt(treeNode)+' "'+treeNode_NAME(treeNode)+'"');
-        {$endIf}
-    end
-    {$ifDef _debugLOG_}
+    end{$ifDef _debugLOG_}
     else begin
-       if not Assigned(Form) then DEBUG('SKIP treeView_select','not Assigned(Owner)')
+       if not Assigned(Form) then DEBUG('ERROR','not Assigned(Owner)')
       else
-       if not Assigned(treeNode) then DEBUG('SKIP treeView_select','not Assigned(treeNode)')
+       if not Assigned(_treeView_) then DEBUG('ERROR','not Assigned(_treeView_)')
       else
-       if treeNode.Selected then DEBUG('SKIP treeView_select','treeNode('+addr2txt(treeNode)+').Selected==TRUE')
-      else begin
-          DEBUG('SKIP treeView_select','XZ')
-       end;
-    end
-    {$endIf};
+       if not Assigned(_slctNode_) then DEBUG('ERROR','not Assigned(_slctNode_)')
+    end{$endIf};
+end;
 
+//------------------------------------------------------------------------------
 
+{%region --- сабЕвентинг событий форма и её компанентов ----------- /fold}
 
+{$ifDef _fuckUp__ide_object_WND_onActivate_}
+// при получении окном фокуса
+procedure tLazExt_wndInspector_aFFfSE_Node._WND_onActivate_myCustom_(Sender:TObject);
+begin
+    //--- моя "нагрузка" ----------------------------------------
+    if Assigned(Sender) and (Sender=Form) then begin {todo: перестраховка, подумать про необходимость}
+       expandedNodesTracking_workOFF; //< отключаем систему слежения
+    end;
+    //--- вызов ОРИГИНАЛЬНОГО обработчика, то что было изначально
+    if Assigned(_ide_object_WND_onActivate_original_) then _ide_object_WND_onActivate_original_(Sender);
+end;
+{$endif}
 
-    {if Assigned(Form) and Assigned(_treeView_) and Assigned(treeNode)
+{$ifDef _fuckUp__ide_object_WND_onDeActivate_}
+// при ПОТЕРЕ окном фокуса
+procedure tLazExt_wndInspector_aFFfSE_Node._WND_onDeActivate_myCustom_(Sender:TObject);
+begin
+    //--- моя "нагрузка" ----------------------------------------
+    if Assigned(Sender) and (Sender=Form) then begin {todo: перестраховка, подумать про необходимость}
+       expandedNodesTracking_workON; //< отключаем систему слежения
+    end;
+    //--- вызов ОРИГИНАЛЬНОГО обработчика, то что было изначально
+    if Assigned(_ide_object_WND_onDeActivate_original_) then _ide_object_WND_onDeActivate_original_(Sender);
+end;
+{$endif}
+
+//------------------------------------------------------------------------------
+
+// при добавление нового узла в дерево
+procedure tLazExt_wndInspector_aFFfSE_Node._VTV_onAddition_myCustom_(Sender:TObject; Node:TTreeNode);
+begin
+    //--- вызов ОРИГИНАЛЬНОГО обработчика, то что было изначально
+    if Assigned(_ide_object_VTV_onAddition_original_) then _ide_object_VTV_onAddition_original_(Sender,Node);
+    //--- моя "нагрузка" ----------------------------------------
+    if Assigned(_owner_onNodeAdd_) then _owner_onNodeAdd_(self);
+end;
+
+// при удалении узла из дерева
+procedure tLazExt_wndInspector_aFFfSE_Node._VTV_onDeletion_myCustom_(Sender:TObject; Node:TTreeNode);
+begin
+    //--- вызов ОРИГИНАЛЬНОГО обработчика, то что было изначально
+    if Assigned(_ide_object_VTV_onDeletion_original_) then _ide_object_VTV_onDeletion_original_(Sender,Node);
+    //--- моя "нагрузка" ----------------------------------------
+    if Node=_slctNode_ then begin
+       _slctNode_:=nil;
+        {$ifDef _debugLOG_}
+        DEBUG('DELETE','delete Selected Node:"'+_slctFile_+'"')
+        {$endIf};
+    end;
+end;
+
+{$ifDef _fuckUp__ide_object_VTV_onAdvancedCustomDrawItem_}
+// при рисовании узла у дерева
+procedure tLazExt_wndInspector_aFFfSE_Node._VTV_onAdvancedCustomDrawItem_myCustom_(
+  Sender: TCustomTreeView; Node: TTreeNode; State: TCustomDrawState;
+  Stage: TCustomDrawStage; var PaintImages, DefaultDraw: Boolean);
+begin
+    //--- вызов ОРИГИНАЛЬНОГО обработчика, то что было изначально
+    if Assigned(_ide_object_VTV_onAdvancedCustomDrawItem_original_) then _ide_object_VTV_onAdvancedCustomDrawItem_original_(Sender,Node,State,Stage,PaintImages,DefaultDraw);
+    //--- моя "нагрузка" ----------------------------------------
+
+    {$ifDef lazExt_ProjectInspector_aFFfSE__treeView_mark_autoCollapseNode}
+    if (_expandedNodesTracking_WORK_) then begin
+        if Stage=cdPostPaint then begin
+            if not _expandedNodesTracking_state_(node) then begin
+               _VTV_onAdvancedCustomDrawItem_myCustom_clspMARK(Sender,Node);
+            end;
+        end;
+    end;
+    {$endif}
+    {$ifDef lazExt_ProjectInspector_aFFfSE__treeView_mark_ActiveFile}
+    //--- выделение текущего файла
+    if Stage=cdPostPaint then begin
+       _VTV_onAdvancedCustomDrawItem_myCustom_selected_(Sender,Node);
+       _VTV_onAdvancedCustomDrawItem_myCustom_slctFLDR_(Sender,Node);
+    end;
+   { //----
+    if (Stage=cdPostPaint)and(Assigned(_slctNode_))
+       and(_slctNode_.HasAsParent(Node))
+       and(not Node.Expanded)
     then begin
-        treeView_select(_treeView_,treeNode);
+       _VTV_onAdvancedCustomDrawItem_myCustom_slctFLDR_(Sender,Node);
     end; }
+    {$endif}
 end;
+{$endif}
+
+{%endregion}
+
+{$ifDef _fuckUp__ide_object_VTV_onAdvancedCustomDrawItem_}
+{%region --- рисование ДОП примитивов ---------------------------- /fold }
 
 
-
-
-//------------------------------------------------------------------------------
-
-
-//------------------------------------------------------------------------------
-
-{function tLazExt_wndInspector_aFFfSE_Node.treeView_findByNAME(const OwnerWnd:TCustomForm; const treeNAME:string):tTreeView;
-var i:integer;
-begin //< тупо идем по ВСЕМ контролам в форме ... и исчем по имени (((
-    result:=nil;
-    for i:=0 to OwnerWnd.ControlCount-1 do begin
-        if (OwnerWnd.Controls[i] is TTreeView) and (OwnerWnd.Controls[i].Name=treeNAME)
-        then begin
-            result:=TTreeView(OwnerWnd.Controls[i]);
-            break;
-        end;
-    end;
-end;}
-
-{function tLazExt_wndInspector_aFFfSE_Node.treeNode_find(const Owner:tTreeView; const FileName:string):TTreeNode;
-begin
-    result:=Owner.Items.GetFirstNode;
-    while Assigned(result) do begin
-        if FileName=treeNode_NAME(result) then begin
-            BREAK; //< нашли родимого
-        end;
-        result:=result.GetNext;
-    end;
-end;}
-
-procedure tLazExt_wndInspector_aFFfSE_Node.treeView_select(const Owner:tTreeView; const treeNode:TTreeNode);
-begin
-    if Assigned(Owner) and Assigned(treeNode) and (not treeNode.Selected) then begin
-        with Owner do begin
-            BeginUpdate;
-            expandedNodesTracking_reStore;
-            ClearSelection;
-            Selected:=treeNode;
-            EndUpdate;
-        end;
-        {$ifDef _debugLOG_}
-        DEBUG('treeView_select','SELECT'+addr2txt(treeNode)+' "'+treeNode_NAME(treeNode)+'"');
-        {$endIf}
-    end
-    {$ifDef _debugLOG_}
-    else begin
-       if not Assigned(Owner) then DEBUG('SKIP treeView_select','not Assigned(Owner)')
-      else
-       if not Assigned(treeNode) then DEBUG('SKIP treeView_select','not Assigned(treeNode)')
-      else
-       if treeNode.Selected then DEBUG('SKIP treeView_select','treeNode('+addr2txt(treeNode)+').Selected==TRUE')
-      else begin
-          DEBUG('SKIP treeView_select','XZ')
-       end;
-    end
-    {$endIf};
-end;
-
-//------------------------------------------------------------------------------
-
-
-//------------------------------------------------------------------------------
-
-
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+{$ifDef lazExt_ProjectInspector_aFFfSE__treeView_mark_autoCollapseNode}
 
 // рисование: МАРКЕР авто-Сворачивания
 procedure tLazExt_wndInspector_aFFfSE_Node._VTV_onAdvancedCustomDrawItem_myCustom_clspMARK(const Sender:TCustomTreeView; const Node:TTreeNode);
@@ -537,50 +733,60 @@ begin
      Sender.Canvas.Line(r.Left,r.Bottom,r.Left,r.Top);
 end;
 
-procedure tLazExt_wndInspector_aFFfSE_Node._VTV_onAdvancedCustomDrawItem_myCustom_slctFLDR_(const Sender:TCustomTreeView; const Node:TTreeNode);
+{$endif}
+
+
+{$ifDef lazExt_ProjectInspector_aFFfSE__treeView_mark_ActiveFile}
+
+// рисуем Прямоугольник с линией Справа
+procedure tLazExt_wndInspector_aFFfSE_Node._VTV_drawMARK_selected_(const Sender:TCustomTreeView; const Node:TTreeNode; const Color:TColor);
 var r:TRect;
-    y:Integer;
 begin
-    if Assigned(_slctNode_) and _slctNode_.HasAsParent(Node) and(not Node.Expanded) then begin
-        r:=Node.DisplayRect(TRUE);
-        Sender.Canvas.Pen.Color:=clgreen;
-        Sender.Canvas.Frame(R);
-        y:=(r.Bottom+r.Top) div 2;
-        //Sender.Canvas.Line(0,y,r.Left,y);
-        Sender.Canvas.Line(r.Right,y,Sender.Canvas.Width,y);
-
-      { r:=Node.DisplayRect(true);
-        y:=((r.Bottom-r.Top) div 4);
-        y:=y-1;
-        if y<=0 then y:=1;
-
-         r.Left :=r.Left+1;
-         r.Right:=r.Left+y;
-         r.Bottom:=r.Bottom-1;
-         r.Top:=r.Bottom-y;
-         Sender.Canvas.Pen.Color:=clRed;
-         Sender.Canvas.Line(r.Left,r.Bottom,r.Left, r.Top);
-         Sender.Canvas.Line(r.Left,r.Bottom,r.Right,r.Bottom);}
-    end;
+    Sender.Canvas.Pen.Color:=Color;
+    r:=Node.DisplayRect(TRUE);
+    Sender.Canvas.Frame(R);
+    r.Top:=(r.Bottom+r.Top) div 2;
+    Sender.Canvas.Line(r.Right,r.Top,Sender.Canvas.Width,r.Top);
 end;
 
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 // рисование: Усиливаем выделение АКТИВНОГО
-procedure tLazExt_wndInspector_aFFfSE_Node._VTV_onAdvancedCustomDrawItem_myCustom_selected(const Sender:TCustomTreeView; const Node:TTreeNode);
-var r:TRect;
-    y:Integer;
+procedure tLazExt_wndInspector_aFFfSE_Node._VTV_onAdvancedCustomDrawItem_myCustom_selected_(const Sender:TCustomTreeView; const Node:TTreeNode);
 begin
-    if _treeNode_isCurrentActive_(Node) then begin
-        r:=Node.DisplayRect(TRUE);
-        Sender.Canvas.Pen.Color:=clgreen;
-        Sender.Canvas.Frame(R);
-        y:=(r.Bottom+r.Top) div 2;
-        //Sender.Canvas.Line(0,y,r.Left,y);
-        Sender.Canvas.Line(r.Right,y,Sender.Canvas.Width,y);
+    if Assigned(_slctNode_) and (_slctNode_=node) then begin // _treeNode_isCurrentActive_(Node) then begin
+        if _ide_ActiveSourceEdit_fileName_=treeNode_NAME(_slctNode_)
+        then _VTV_drawMARK_selected_(Sender,Node,clHighlight)
+        else _VTV_drawMARK_selected_(Sender,Node,clBtnShadow);
     end;
 end;
 
-{%region --- Слежение ра развернутыми узлами ---------------------- /fold}
+procedure tLazExt_wndInspector_aFFfSE_Node._VTV_onAdvancedCustomDrawItem_myCustom_slctFLDR_(const Sender:TCustomTreeView; const Node:TTreeNode);
+begin
+    // это для ПАПКИ
+    if (not Node.Expanded) then begin //< и она ДОЛЖНА быть ОБЯЗАТЕЛЬНО свернута
+        if Assigned(_slctNode_) and (_slctNode_.HasAsParent(Node)) then begin
+            if _ide_ActiveSourceEdit_fileName_=treeNode_NAME(_slctNode_)
+            then _VTV_drawMARK_selected_(Sender,Node,clHighlight)
+            else _VTV_drawMARK_selected_(Sender,Node,clBtnShadow);
+        end;
+    end;
+end;
+
+{$endif}
+
+
+
+{%endregion}
+{$endif _fuckUp__ide_object_VTV_onAdvancedCustomDrawItem_}
+
+{$ifDef lazExt_ProjectInspector_aFFfSE__treeView_expandedTracking_mode_01}
+{%region --- Слежение ра развернутыми узлами mode_01 -------------- /fold}
+
+// провто под
+//
+//
+
 
 // запомнить текущее состояние "развернутости узлов"
 procedure tLazExt_wndInspector_aFFfSE_Node._expandedNodesTracking_state_Save_;
@@ -642,6 +848,11 @@ end;
 procedure tLazExt_wndInspector_aFFfSE_Node._expandedNodesTracking_set_WORK_(const value:boolean);
 begin
     if value<>_expandedNodesTracking_WORK_ then begin
+        {$ifDef _debugLOG_}
+            if value
+            then DEBUG('expandedNodesTracking','ON')
+            else DEBUG('expandedNodesTracking','off');
+        {$endIf}
        _expandedNodesTracking_List_.Clear;
        _expandedNodesTracking_WORK_:=value;
         if _expandedNodesTracking_WORK_ then _expandedNodesTracking_state_Save_;
@@ -655,70 +866,20 @@ begin
    _expandedNodesTracking_set_WORK_(FALSE);
 end;
 
+procedure tLazExt_wndInspector_aFFfSE_Node.expandedNodesTracking_workON;
+begin
+   _expandedNodesTracking_set_WORK_(TRUE);
+end;
+
 procedure tLazExt_wndInspector_aFFfSE_Node.expandedNodesTracking_reStore;
 begin
     if _expandedNodesTracking_WORK_
     then _expandedNodesTracking_state_reSet_    //< восстановить состояние "свернутости"
-    else _expandedNodesTracking_set_WORK_(TRUE) //< ВКЛЮЧИТЬ систему отслеживания
+    //else _expandedNodesTracking_set_WORK_(TRUE) //< ВКЛЮЧИТЬ систему отслеживания
 end;
 
 {%endregion}
-
-
-{%region --- сабЕвентинг событий форма и её компанентов --------- /fold}
-
-// при получении окном фокуса
-procedure tLazExt_wndInspector_aFFfSE_Node._WND_onActivate_myCustom_(Sender:TObject);
-begin
-    //--- моя "нагрузка" ----------------------------------------
-    if Assigned(Sender) and (Sender=Form) then begin {todo: перестраховка, подумать про необходимость}
-       expandedNodesTracking_workOFF; //< отключаем систему слежения
-       {$ifDef _debugLOG_}
-       DEBUG('expandedNodesTracking','OFF');
-       {$endIf}
-    end;
-    //--- вызов ОРИГИНАЛЬНОГО обработчика, то что было изначально
-    if Assigned(_ide_object_WND_onActivate_original_) then _ide_object_WND_onActivate_original_(Sender);
-end;
-
-// при добавление нового узла в дерево
-procedure tLazExt_wndInspector_aFFfSE_Node._VTV_onAddition_myCustom_(Sender:TObject; Node:TTreeNode);
-begin
-    //--- вызов ОРИГИНАЛЬНОГО обработчика, то что было изначально
-    if Assigned(_ide_object_VTV_onAddition_original_) then _ide_object_VTV_onAddition_original_(Sender,Node);
-    //--- моя "нагрузка" ----------------------------------------
-    if Assigned(_owner_onNodeAdd_) then _owner_onNodeAdd_(self);
-end;
-
-// при рисовании узла у дерева
-procedure tLazExt_wndInspector_aFFfSE_Node._VTV_onAdvancedCustomDrawItem_myCustom_(
-  Sender: TCustomTreeView; Node: TTreeNode; State: TCustomDrawState;
-  Stage: TCustomDrawStage; var PaintImages, DefaultDraw: Boolean);
-begin
-    //--- вызов ОРИГИНАЛЬНОГО обработчика, то что было изначально
-    if Assigned(_ide_object_VTV_onAdvancedCustomDrawItem_original_) then _ide_object_VTV_onAdvancedCustomDrawItem_original_(Sender,Node,State,Stage,PaintImages,DefaultDraw);
-    //--- моя "нагрузка" ----------------------------------------
-    if (_expandedNodesTracking_WORK_) then begin
-        if Stage=cdPostPaint then begin
-            if not _expandedNodesTracking_state_(node) then begin
-               _VTV_onAdvancedCustomDrawItem_myCustom_clspMARK(Sender,Node);
-            end;
-        end;
-    end;
-    //--- усиливаем выделение текущего файла при просмотре БЕЗ фокуса
-    if Stage=cdPostPaint then begin
-       _VTV_onAdvancedCustomDrawItem_myCustom_selected(Sender,Node);
-    end;
-    //----
-    if (Stage=cdPostPaint)and(Assigned(_slctNode_))
-       and(_slctNode_.HasAsParent(Node))
-       and(not Node.Expanded)
-    then begin
-       _VTV_onAdvancedCustomDrawItem_myCustom_slctFLDR_(Sender,Node);
-    end;
-end;
-
-{%endregion}
+{$endIf}
 
 
 {$endregion}
