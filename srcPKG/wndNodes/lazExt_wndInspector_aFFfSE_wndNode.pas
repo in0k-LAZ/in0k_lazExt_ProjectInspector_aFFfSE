@@ -11,8 +11,24 @@ interface
 //--- # treeView_autoExpand ----------------------------------------------------
 // Автоматически РАЗВОРАЧИВАТЬ узлы при выделении
 //
-//{$define lazExt_ProjectInspector_aFFfSE__treeView_autoExpand}
+{$define lazExt_ProjectInspector_aFFfSE__treeView_autoExpand}
 //
+//------------------------------------------------------------------------------
+
+
+//--- # mark ActiveFileFromSoureceEdit -----------------------------------------
+// Отмечать (дорисовывать выделение) для текущего выделенного файла
+{$define lazExt_ProjectInspector_aFFfSE__treeView_mark_ActiveFileFromSoureceEdit}
+//------------------------------------------------------------------------------
+
+//--- # TrackingSystemForExpandedNodes -----------------------------------------
+// Система Слежения за Развернутыми Узлами (ССзРУ)
+// способ функционирования (модель работы)
+{$define lazExt_ProjectInspector_aFFfSE__TrackingSystemForExpanded_mode_01}
+//{$define lazExt_ProjectInspector_aFFfSE__TrackingSystemForExpandedNodes_mode_02}
+//
+// отмечать деятельность системы на ДЕРЕВЕ (дорисовывать в интерфейсе)
+{$define lazExt_ProjectInspector_aFFfSE__treeView_mark_TrackingSystemForExpanded}
 //------------------------------------------------------------------------------
 
 
@@ -33,56 +49,45 @@ uses {$ifDef lazExt_ProjectInspector_aFFfSE__DebugLOG_mode}in0k_lazExt_DEBUG,{$e
      LCLVersion, //< в зависимости от версий, разные способы работы
      in0k_lazIdeSRC_FuckUpForm;
 
-
-
 {%region --- применение "НАСТРОЕК уровня КОМПИЛЯЦИИ" ------------- /fold }
 
 {$unDef _fuckUp__ide_object_WND_onActivate_}
 {$unDef _fuckUp__ide_object_WND_onDeActivate_}
 {$unDef _fuckUp__ide_object_VTV_onAdvancedCustomDrawItem_}
 
+//==============================================================================
 
-
-{$ifDef lazExt_ProjectInspector_aFFfSE__treeView_expandedTracking_mode_01}
+{$ifDef lazExt_ProjectInspector_aFFfSE__TrackingSystemForExpanded_mode_01}
+    {$define  lazExt_ProjectInspector_aFFfSE__TSfEN_ON}
     {$define _fuckUp__ide_object_WND_onActivate_}
-    {$define _fuckUp__ide_object_WND_onDeActivate_}
+    {ю$define _fuckUp__ide_object_WND_onDeActivate_}
 {$endIf}
 
 {$ifDef lazExt_ProjectInspector_aFFfSE__treeView_expandedTracking_mode_02}
+    {$define lazExt_ProjectInspector_aFFfSE__TSfEN_ON}
     {$undef  _future_treeView_expandedTracking_mode_01}
     {$define _future_treeView_expandedTracking_mode_02}
 {$endIf}
 
-{$if not (
-        defined(lazExt_ProjectInspector_aFFfSE__treeView_expandedTracking_mode_01)
-        or
-        defined(lazExt_ProjectInspector_aFFfSE__treeView_expandedTracking_mode_02)
-         )
-}//< БЕЗ слежения это НЕвозможно
-    {$unDef lazExt_ProjectInspector_aFFfSE__treeView_mark_autoCollapseNode}
+//==============================================================================
+
+{$ifnDef lazExt_ProjectInspector_aFFfSE__TSfEN_ON}
+    // БЕЗ слежения это НЕвозможно
+    {$unDef lazExt_ProjectInspector_aFFfSE__treeView_mark_TrackingSystemForExpanded}
 {$endIf}
 
+//==============================================================================
 
-{$ifDef lazExt_ProjectInspector_aFFfSE__treeView_mark_ActiveFile}
+// --- определяем, бедет ли ДОП рисование
+
+{$ifDef lazExt_ProjectInspector_aFFfSE__treeView_mark_ActiveFileFromSoureceEdit}
     {$define _fuckUp__ide_object_VTV_onAdvancedCustomDrawItem_}
 {$endIf}
-{$ifDef lazExt_ProjectInspector_aFFfSE__treeView_mark_autoCollapseNode}
+{$ifDef lazExt_ProjectInspector_aFFfSE__treeView_mark_TrackingSystemForExpanded}
     {$define _fuckUp__ide_object_VTV_onAdvancedCustomDrawItem_}
 {$endIf}
-
-
-//{$ifunDef _fuckUp__ide_object_VTV_onAdvancedCustomDrawItem_}
-//    {$undef lazExt_ProjectInspector_aFFfSE__treeView_mark_autoCollapseNode}
-//{$endIf}
-
-
-
 
 {%endregion}
-
-
-
-
 
 type
 
@@ -105,31 +110,32 @@ type
    _slctFile_:string;    //< последний отмеченный узел (имя файла) нужен для отлова событый связанных с "перевставкой узлов"
     procedure _slctNode_SET_(const value:TTreeNode);
     procedure _slctNode_do_selectInTREE_;
-    //function  treeView_findByNAME(const OwnerWnd:TCustomForm; const treeNAME:string):tTreeView;
-    //function  treeNode_find  (const Owner:tTreeView; const FileName:string):TTreeNode;
-    //procedure treeView_select(const Owner:tTreeView; const treeNode:TTreeNode);
   protected
-
-    //    function  _do_treeView_find_  :tTreeView;
-    //function  _do_treeNode_find_  (const FileName:string):TTreeNode;
-//    procedure _do_treeView_select_(const treeNode:TTreeNode);
-
-  {%region --- Слежение ра развернутыми узлами --- /fold}
-    {$ifDef lazExt_ProjectInspector_aFFfSE__treeView_expandedTracking_mode_01}
+  {%region --- Система Слежение за Развернутыми Узлами (ССзРУ) ---- /fold}
+  {$ifDef lazExt_ProjectInspector_aFFfSE__TSfEN_ON}
+    {%region --- ВАРИАНТ №1 ("ССзРУ" m01) ------------------------ /fold}
+    {$ifDef lazExt_ProjectInspector_aFFfSE__TrackingSystemForExpanded_mode_01}
   private
-   _expandedNodesTracking_WORK_:boolean;           //< система ВКЛЮЧЕНА
-   _expandedNodesTracking_List_:TStringList;       //<
-    procedure _expandedNodesTracking_set_WORK_(const value:boolean);
-    procedure _expandedNodesTracking_state_Save_;  //<
-    procedure _expandedNodesTracking_state_reSet_; //<
-    function  _expandedNodesTracking_state_(const treeNode:tTreeNode):boolean; //<
-  protected
-    procedure  expandedNodesTracking_reStore;
-    procedure  expandedNodesTracking_workOFF;
-    procedure  expandedNodesTracking_workON;
+   _TSfENm01__WORK_:boolean;       //< система ВКЛЮЧЕНА
+    procedure _TSfENm01__WORK_set_(const value:boolean);
+  private
+   _TSfENm01__listExpandedNodes_:TStringList;      //< список "ННчС"
+    procedure _TSfENm01_listExpandedNodes__2List_; //<
+    procedure _TSfENm01_listExpandedNodes__2Tree_; //<
+  private
+    function  _TSfENm01__node_willBeCollapsed_(const node:TTreeNode):boolean;
+    function  _TSfENm01__node_willBeNoVisible_(const node:TTreeNode):boolean;
     {$endIf}
+    {%endregion}
+    {%region --- "ССзРУ" Степень СВЕРНУТОСТИ для рисования ------- /fold}
+    {$ifDef lazExt_ProjectInspector_aFFfSE__treeView_mark_TrackingSystemForExpanded}
+  protected
+    function _TSfEN__node_willBeCollapsed_(const node:TTreeNode):boolean;
+    function _TSfEN__node_willBeNoVisible_(const node:TTreeNode):boolean;
+    {$endIf}
+    {%endregion}
+  {$endif}
   {%endregion}
-
   {%region --- сабЕвентинг событий форма и её компанентов --------- /fold}
   {$ifDef _fuckUp__ide_object_WND_onActivate_}
   private //< ФакАпим получение фокуса формой
@@ -152,18 +158,17 @@ type
    _ide_object_VTV_onAdvancedCustomDrawItem_original_:TTVAdvancedCustomDrawItemEvent;
     procedure _VTV_onAdvancedCustomDrawItem_myCustom_(Sender:TCustomTreeView; Node:TTreeNode; State:TCustomDrawState; Stage:TCustomDrawStage; var PaintImages,DefaultDraw:Boolean);
   private //< рисование ДОП примитивов
-    {$ifDef lazExt_ProjectInspector_aFFfSE__treeView_mark_ActiveFile}
+    {$ifDef lazExt_ProjectInspector_aFFfSE__treeView_mark_ActiveFileFromSoureceEdit}
     procedure _VTV_drawMARK_selected_(const Sender:TCustomTreeView; const Node:TTreeNode; const Color:TColor);
     procedure _VTV_onAdvancedCustomDrawItem_myCustom_selected_(const Sender:TCustomTreeView; const Node:TTreeNode);
     procedure _VTV_onAdvancedCustomDrawItem_myCustom_slctFLDR_(const Sender:TCustomTreeView; const Node:TTreeNode);
     {$endif}
-    {$ifDef lazExt_ProjectInspector_aFFfSE__treeView_mark_autoCollapseNode}
+    {$ifDef lazExt_ProjectInspector_aFFfSE__treeView_mark_TrackingSystemForExpanded}
+    procedure _VTV_drawMARK_clspMARK_(const Sender:TCustomTreeView; const Node:TTreeNode; const Color:TColor);
     procedure _VTV_onAdvancedCustomDrawItem_myCustom_clspMARK(const Sender:TCustomTreeView; const Node:TTreeNode);
     {$endif}
   {$endIf}
   {%endregion}
-  protected
-    function  _treeNode_isCurrentActive_(const treeNode:TTreeNode):boolean;
   private //< событие для радителя ... "узел добавлен"
    _owner_onNodeAdd_:TNotifyEvent;
   public
@@ -202,9 +207,9 @@ implementation
 constructor tLazExt_wndInspector_aFFfSE_Node.Create{(const aForm:TCustomForm)};
 begin
     inherited;
-    {$ifDef lazExt_ProjectInspector_aFFfSE__treeView_expandedTracking_mode_01}
-   _expandedNodesTracking_WORK_:=FALSE;
-   _expandedNodesTracking_List_:=TStringList.Create;
+    {$ifDef lazExt_ProjectInspector_aFFfSE__TrackingSystemForExpanded_mode_01}
+   _TSfENm01__WORK_:=FALSE;
+   _TSfENm01__listExpandedNodes_:=TStringList.Create;
     {$endIf}
     //---
    _treeView_:=nil;
@@ -221,8 +226,8 @@ end;
 destructor tLazExt_wndInspector_aFFfSE_Node.DESTROY;
 begin
     inherited;
-    {$ifDef lazExt_ProjectInspector_aFFfSE__treeView_expandedTracking_mode_01}
-   _expandedNodesTracking_List_.FREE;
+    {$ifDef lazExt_ProjectInspector_aFFfSE__TrackingSystemForExpanded_mode_01}
+   _TSfENm01__listExpandedNodes_.FREE;
     {$endIf}
 end;
 
@@ -389,6 +394,12 @@ end;
 
 //
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+//
+//
+//
+//
+//
+//
 
 procedure tLazExt_wndInspector_aFFfSE_Node.FuckUP_onSET;
 begin
@@ -460,13 +471,6 @@ begin
             result:=tmpSourceEditor.FileName;
         end;
     end;
-end;
-
-//------------------------------------------------------------------------------
-
-function tLazExt_wndInspector_aFFfSE_Node._treeNode_isCurrentActive_(const treeNode:TTreeNode):boolean;
-begin {todo: подумать, а может Compare?}
-    result:=_ide_ActiveSourceEdit_fileName_=treeNode_NAME(treeNode);
 end;
 
 //------------------------------------------------------------------------------
@@ -558,8 +562,9 @@ begin
    _slctNode_:=value;
    _slctFile_:=treeNode_NAME(_slctNode_);
     //--- воот ... теперь пошлу тут разные фичи ----------------------------
-    {$ifdef lazExt_ProjectInspector_aFFfSE__treeView_expandedTracking_mode_01}
-    expandedNodesTracking_reStore;
+    {$ifdef lazExt_ProjectInspector_aFFfSE__TrackingSystemForExpanded_mode_01}
+    if _TSfENm01__WORK_ then _TSfENm01_listExpandedNodes__2Tree_
+    else _TSfENm01__WORK_set_(TRUE);
     {$endIf}
     // это БЕЗ условная фича, ради неё и писался этот компанент
    _slctNode_do_selectInTREE_;
@@ -568,7 +573,6 @@ begin
    _slctNode_.Update;
     {$endIf}
 end;
-
 
 // переместить ВЫДЕЛЕНИЕ на _slctNode_ узел
 procedure tLazExt_wndInspector_aFFfSE_Node._slctNode_do_selectInTREE_;
@@ -601,9 +605,11 @@ end;
 procedure tLazExt_wndInspector_aFFfSE_Node._WND_onActivate_myCustom_(Sender:TObject);
 begin
     //--- моя "нагрузка" ----------------------------------------
+    {$ifdef lazExt_ProjectInspector_aFFfSE__TrackingSystemForExpanded_mode_01}
     if Assigned(Sender) and (Sender=Form) then begin {todo: перестраховка, подумать про необходимость}
-       expandedNodesTracking_workOFF; //< отключаем систему слежения
+       _TSfENm01__WORK_set_(false); // отключяаем слежение нафиг
     end;
+    {$endIf}
     //--- вызов ОРИГИНАЛЬНОГО обработчика, то что было изначально
     if Assigned(_ide_object_WND_onActivate_original_) then _ide_object_WND_onActivate_original_(Sender);
 end;
@@ -656,87 +662,175 @@ begin
     //--- вызов ОРИГИНАЛЬНОГО обработчика, то что было изначально
     if Assigned(_ide_object_VTV_onAdvancedCustomDrawItem_original_) then _ide_object_VTV_onAdvancedCustomDrawItem_original_(Sender,Node,State,Stage,PaintImages,DefaultDraw);
     //--- моя "нагрузка" ----------------------------------------
-
-    {$ifDef lazExt_ProjectInspector_aFFfSE__treeView_mark_autoCollapseNode}
-    if (_expandedNodesTracking_WORK_) then begin
-        if Stage=cdPostPaint then begin
-            if not _expandedNodesTracking_state_(node) then begin
-               _VTV_onAdvancedCustomDrawItem_myCustom_clspMARK(Sender,Node);
-            end;
-        end;
-    end;
-    {$endif}
-    {$ifDef lazExt_ProjectInspector_aFFfSE__treeView_mark_ActiveFile}
+    {$ifDef lazExt_ProjectInspector_aFFfSE__treeView_mark_ActiveFileFromSoureceEdit}
     //--- выделение текущего файла
     if Stage=cdPostPaint then begin
        _VTV_onAdvancedCustomDrawItem_myCustom_selected_(Sender,Node);
        _VTV_onAdvancedCustomDrawItem_myCustom_slctFLDR_(Sender,Node);
     end;
-   { //----
-    if (Stage=cdPostPaint)and(Assigned(_slctNode_))
-       and(_slctNode_.HasAsParent(Node))
-       and(not Node.Expanded)
-    then begin
-       _VTV_onAdvancedCustomDrawItem_myCustom_slctFLDR_(Sender,Node);
-    end; }
+    {$endif}
+    {$ifDef lazExt_ProjectInspector_aFFfSE__treeView_mark_TrackingSystemForExpanded}
+    //--- маркер СВОРАЧИВАЕМОСТИ
+    if Stage=cdPostPaint then begin
+       _VTV_onAdvancedCustomDrawItem_myCustom_clspMARK(Sender,Node);
+    end;
     {$endif}
 end;
 {$endif}
 
 {%endregion}
 
-{$ifDef _fuckUp__ide_object_VTV_onAdvancedCustomDrawItem_}
-{%region --- рисование ДОП примитивов ---------------------------- /fold }
+{$ifDef lazExt_ProjectInspector_aFFfSE__TSfEN_ON}
+{%region --- Система Слежение за Развернутыми Узлами (ССзРУ) ------ /fold}
+//  "Системе Слежения за Развернутыми Узлами" (ССзРУ)
+//  "Tracking System for Expanded Nodes" (TSfEN)
 
+{$ifDef lazExt_ProjectInspector_aFFfSE__TrackingSystemForExpanded_mode_01}
+{%region --- Слежение за развернутыми узлами mode_01 -------------- /fold}
+//  #ВАРИАНТ №1. Идея и реализация
+{   Туповато, но работает.
+### Идея фукционирования:
+  - Автоматически поддерживать состояния свернутых/развернутых узлов на
+    основе "Некого НаЧального Состояния" (ННчС).
+    Алгоритм выделения узла следующий:
+    -- восстанавливаем "ННчС"
+    -- выделяем узел дерева, это приводит к возможному "раскрытию"
+       дополнительных узлов дорева, с чем мы успешно боремся в предыдущем
+       пункте
+  - Моментом для фиксировании "ННчС" считаем:
+    -- ПОТЕРЯ окном фокуса (пользователь настроил состояние дерева, и это
+       состояние мы поддерживаем)
+    -- попытка выделить файл при ОТКЛЮЧЕННОЙ "ССзРУ"
+  - Момент ОТКЛЮЧЕНИЯ "ССзРУ":
+    -- изначально "ССзРУ" отключена
+    -- ПОЛУЧЕНИЕ фокуса. Пользователь ВОШёЛ в дерево и руками настраивает
+       его состояния
 
-{$ifDef lazExt_ProjectInspector_aFFfSE__treeView_mark_autoCollapseNode}
+### Реализация:
+  - _expandedNodesTracking_List_ -- список ИМЕН развернутых узлов (это "ННчС")
 
-// рисование: МАРКЕР авто-Сворачивания
-procedure tLazExt_wndInspector_aFFfSE_Node._VTV_onAdvancedCustomDrawItem_myCustom_clspMARK(const Sender:TCustomTreeView; const Node:TTreeNode);
-var r:TRect;
-    y:Integer;
+}// и далее по коду (он же самодокументирующийся :-P )
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+procedure tLazExt_wndInspector_aFFfSE_Node._TSfENm01__WORK_set_(const value:boolean);
 begin
-    {// рисование КВАДРАТИКА
-    r:=Node.DisplayRect(true);
-    y:=(r.Bottom-r.Top) div 4;
-    // хочу получить квадратик )))
-    r.Right:=r.Left  +1;
-    r.Left :=r.Left-y+1;
-    r.Bottom:=r.Top+y;
-    // ---
-    Sender.Canvas.Pen.Color:=clgreen;
-    Sender.Canvas.Frame(R);}
-    {рисование ТРЕУГОЛЬНИКА}
-    r:=Node.DisplayRect(true);
-    y:=((r.Bottom-r.Top) div 4);
-    y:=y-1;
-    if y<=0 then y:=1;
-    // ---
-   { r.Right:=r.Left  -2;//1;
-    r.Left :=r.Left-y-2;//+1;
-    r.Top  :=r.Top+1;
-    r.Bottom:=r.Top+y;
-    Sender.Canvas.Pen.Color:=clHighlight;// clgreen;
-    Sender.Canvas.Line(r.Left,r.Top, r.Right,r.Top);
-    Sender.Canvas.Line(r.Right,r.Top, r.Right,r.Bottom);
-    Sender.Canvas.Line(r.Right,r.Bottom, r.Left,r.Top);    }
-
-     r.Left :=r.Left+1;
-     r.Right:=r.Left+y;
-     //r.Top  :=r.Top+1;
-     r.Bottom:=r.Top+y;
-     r.Top:=r.Top+1;
-     r.Bottom:=r.Bottom+1;
-     Sender.Canvas.Pen.Color:=clHighlight;// clgreen;
-     Sender.Canvas.Line(r.Left,r.Top,r.Right,r.Top);
-     //Sender.Canvas.Line(r.Right,r.Top,r.Left,r.Bottom);
-     Sender.Canvas.Line(r.Left,r.Bottom,r.Left,r.Top);
+    if value<>_TSfENm01__WORK_ then begin
+        if _treeView_.Focused
+        then _TSfENm01__WORK_:=FALSE // НЕЛЬЗЯ включить, пока окно в фокусе
+        else _TSfENm01__WORK_:=value;
+        {$ifDef _debugLOG_}
+            if _TSfENm01__WORK_
+            then DEBUG('expandedNodesTracking','ON')
+            else DEBUG('expandedNodesTracking','off');
+        {$endIf}
+       _TSfENm01__listExpandedNodes_.Clear;
+        if _TSfENm01__WORK_ then _TSfENm01_listExpandedNodes__2List_;
+    end;
 end;
 
-{$endif}
+//------------------------------------------------------------------------------
 
+// запомнить текущее состояние "развернутости узлов"
+procedure tLazExt_wndInspector_aFFfSE_Node._TSfENm01_listExpandedNodes__2List_;
+var tmp:tTreeNode;
+begin //< тупо сохраняем ИМЕНА всех РАЗВЕРНУТЫХ узлов в список
+    if Assigned(_treeView_) then begin
+       _TSfENm01__listExpandedNodes_.Clear;
+        tmp:=_treeView_.Items.GetFirstNode;
+        while Assigned(tmp) do begin
+            if tmp.Expanded then begin
+               _TSfENm01__listExpandedNodes_.Add(treeNode_NAME(tmp));
+            end;
+            tmp:=tmp.GetNext;
+        end;
+        {$ifDef _debugLOG_}
+        DEBUG('_TSfENm01_listExpandedNodes__2List_','SAVE. In List '+inttostr(_TSfENm01__listExpandedNodes_.Count)+' node(s).');
+        {$endIf}
+    end;
+end;
 
-{$ifDef lazExt_ProjectInspector_aFFfSE__treeView_mark_ActiveFile}
+// переустановть из запомненного состояние "развернутости узлов"
+procedure tLazExt_wndInspector_aFFfSE_Node._TSfENm01_listExpandedNodes__2Tree_;
+var tmp:tTreeNode;
+begin //< проходим по ВСЕМ узлам, если ИМЯ найдено в списке => развернут
+    if Assigned(_treeView_)and(_TSfENm01__listExpandedNodes_.Count>0) then begin
+       _treeView_.Items.BeginUpdate; {todo: проверить необходимость}
+        tmp:=_treeView_.Items.GetFirstNode;
+        while Assigned(tmp) do begin
+            tmp.Expanded:=(_TSfENm01__listExpandedNodes_.IndexOf(treeNode_NAME(tmp))>=0);
+            tmp:=tmp.GetNext;
+        end;
+       _treeView_.Items.EndUpdate; {todo: проверить необходимость}
+        {$ifDef _debugLOG_}
+        DEBUG('_TSfENm01_listExpandedNodes__2Tree_','ReSTORE. In List '+inttostr(_TSfENm01__listExpandedNodes_.Count)+' node(s).');
+        {$endIf}
+    end;
+end;
+
+//------------------------------------------------------------------------------
+
+function tLazExt_wndInspector_aFFfSE_Node._TSfENm01__node_willBeCollapsed_(const node:TTreeNode):boolean;
+begin // если система РАБОТАЕТ и его НЕТ в списке => мы его СВОРАЧИВАЕМ
+    result:=_TSfENm01__WORK_ and (_TSfENm01__listExpandedNodes_.IndexOf(treeNode_NAME(node))<0);
+end;
+
+function tLazExt_wndInspector_aFFfSE_Node._TSfENm01__node_willBeNoVisible_(const node:TTreeNode):boolean;
+var tmp:tTreeNode;
+begin // если свернут моего папу => меня не будет видно
+    result:=false;
+    if _TSfENm01__WORK_ then begin //< имеет смысл только если система работает
+        tmp:=node.Parent;
+        while Assigned(tmp) do begin
+            result:=_TSfENm01__node_willBeCollapsed_(tmp);
+            if result then BREAK;
+            tmp:=tmp.Parent;
+        end;
+    end;
+end;
+
+{%endregion}
+{$endIf}
+
+{$ifDef lazExt_ProjectInspector_aFFfSE__treeView_mark_TrackingSystemForExpanded}
+{%region --- "ССзРУ" Степень СВЕРНУТОСТИ для рисования ------------ /fold}
+
+// этот узел - ПАПКА (и она РАЗВЕРНУТА) и будет свернута
+function tLazExt_wndInspector_aFFfSE_Node._TSfEN__node_willBeCollapsed_(const node:TTreeNode):boolean;
+begin //<   | возможно лишняя проверка
+    result:=Assigned(node) and node.HasChildren and node.Expanded;
+    if result then begin //< мдя ... это папка, уточним состояние
+        {$if defined(lazExt_ProjectInspector_aFFfSE__TrackingSystemForExpanded_mode_01)}
+            result:=_TSfENm01__node_willBeCollapsed_(node);
+       {$else}
+            result:=FALSE;
+        {$endIf}
+    end;
+end;
+
+// этот узел перестанет быть виден, при сворачивании родительских
+function tLazExt_wndInspector_aFFfSE_Node._TSfEN__node_willBeNoVisible_(const node:TTreeNode):boolean;
+begin //<   | возможно лишняя проверка
+    result:=Assigned(node);
+    if result then begin //< мдя ... это папка, уточним состояние
+        {$if defined(lazExt_ProjectInspector_aFFfSE__TrackingSystemForExpanded_mode_01)}
+            result:=_TSfENm01__node_willBeNoVisible_(node);
+       {$else}
+            result:=FALSE;
+        {$endIf}
+    end;
+end;
+
+{%endregion}
+{$endIf}
+
+{%endregion}
+{$endif lazExt_ProjectInspector_aFFfSE__TSfEN_ON}
+
+{$ifDef _fuckUp__ide_object_VTV_onAdvancedCustomDrawItem_}
+{%region --- рисование ДОП примитивов ----------------------------- /fold}
+
+{$ifDef lazExt_ProjectInspector_aFFfSE__treeView_mark_ActiveFileFromSoureceEdit}
 
 // рисуем Прямоугольник с линией Справа
 procedure tLazExt_wndInspector_aFFfSE_Node._VTV_drawMARK_selected_(const Sender:TCustomTreeView; const Node:TTreeNode; const Color:TColor);
@@ -776,113 +870,42 @@ end;
 {$endif}
 
 
+{$ifDef lazExt_ProjectInspector_aFFfSE__treeView_mark_TrackingSystemForExpanded}
+
+// рисуем Уголок слева
+procedure tLazExt_wndInspector_aFFfSE_Node._VTV_drawMARK_clspMARK_(const Sender:TCustomTreeView; const Node:TTreeNode; const Color:TColor);
+var r:TRect;
+begin
+    Sender.Canvas.Pen.Color:=Color;
+    r:=Node.DisplayRect(TRUE);
+    // вычисляем (-: очевидно же по коду :-)  r.Bottom -- как ТЕМП переменная
+    r.Bottom:=((r.Bottom-r.Top) div 4);
+    r.Bottom:=r.Bottom-1; if r.Bottom<=0 then r.Bottom:=1;
+    //
+    r.Left :=r.Left+1;
+    r.Right:=r.Left+r.Bottom+1;
+    r.Top   :=1+r.Top;
+    r.Bottom:=1+r.Top+r.Bottom;
+    // РИСУЕМ
+    Sender.Canvas.Line(r.Left,r.Top   ,r.Right,r.Top);
+    Sender.Canvas.Line(r.Left,r.Bottom,r.Left ,r.Top);
+end;
+
+
+// рисование: МАРКЕР авто-Сворачивания
+procedure tLazExt_wndInspector_aFFfSE_Node._VTV_onAdvancedCustomDrawItem_myCustom_clspMARK(const Sender:TCustomTreeView; const Node:TTreeNode);
+begin
+    if _TSfEN__node_willBeCollapsed_(Node) then _VTV_drawMARK_clspMARK_(Sender,Node,clHighlight)
+   else
+    if _TSfEN__node_willBeNoVisible_(Node) then _VTV_drawMARK_clspMARK_(Sender,Node,clBtnShadow);
+end;
+
+{$endif}
 
 {%endregion}
 {$endif _fuckUp__ide_object_VTV_onAdvancedCustomDrawItem_}
 
-{$ifDef lazExt_ProjectInspector_aFFfSE__treeView_expandedTracking_mode_01}
-{%region --- Слежение ра развернутыми узлами mode_01 -------------- /fold}
-
-// провто под
-//
-//
-
-
-// запомнить текущее состояние "развернутости узлов"
-procedure tLazExt_wndInspector_aFFfSE_Node._expandedNodesTracking_state_Save_;
-var tmp:tTreeNode;
-begin //< тупо сохраняем ИМЕНА всех РАЗВЕРНУТЫХ узлов в список
-    if Assigned(_treeView_) then begin
-       _expandedNodesTracking_List_.Clear;
-        tmp:=_treeView_.Items.GetFirstNode;
-        while Assigned(tmp) do begin
-            if tmp.Expanded then begin
-               _expandedNodesTracking_List_.Add(treeNode_NAME(tmp));
-            end;
-            tmp:=tmp.GetNext;
-        end;
-        {$ifDef _debugLOG_}
-        DEBUG('expandedNodesTracking','SAVE. In List '+inttostr(_expandedNodesTracking_List_.Count)+' node(s).');
-        {$endIf}
-    end;
-end;
-
-// переустановть из запомненного состояние "развернутости узлов"
-procedure tLazExt_wndInspector_aFFfSE_Node._expandedNodesTracking_state_reSet_;
-var tmp:tTreeNode;
-begin //< проходим по ВСЕМ узлам, если ИМЯ найдено в списке => развернут
-    if Assigned(_treeView_)and(_expandedNodesTracking_List_.Count>0) then begin
-       _treeView_.Items.BeginUpdate; {todo: проверить необходимость}
-        tmp:=_treeView_.Items.GetFirstNode;
-        while Assigned(tmp) do begin
-            tmp.Expanded:=(_expandedNodesTracking_List_.IndexOf(treeNode_NAME(tmp))>=0);
-            tmp:=tmp.GetNext;
-        end;
-       _treeView_.Items.EndUpdate; {todo: проверить необходимость}
-        {$ifDef _debugLOG_}
-        DEBUG('expandedNodesTracking','ReSTORE. In List '+inttostr(_expandedNodesTracking_List_.Count)+' node(s).');
-        {$endIf}
-    end;
-end;
-
-// проверить состояние узла
-function tLazExt_wndInspector_aFFfSE_Node._expandedNodesTracking_state_(const treeNode:tTreeNode):boolean;
-var tmp:tTreeNode;
-begin
-    result:=false;
-    if Assigned(treeNode) then begin {todo: проверить необходимость}
-        result:=true;
-        tmp:=treeNode.Parent;
-        while Assigned(tmp) do begin
-            if _expandedNodesTracking_List_.IndexOf(treeNode_NAME(tmp))<0 then begin
-                result:=false;
-                BREAK;
-            end;
-            tmp:=tmp.Parent;
-        end;
-    end;
-end;
-
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-procedure tLazExt_wndInspector_aFFfSE_Node._expandedNodesTracking_set_WORK_(const value:boolean);
-begin
-    if value<>_expandedNodesTracking_WORK_ then begin
-        {$ifDef _debugLOG_}
-            if value
-            then DEBUG('expandedNodesTracking','ON')
-            else DEBUG('expandedNodesTracking','off');
-        {$endIf}
-       _expandedNodesTracking_List_.Clear;
-       _expandedNodesTracking_WORK_:=value;
-        if _expandedNodesTracking_WORK_ then _expandedNodesTracking_state_Save_;
-    end;
-end;
-
-//------------------------------------------------------------------------------
-
-procedure tLazExt_wndInspector_aFFfSE_Node.expandedNodesTracking_workOFF;
-begin
-   _expandedNodesTracking_set_WORK_(FALSE);
-end;
-
-procedure tLazExt_wndInspector_aFFfSE_Node.expandedNodesTracking_workON;
-begin
-   _expandedNodesTracking_set_WORK_(TRUE);
-end;
-
-procedure tLazExt_wndInspector_aFFfSE_Node.expandedNodesTracking_reStore;
-begin
-    if _expandedNodesTracking_WORK_
-    then _expandedNodesTracking_state_reSet_    //< восстановить состояние "свернутости"
-    //else _expandedNodesTracking_set_WORK_(TRUE) //< ВКЛЮЧИТЬ систему отслеживания
-end;
-
-{%endregion}
-{$endIf}
-
-
-{$endregion}
+{$endregion} //------------- End of Class --- tLazExt_wndInspector_aFFfSE_Node <
 
 {$region -- tLazExt_wndInspector_aFFfSE_NodeLST ------------------- /fold}
 

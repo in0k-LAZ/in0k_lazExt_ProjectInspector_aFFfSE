@@ -15,14 +15,14 @@
 
 {$define lazExt_ProjectInspector_aFFfSE__treeView_autoExpand}
 
-
-{$define lazExt_ProjectInspector_aFFfSE__treeView_expandedTracking_mode_01}
+{$define lazExt_ProjectInspector_aFFfSE__TrackingSystemForExpanded_mode_01}
 
 {.$define lazExt_ProjectInspector_aFFfSE__treeView_expandedTracking_mode_02}
 
-{$define lazExt_ProjectInspector_aFFfSE__treeView_mark_ActiveFile}
+// подРисовки в дереве
 
-{$define lazExt_ProjectInspector_aFFfSE__treeView_mark_autoCollapseNode}
+{$define lazExt_ProjectInspector_aFFfSE__treeView_mark_ActiveFileFromSoureceEdit}
+{$define lazExt_ProjectInspector_aFFfSE__treeView_mark_TrackingSystemForExpanded}
 
 
 //--- # режим ДЕБАГ ------------------------------------------------------------
