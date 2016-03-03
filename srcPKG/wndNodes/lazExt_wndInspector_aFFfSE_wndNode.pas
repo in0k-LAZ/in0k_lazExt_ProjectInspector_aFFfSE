@@ -110,6 +110,9 @@ type
    _slctFile_:string;    //< последний отмеченный узел (имя файла) нужен для отлова событый связанных с "перевставкой узлов"
     procedure _slctNode_SET_(const value:TTreeNode);
     procedure _slctNode_do_selectInTREE_;
+    {$ifDef lazExt_ProjectInspector_aFFfSE__treeView_autoExpand}
+    procedure _slctNode_do_expandAllParent_(const node:TTreeNode); inline;
+    {$endif}
   protected
   {%region --- Система Слежение за Развернутыми Узлами (ССзРУ) ---- /fold}
   {$ifDef lazExt_ProjectInspector_aFFfSE__TSfEN_ON}
@@ -578,14 +581,18 @@ end;
 procedure tLazExt_wndInspector_aFFfSE_Node._slctNode_do_selectInTREE_;
 begin
     if Assigned(Form) and Assigned(_treeView_) and Assigned(_slctNode_) then begin
-        if not _slctNode_.Selected then begin //< ну будем гонять попусту
-            with _treeView_ do begin
-                BeginUpdate;
-                ClearSelection;
-                Selected:=_slctNode_;
-                EndUpdate;
-            end;
+        with _treeView_ do begin
+            BeginUpdate;
+            if not _slctNode_.Selected then begin //< ну будем гонять попусту
+                    ClearSelection;
+                    Selected:=_slctNode_;
+            end{$ifDef lazExt_ProjectInspector_aFFfSE__treeView_autoExpand}
+            else begin // убедимся что ВСЕ родители узла РАЗВЕРНУТЫ
+               _slctNode_do_expandAllParent_(_slctNode_)
+            end{$endif};
+            EndUpdate;
         end;
+
     end{$ifDef _debugLOG_}
     else begin
        if not Assigned(Form) then DEBUG('ERROR','not Assigned(Owner)')
@@ -595,6 +602,20 @@ begin
        if not Assigned(_slctNode_) then DEBUG('ERROR','not Assigned(_slctNode_)')
     end{$endIf};
 end;
+
+{$ifDef lazExt_ProjectInspector_aFFfSE__treeView_autoExpand}
+procedure tLazExt_wndInspector_aFFfSE_Node._slctNode_do_expandAllParent_(const node:TTreeNode);
+var tmp:TTreeNode;
+begin
+    tmp:=node.Parent;
+    while Assigned(tmp) do begin
+        tmp.Expand(false);
+        tmp:=tmp.Parent;
+    end;
+end;
+{$endif}
+
+
 
 //------------------------------------------------------------------------------
 
