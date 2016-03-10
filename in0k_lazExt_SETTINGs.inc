@@ -5,6 +5,15 @@
 //------------------------------------------------------------------------------
 
 
+//--- # treeView_autoExpand ----------------------------------------------------
+// Автоматически РАЗВОРАЧИВАТЬ узлы при выделении
+// (при обнаружении искомого файла РАЗВОРаЧИВАТЬ дерево родителей)
+{$define lazExt_ProjectInspector_aFFfSE__treeView_autoExpand}
+//
+//------------------------------------------------------------------------------
+
+
+
 
 
 //  переместить "родительское" окно "Инспектор Проекта|Пакета" на второй план
@@ -13,7 +22,6 @@
 {$define lazExt_ProjectInspector_aFFfSE__wndInspector_B2SP__WinAPI_mode}
 
 
-{$define lazExt_ProjectInspector_aFFfSE__treeView_autoExpand}
 
 {$define lazExt_ProjectInspector_aFFfSE__TrackingSystemForExpanded_mode_01}
 

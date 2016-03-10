@@ -13,10 +13,8 @@ interface
 
 //--- # DebugLOG_mode ----------------------------------------------------------
 // Режим логирования.
-//  В код включаются вызовы `DEBUG` с описанием текущих событий и состояний.
-//
+// В код включаются вызовы `DEBUG` с описанием текущих событий и состояний.
 //{$define lazExt_ProjectInspector_aFFfSE__DebugLOG_mode}
-//
 //------------------------------------------------------------------------------
 
 {%endregion}
@@ -222,6 +220,7 @@ end;
 
 //------------------------------------------------------------------------------
 
+// поиск в КОНКРЕТНОМ окне
 procedure tLazExt_ProjectInspector_aFFfSE._select_inWindow_(const fileName:string; const Form:TForm; const nodeTYPE:tLazExt_wndInspector_aFFfSE_NodeTYPE);
 var tmp:tLazExt_wndInspector_aFFfSE_Node;
 begin
@@ -236,6 +235,7 @@ begin
     {$endIf}
 end;
 
+// поиск файла во ВСЕХ окнах
 procedure tLazExt_ProjectInspector_aFFfSE._select_inSCREEN_(const fileName:string);
 var i:integer;
   tmp:tForm;

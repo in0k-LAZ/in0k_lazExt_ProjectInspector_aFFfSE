@@ -2,46 +2,61 @@ unit lazExt_wndInspector_aFFfSE_wndNode;
 
 {$mode objfpc}{$H+}
 interface
-{%region --- Описание НАСТРОЕК уровня КОМПИЛЯЦИИ ----------------- /fold }
+{%region --- Описание "НАСТРОЕК уровня КОМПИЛЯЦИИ" --------------- /fold }
 
 //// ВНИМАНИЕ !!!
 //// настройки могут быть ПЕРЕОПРЕДЕЛЕНЫ ниже при подключении
 //// файла настроек "компанента-Расширения" (`in0k_lazExt_SETTINGs.inc`).
 
+// текущий АКТИВНЫЙ файл - файл открытый в ТЕКУЩЕМ АКТИВНОМ окне редактора кода.
+// узел АКТИВНОГО файл - узел дерева, отвечающий за текущий АКТИВНЫЙ файл.
+
 //--- # treeView_autoExpand ----------------------------------------------------
-// Автоматически РАЗВОРАЧИВАТЬ узлы при выделении
-//
+// Автоматически РАЗВОРАЧИВАТЬ узлы.
+// При выделении искомого узла АКТИВНОГО файла, РАЗВЕРНУТЬ его дерево родителей.
 {$define lazExt_ProjectInspector_aFFfSE__treeView_autoExpand}
-//
 //------------------------------------------------------------------------------
 
-
 //--- # mark ActiveFileFromSoureceEdit -----------------------------------------
-// Отмечать (дорисовывать выделение) для текущего выделенного файла
+// Отмечать текущей АКТИВНЫЙ файл.
+// Дорисовывать в интерфейсе: выделение для узла АКТИВНОГО файла.
 {$define lazExt_ProjectInspector_aFFfSE__treeView_mark_ActiveFileFromSoureceEdit}
 //------------------------------------------------------------------------------
 
 //--- # TrackingSystemForExpandedNodes -----------------------------------------
-// Система Слежения за Развернутыми Узлами (ССзРУ)
+// Система Слежения за Развернутыми Узлами (ССзРУ).
+// Автоматическое СВОРАЧИВАНИЕ узлов развернутых на этапе "treeView_autoExpand".
+//---------
 // способ функционирования (модель работы)
 {$define lazExt_ProjectInspector_aFFfSE__TrackingSystemForExpanded_mode_01}
-//{$define lazExt_ProjectInspector_aFFfSE__TrackingSystemForExpandedNodes_mode_02}
-//
-// отмечать деятельность системы на ДЕРЕВЕ (дорисовывать в интерфейсе)
+{$define lazExt_ProjectInspector_aFFfSE__TrackingSystemForExpanded_mode_02}
+//------------------------------------------------------------------------------
+
+//--- # mark TrackingSystemForExpandedNodes ------------------------------------
+// Отмечать деятельность системы "ССзРУ".
+// Дорисовывать в интерфейсе: отметки о сворачиваемых файлах.
 {$define lazExt_ProjectInspector_aFFfSE__treeView_mark_TrackingSystemForExpanded}
 //------------------------------------------------------------------------------
 
 
 //--- # DebugLOG_mode ----------------------------------------------------------
 // Режим логирования.
-//  В код включаются вызовы `DEBUG` с описанием текущих событий и состояний.
-//
-//{$define in0k_lazIdeSRC_FuckUpForm__DebugLOG_mode}
-//
+// В код включаются вызовы `DEBUG` с описанием текущих событий и состояний.
+{$define lazExt_ProjectInspector_aFFfSE__DebugLOG_mode}
 //------------------------------------------------------------------------------
 
 {%endregion}
-{$i in0k_lazExt_SETTINGs.inc} //< настройки компанента-Расширения.
+{%region --- отключение настроек перед конфигурацией ------------- /fold }
+//---
+{$unDef lazExt_ProjectInspector_aFFfSE__DebugLOG_mode}
+//---
+{$unDef lazExt_ProjectInspector_aFFfSE__treeView_autoExpand}
+{$unDef lazExt_ProjectInspector_aFFfSE__treeView_mark_ActiveFileFromSoureceEdit}
+{$unDef lazExt_ProjectInspector_aFFfSE__TrackingSystemForExpanded_mode_01}
+{$unDef lazExt_ProjectInspector_aFFfSE__TrackingSystemForExpanded_mode_02}
+{$unDef lazExt_ProjectInspector_aFFfSE__treeView_mark_TrackingSystemForExpanded}
+{%endregion}
+{$i in0k_lazExt_SETTINGs.inc} //< настройки-конфигурация компанента-Расширения.
 
 uses {$ifDef lazExt_ProjectInspector_aFFfSE__DebugLOG_mode}in0k_lazExt_DEBUG,{$endIf}
      Classes, Forms, ComCtrls, TreeFilterEdit,   Controls, Graphics,
@@ -56,6 +71,12 @@ uses {$ifDef lazExt_ProjectInspector_aFFfSE__DebugLOG_mode}in0k_lazExt_DEBUG,{$e
 {$unDef _fuckUp__ide_object_VTV_onAdvancedCustomDrawItem_}
 
 //==============================================================================
+
+{$ifNdef lazExt_ProjectInspector_aFFfSE__treeView_autoExpand}
+    // БЕЗ автоматического разворачивания это НЕИМЕЕТ СМЫСЛА
+    {$undef lazExt_ProjectInspector_aFFfSE__TrackingSystemForExpanded_mode_01}
+    {$undef lazExt_ProjectInspector_aFFfSE__TrackingSystemForExpanded_mode_02}
+{$endIf}
 
 {$ifDef lazExt_ProjectInspector_aFFfSE__TrackingSystemForExpanded_mode_01}
     {$define  lazExt_ProjectInspector_aFFfSE__TSfEN_ON}
@@ -583,7 +604,7 @@ begin
     if Assigned(Form) and Assigned(_treeView_) and Assigned(_slctNode_) then begin
         with _treeView_ do begin
             BeginUpdate;
-            if not _slctNode_.Selected then begin //< ну будем гонять попусту
+            if not _slctNode_.Selected then begin //< не будем гонять попусту
                     ClearSelection;
                     Selected:=_slctNode_;
             end{$ifDef lazExt_ProjectInspector_aFFfSE__treeView_autoExpand}
@@ -604,6 +625,7 @@ begin
 end;
 
 {$ifDef lazExt_ProjectInspector_aFFfSE__treeView_autoExpand}
+// разворачивание ВСЕХ родиетелей узла
 procedure tLazExt_wndInspector_aFFfSE_Node._slctNode_do_expandAllParent_(const node:TTreeNode);
 var tmp:TTreeNode;
 begin
@@ -614,8 +636,6 @@ begin
     end;
 end;
 {$endif}
-
-
 
 //------------------------------------------------------------------------------
 
