@@ -32,7 +32,7 @@ end;"/>
         <CustomOptions Value="-dIn0k_lazExt_ProjectInspector_aFFfSE_debugLOG_modeON"/>
       </Other>
     </CompilerOptions>
-    <Files Count="11">
+    <Files Count="12">
       <Item1>
         <Filename Value="in0k_lazExt_SETTINGs.inc"/>
         <Type Value="Binary"/>
@@ -79,6 +79,10 @@ end;"/>
         <Filename Value="srcEXT\in0k-lazarusIdeSRC-FuckUpForm\in0k_lazIdeSRC_FuckUpForm.pas"/>
         <UnitName Value="in0k_lazIdeSRC_FuckUpForm"/>
       </Item11>
+      <Item12>
+        <Filename Value="README.md"/>
+        <Type Value="Text"/>
+      </Item12>
     </Files>
     <RequiredPkgs Count="2">
       <Item1>
