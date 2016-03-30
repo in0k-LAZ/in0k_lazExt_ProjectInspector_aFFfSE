@@ -13,15 +13,10 @@
 //------------------------------------------------------------------------------
 
 
-
-
-
 //  переместить "родительское" окно "Инспектор Проекта|Пакета" на второй план
 //                     bring to second plan
-{$define lazExt_ProjectInspector_aFFfSE__wndInspector_B2SP}
-{$define lazExt_ProjectInspector_aFFfSE__wndInspector_B2SP__WinAPI_mode}
-
-
+//{$define lazExt_ProjectInspector_aFFfSE__wndInspector_B2SP}
+//{$define lazExt_ProjectInspector_aFFfSE__wndInspector_B2SP__WinAPI_mode}
 
 {$define lazExt_ProjectInspector_aFFfSE__TrackingSystemForExpanded_mode_01}
 

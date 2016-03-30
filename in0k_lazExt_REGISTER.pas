@@ -7,7 +7,7 @@ interface
 {$i in0k_lazExt_SETTINGs.inc} //< настройки компанента-Расширения.
 
 uses {$ifDef lazExt_ProjectInspector_aFFfSE__DebugLOG_mode}in0k_lazExt_DEBUG,{$endIf}
-     lazExt_ProjectInspector_aFFfSE;
+     lazExt_wndInspector_aFNcAFSE;
 
 procedure REGISTER;
 
@@ -23,14 +23,14 @@ implementation
 {$endIf}
 {%endregion}
 
-var _extEBJ_:tLazExt_ProjectInspector_aFFfSE;
+var _extEBJ_:tLazExt_wndInspector_aFNcAFSE;
 
 procedure REGISTER;
 begin
     {$ifDef _debugLOG_}
-    in0k_lazExt_DEBUG.IdeLazarus_SetUP(tLazExt_ProjectInspector_aFFfSE.ClassName);
+    in0k_lazExt_DEBUG.IdeLazarus_SetUP(tLazExt_wndInspector_aFNcAFSE.ClassName);
     {$endIf}
-   _extEBJ_:=tLazExt_ProjectInspector_aFFfSE.Create;
+   _extEBJ_:=tLazExt_wndInspector_aFNcAFSE.Create;
    _extEBJ_.LazarusIDE_SetUP;
 end;
 

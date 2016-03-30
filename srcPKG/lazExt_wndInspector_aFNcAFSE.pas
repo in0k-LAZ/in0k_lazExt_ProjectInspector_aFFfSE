@@ -1,4 +1,4 @@
-unit lazExt_ProjectInspector_aFFfSE;
+unit lazExt_wndInspector_aFNcAFSE;
 
 {todo: описание и документация}
 
@@ -24,13 +24,13 @@ interface
 uses {$ifDef lazExt_ProjectInspector_aFFfSE__DebugLOG_mode}in0k_lazExt_DEBUG,{$endIf}
      Classes, Dialogs, Controls, Forms,
      ProjectIntf, LazIDEIntf, SrcEditorIntf, IDECommands,
-     LCLIntf, //< это для GetTickCount64 в (Laz 1.4)
+     LCLIntf, //< это для GetTickCount64 в (Laz 1.4) {todo: обернуть в предКомпиляцию}
      //---
      in0k_lazIdeSRC_SourceEditor_onActivate,
      //---
-     lazExt_wndInspector_aFFfSE_wndNode,
-     lazExt_wndInspector_aFFfSE_wndNode_ProjectInspector,
-     lazExt_wndInspector_aFFfSE_wndNode_PackageEditor;
+     lazExt_wndInspector_aFNcAFSE_wndNode,
+     lazExt_wndInspector_aFNcAFSE_wndNode_ProjectInspector,
+     lazExt_wndInspector_aFNcAFSE_wndNode_PackageEditor;
 
 
 CONST // ОЧЕНЬ ВАЖНАЯ константа, задержка (в мс) от события до начала выполнения
@@ -39,7 +39,7 @@ CONST // ОЧЕНЬ ВАЖНАЯ константа, задержка (в мс) 
       // подробности см. `_select_heldCall_`.
 type
 
- tLazExt_ProjectInspector_aFFfSE=class
+ tLazExt_wndInspector_aFNcAFSE=class
   {%region --- организация отложенного вызова -------------------- /fold }
   strict private
    _heldCall_THREAD_  :TThread;
@@ -85,7 +85,7 @@ implementation
 {$endIf}
 {%endregion}
 
-constructor tLazExt_ProjectInspector_aFFfSE.Create;
+constructor tLazExt_wndInspector_aFNcAFSE.Create;
 begin
     _heldCall_THREAD_  :=nil;
     _heldCall_timeST_  :=0;
@@ -95,7 +95,7 @@ begin
     _SourceEditor_onActivate_:=tIn0k_lazIdeSRC_SourceEditor_onActivate.Create;
 end;
 
-destructor tLazExt_ProjectInspector_aFFfSE.DESTROY;
+destructor tLazExt_wndInspector_aFNcAFSE.DESTROY;
 begin
    _SourceEditor_onActivate_.FREE;
    _lair_nodes_wndInspector_.FREE;
@@ -104,7 +104,7 @@ end;
 
 //------------------------------------------------------------------------------
 
-procedure tLazExt_ProjectInspector_aFFfSE.LazarusIDE_SetUP;
+procedure tLazExt_wndInspector_aFNcAFSE.LazarusIDE_SetUP;
 begin
    _lair_nodes_wndInspector_.CLEAR;
    _SourceEditor_onActivate_.onEvent:=@_Event_SourceEditor_onActivate_;
@@ -112,7 +112,7 @@ begin
     LazarusIDE.AddHandlerOnIDEClose(@LazarusIDE_OnIDEClose);
 end;
 
-procedure tLazExt_ProjectInspector_aFFfSE.LazarusIDE_Clean;
+procedure tLazExt_wndInspector_aFNcAFSE.LazarusIDE_Clean;
 begin
    _SourceEditor_onActivate_.onEvent:=nil;
    _SourceEditor_onActivate_.LazarusIDE_Clean;
@@ -121,7 +121,7 @@ end;
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-procedure tLazExt_ProjectInspector_aFFfSE.LazarusIDE_OnIDEClose(Sender:TObject);
+procedure tLazExt_wndInspector_aFNcAFSE.LazarusIDE_OnIDEClose(Sender:TObject);
 begin
     LazarusIDE_Clean;
 end;
@@ -129,7 +129,7 @@ end;
 //------------------------------------------------------------------------------
 
 // имя файла в ТЕКУЩЕМ активном окне редактора
-function tLazExt_ProjectInspector_aFFfSE._fileName_fromActiveSourceEdit_:string;
+function tLazExt_wndInspector_aFNcAFSE._fileName_fromActiveSourceEdit_:string;
 var tmpSourceEditor:TSourceEditorInterface;
 begin
     result:='';
@@ -155,14 +155,14 @@ end;
 type
 _THeldCallTHREAD_=class(TThread)
   private
-   _owner_:tLazExt_ProjectInspector_aFFfSE;
+   _owner_:tLazExt_wndInspector_aFNcAFSE;
   public
-    Constructor Create(Owner:tLazExt_ProjectInspector_aFFfSE);
+    Constructor Create(Owner:tLazExt_wndInspector_aFNcAFSE);
   protected
     procedure Execute; override;
   end;
 
-Constructor _THeldCallTHREAD_.Create(Owner:tLazExt_ProjectInspector_aFFfSE);
+Constructor _THeldCallTHREAD_.Create(Owner:tLazExt_wndInspector_aFNcAFSE);
 begin
     inherited Create(true);
     FreeOnTerminate:=TRUE;
@@ -183,7 +183,7 @@ end;
 
 {$endregion}
 
-procedure tLazExt_ProjectInspector_aFFfSE._heldCall_execute_;
+procedure tLazExt_wndInspector_aFNcAFSE._heldCall_execute_;
 begin // call only `Synchronize(@_heldCall_execute_)`
     if GetTickCount64-_heldCall_timeST_<cLazExt_ProjectInspector_aFFfSE__timeHeldCallForSelect then begin
         if Assigned(_heldCall_THREAD_) then _heldCall_THREAD_.Terminate;
@@ -196,7 +196,7 @@ begin // call only `Synchronize(@_heldCall_execute_)`
     end;
 end;
 
-procedure tLazExt_ProjectInspector_aFFfSE._heldCall_doSetUp_;
+procedure tLazExt_wndInspector_aFNcAFSE._heldCall_doSetUp_;
 begin // call only `Synchronize(@_heldCall_setUp_)`
    _heldCall_timeST_:=GetTickCount64;
     if not Assigned(_heldCall_THREAD_) then begin
@@ -206,12 +206,12 @@ end;
 
 //------------------------------------------------------------------------------
 
-procedure tLazExt_ProjectInspector_aFFfSE._heldCall_select_doSetUp_;
+procedure tLazExt_wndInspector_aFNcAFSE._heldCall_select_doSetUp_;
 begin
     TThread.Synchronize(nil,@_heldCall_doSetUp_);
 end;
 
-procedure tLazExt_ProjectInspector_aFFfSE._heldCall_select_execute_;
+procedure tLazExt_wndInspector_aFNcAFSE._heldCall_select_execute_;
 begin
     TThread.Synchronize(nil,@_heldCall_execute_);
 end;
@@ -221,8 +221,8 @@ end;
 //------------------------------------------------------------------------------
 
 // поиск в КОНКРЕТНОМ окне
-procedure tLazExt_ProjectInspector_aFFfSE._select_inWindow_(const fileName:string; const Form:TForm; const nodeTYPE:tLazExt_wndInspector_aFFfSE_NodeTYPE);
-var tmp:tLazExt_wndInspector_aFFfSE_Node;
+procedure tLazExt_wndInspector_aFNcAFSE._select_inWindow_(const fileName:string; const Form:TForm; const nodeTYPE:tLazExt_wndInspector_aFFfSE_NodeTYPE);
+var tmp:tLazExt_wndInspector_aFNcAFSE_wndNode;
 begin
     tmp:=_lair_nodes_wndInspector_.Nodes_GET(Form,nodeTYPE);
     if Assigned(tmp) then begin //< перестраховка
@@ -236,19 +236,19 @@ begin
 end;
 
 // поиск файла во ВСЕХ окнах
-procedure tLazExt_ProjectInspector_aFFfSE._select_inSCREEN_(const fileName:string);
+procedure tLazExt_wndInspector_aFNcAFSE._select_inSCREEN_(const fileName:string);
 var i:integer;
   tmp:tForm;
 begin
     if fileName<>'' then begin
         for i:=0 to Screen.FormCount-1 do begin
             tmp:=Screen.Forms[i];
-            if tLazExt_wndInspector_aFFfSE_wndNode_ProjectInspector.OfMyType(tmp) then begin
-               _select_inWindow_(fileName,tmp,tLazExt_wndInspector_aFFfSE_wndNode_ProjectInspector)
+            if tLazExt_wndInspector_aFNcAFSE_wndNode_ProjectInspector.OfMyType(tmp) then begin
+               _select_inWindow_(fileName,tmp,tLazExt_wndInspector_aFNcAFSE_wndNode_ProjectInspector)
             end
            else
-            if tLazExt_wndInspector_aFFfSE_wndNode_PackageEditor.OfMyType(tmp) then begin
-               _select_inWindow_(fileName,tmp,tLazExt_wndInspector_aFFfSE_wndNode_PackageEditor);
+            if tLazExt_wndInspector_aFNcAFSE_wndNode_PackageEditor.OfMyType(tmp) then begin
+               _select_inWindow_(fileName,tmp,tLazExt_wndInspector_aFNcAFSE_wndNode_PackageEditor);
             end;
         end;
     end
@@ -259,12 +259,12 @@ begin
     {$endIf}
 end;
 
-procedure tLazExt_ProjectInspector_aFFfSE._select_;
+procedure tLazExt_wndInspector_aFNcAFSE._select_;
 begin // такое САМОЕ главное событие ... и такое короткое стало
    _select_inSCREEN_(_fileName_fromActiveSourceEdit_);
 end;
 
-procedure tLazExt_ProjectInspector_aFFfSE._select_heldCall_;
+procedure tLazExt_wndInspector_aFNcAFSE._select_heldCall_;
 begin
     //
     // зачем так сложно? источник проблем окно "Project Inspector"
@@ -282,7 +282,7 @@ end;
 
 //------------------------------------------------------------------------------
 
-procedure tLazExt_ProjectInspector_aFFfSE._Event_SourceEditor_onActivate_(Sender:TObject);
+procedure tLazExt_wndInspector_aFNcAFSE._Event_SourceEditor_onActivate_(Sender:TObject);
 begin
     {$ifDef _debugLOG_}
     DEBUG('_Event_SourceEditor_onActivate_', '>>>');
@@ -290,7 +290,7 @@ begin
    _select_heldCall_;
 end;
 
-procedure tLazExt_ProjectInspector_aFFfSE._Event_wndNodes_ProjectAddNode_(Sender:TObject);
+procedure tLazExt_wndInspector_aFNcAFSE._Event_wndNodes_ProjectAddNode_(Sender:TObject);
 begin
     {$ifDef _debugLOG_}
     DEBUG('_Event_wndNodes_ProjectAddNode_', '>>>');
