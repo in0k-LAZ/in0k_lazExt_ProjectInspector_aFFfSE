@@ -10,6 +10,6 @@
 [submodule "srcEXT/in0k-lazarusIdeSRC-FuckUpForm"]
 	path = srcEXT/in0k-lazarusIdeSRC-FuckUpForm
 	url = https://github.com/in0k-LazarusIDE-soures/in0k-lazarusIdeSRC-FuckUpForm.git
-[submodule "srcEXT/in0k-lazarusIdeSRC-testWindowIS"]
-	path = srcEXT/in0k-lazarusIdeSRC-testWindowIS
-	url = https://github.com/in0k-LazarusIDE-soures/in0k-lazarusIdeSRC-testWindowIS.git
+[submodule "srcEXT/in0k-lazarusIdeSRC-testFormIS"]
+	path = srcEXT/in0k-lazarusIdeSRC-testFormIS
+	url = https://github.com/in0k-LazarusIDE-soures/in0k-lazarusIdeSRC-testFormIS.git
