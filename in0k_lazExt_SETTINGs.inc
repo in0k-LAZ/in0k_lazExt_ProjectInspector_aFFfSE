@@ -6,17 +6,21 @@
 
 
 //--- # treeView_autoExpand ----------------------------------------------------
-// Автоматически РАЗВОРАЧИВАТЬ узлы при выделении
-// (при обнаружении искомого файла РАЗВОРаЧИВАТЬ дерево родителей)
-{$define lazExt_ProjectInspector_aFFfSE__treeView_autoExpand}
-//
+// Автоматически РАЗВОРАЧИВАТЬ узлы.
+// При выделении искомого узла АКТИВНОГО файла, РАЗВЕРНУТЬ его дерево родителей.
+{$define in0k_LazIdeEXT_wndInspector_aFNcAFSE___treeView_autoExpand}
+//------------------------------------------------------------------------------
+
+//--- # treeView_TrackingSystemForExpandedNodes --------------------------------
+// Система Слежения за Развернутыми Узлами (ССзРУ).
+// Автоматическое СВОРАЧИВАНИЕ узлов развернутых на этапе "treeView_autoExpand".
+//---------
+// способ функционирования (модель работы)
+{$define lazExt_ProjectInspector_aFFfSE__TrackingSystemForExpanded_mode_01}
 //------------------------------------------------------------------------------
 
 
-//  переместить "родительское" окно "Инспектор Проекта|Пакета" на второй план
-//                     bring to second plan
-//{$define lazExt_ProjectInspector_aFFfSE__wndInspector_B2SP}
-//{$define lazExt_ProjectInspector_aFFfSE__wndInspector_B2SP__WinAPI_mode}
+
 
 {$define lazExt_ProjectInspector_aFFfSE__TrackingSystemForExpanded_mode_01}
 
@@ -28,19 +32,22 @@
 {$define lazExt_ProjectInspector_aFFfSE__treeView_mark_TrackingSystemForExpanded}
 
 
-//--- # режим ДЕБАГ ------------------------------------------------------------
+
+{%region --- # режим ДЕБАГ --------------------------------------- /fold }
 //  Позволяет просматривать лог событий в отдельном окне из IDE
-//  View -> IDE Internals -> [eventLog] lazExt_ProjectInspector_aFFfSE
-{$define lazExt_ProjectInspector_aFFfSE__DebugLOG_mode}
+//  `View` -> `IDE Internals` -> `[eventLog]..wndInspector_aFNcAFSE..`
+{$define in0k_LazIdeEXT_wndInspector_aFNcAFSE___DebugLOG_mode}
 //  расширенный дебаг
-{$ifDef lazExt_ProjectInspector_aFFfSE__DebugLOG_mode}
+{$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___DebugLOG_mode}
     // можно подключить логи ПодСистем
     //{$define in0k_lazIdeSRC_FuckUpForm__DebugLOG_mode}
     //{$define in0k_lazIdeSRC_SourceEditor_onActivate__DebugLOG_mode}
 {$endIf}
+{%endregion}
 
-{%region --- дополнительные специальные настройки ---------------- /fold }
+{%region --- # дополнительные специальные настройки -------------- /fold }
 
+// настройка работы подСистемы
 {$unDEF in0k_lazIdeSRC_SourceEditor_onActivate__inFocusONLY} //< событие нужно в ЛЮБОМ состоянии
 
 //--- возня с ОТКЛЮЧЕНИЕ дебага ----------------------------------------------//
@@ -51,4 +58,5 @@
 {$endIf}
 
 {%endregion}
+
 

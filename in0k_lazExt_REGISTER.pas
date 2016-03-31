@@ -6,7 +6,7 @@ interface
 
 {$i in0k_lazExt_SETTINGs.inc} //< настройки компанента-Расширения.
 
-uses {$ifDef lazExt_ProjectInspector_aFFfSE__DebugLOG_mode}in0k_lazExt_DEBUG,{$endIf}
+uses {$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___DebugLOG_mode}in0k_lazExt_DEBUG,{$endIf}
      lazExt_wndInspector_aFNcAFSE;
 
 procedure REGISTER;

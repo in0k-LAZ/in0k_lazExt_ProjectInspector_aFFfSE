@@ -1,27 +1,36 @@
 unit lazExt_wndInspector_aFNcAFSE;
+//< Главный класс компонента-Расширения
 
 {todo: описание и документация}
 
 {$mode objfpc}{$H+}
 interface
+{%region --- описание НАСТРОЕК УРОВНЯ КОМПИЛЯЦИИ ----------------- /fold }
+//-- ВНИМАНИЕ !!! это ТОЛЬКО список с оисанием !!! ---------------------------//
+//   настройки могут БУДУТ ПЕРЕОПРЕДЕЛЕНЫ ниже при подключении                //
+//   файла настроек "компонента-Расширения" (`in0k_lazExt_SETTINGs.inc`).     //
+//----------------------------------------------------------------------------//
 
-{%region --- Описание НАСТРОЕК уровня КОМПИЛЯЦИИ ----------------- /fold }
-
-//// ВНИМАНИЕ !!!
-//// настройки могут быть ПЕРЕОПРЕДЕЛЕНЫ ниже при подключении
-//// файла настроек "компанента-Расширения" (`in0k_lazExt_SETTINGs.inc`).
-
-//--- # DebugLOG_mode ----------------------------------------------------------
+//--- # DebugLOG_mode --------------------------------------------------------//
 // Режим логирования.
 // В код включаются вызовы `DEBUG` с описанием текущих событий и состояний.
-//{$define lazExt_ProjectInspector_aFFfSE__DebugLOG_mode}
+{$define in0k_LazIdeEXT_wndInspector_aFNcAFSE___DebugLOG_mode}
 //------------------------------------------------------------------------------
 
 {%endregion}
+{%region --- ОЧИСТКА настроек перед конфигурацией ---------------- /fold }
+{$unDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___DebugLOG_mode}
+{%endregion}
+{$i in0k_lazExt_SETTINGs.inc} // КОНФИГУРАЦИЯ компонента-Расширения.
+{%region --- применение настроек и доп.конфигурация -------------- /fold }
+{$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___DebugLOG_mode}
+    {$define _debugLOG_}//< типа да ... можно делать ДЕБАГ отметки
+{$else}
+    {$undef _debugLOG_}
+{$endIf}
+{%endregion}
 
-{$i in0k_lazExt_SETTINGs.inc} //< настройки компанента-Расширения.
-
-uses {$ifDef lazExt_ProjectInspector_aFFfSE__DebugLOG_mode}in0k_lazExt_DEBUG,{$endIf}
+uses {$ifDef _debugLOG_}in0k_lazExt_DEBUG,{$endIf}
      Classes, Dialogs, Controls, Forms,
      ProjectIntf, LazIDEIntf, SrcEditorIntf, IDECommands,
      LCLIntf, //< это для GetTickCount64 в (Laz 1.4) {todo: обернуть в предКомпиляцию}
@@ -35,8 +44,9 @@ uses {$ifDef lazExt_ProjectInspector_aFFfSE__DebugLOG_mode}in0k_lazExt_DEBUG,{$e
 
 CONST // ОЧЕНЬ ВАЖНАЯ константа, задержка (в мс) от события до начала выполнения
       // моих фокусов. На моей машине достаточно 100мс.
-  cLazExt_ProjectInspector_aFFfSE__timeHeldCallForSelect=100;
+  clazExt_wndInspector_aFNcAFSE__timeHeldCallForSelect=100;
       // подробности см. `_select_heldCall_`.
+      {todo: придумать, как избавиться от константы используя события дерева}
 type
 
  tLazExt_wndInspector_aFNcAFSE=class
@@ -185,7 +195,7 @@ end;
 
 procedure tLazExt_wndInspector_aFNcAFSE._heldCall_execute_;
 begin // call only `Synchronize(@_heldCall_execute_)`
-    if GetTickCount64-_heldCall_timeST_<cLazExt_ProjectInspector_aFFfSE__timeHeldCallForSelect then begin
+    if GetTickCount64-_heldCall_timeST_<clazExt_wndInspector_aFNcAFSE__timeHeldCallForSelect then begin
         if Assigned(_heldCall_THREAD_) then _heldCall_THREAD_.Terminate;
        _heldCall_THREAD_:=nil;
        _heldCall_timeST_:=0;
@@ -274,7 +284,7 @@ begin
     // поэтому, даем возможность отработать алгоритмам, и тока потом приcтупаем
     // к нашим непосредственным задачам, надеясь что деятельность IDE закончена
     //
-    // задержка задается константой `cLazExt_ProjectInspector_aFFfSE__timeHeldCallForSelect`.
+    // задержка задается константой `clazExt_wndInspector_aFNcAFSE__timeHeldCallForSelect`.
     // на моем компе достаточно задержки в 100мс.
     //
    _heldCall_select_doSetUp_;
