@@ -8,7 +8,7 @@
 //--- # treeView_autoExpand ----------------------------------------------------
 // Автоматически РАЗВОРАЧИВАТЬ узлы.
 // При выделении искомого узла АКТИВНОГО файла, РАЗВЕРНУТЬ его дерево родителей.
-{$define in0k_LazIdeEXT_wndInspector_aFNcAFSE___treeView_autoExpand}
+{$define in0k_LazIdeEXT_wndInspector_aFNcAFSE___AutoExpand}
 //------------------------------------------------------------------------------
 
 //--- # treeView_TrackingSystemForExpandedNodes --------------------------------
@@ -16,7 +16,7 @@
 // Автоматическое СВОРАЧИВАНИЕ узлов развернутых на этапе "treeView_autoExpand".
 //---------
 // способ функционирования (модель работы)
-{$define lazExt_ProjectInspector_aFFfSE__TrackingSystemForExpanded_mode_01}
+{$define in0k_LazIdeEXT_wndInspector_aFNcAFSE___AutoCollapse_mode_01}
 //------------------------------------------------------------------------------
 
 
