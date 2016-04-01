@@ -13,3 +13,9 @@
 [submodule "srcEXT/in0k-lazarusIdeSRC-testFormIS"]
 	path = srcEXT/in0k-lazarusIdeSRC-testFormIS
 	url = https://github.com/in0k-LazarusIDE-soures/in0k-lazarusIdeSRC-testFormIS.git
+[submodule "srcEXT/in0k-lazarusIdeSRC-B2SP"]
+	path = srcEXT/in0k-lazarusIdeSRC-B2SP
+	url = https://github.com/in0k-LazarusIDE-soures/in0k-lazarusIdeSRC-B2SP.git
+[submodule "srcEXT/in0k-bringToSecondPlane"]
+	path = srcEXT/in0k-bringToSecondPlane
+	url = https://github.com/in0k-src/in0k-bringToSecondPlane.git
