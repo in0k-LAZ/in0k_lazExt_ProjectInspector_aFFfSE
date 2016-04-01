@@ -9,11 +9,11 @@
       <PathDelim Value="\"/>
       <SearchPaths>
         <IncludeFiles Value="srcEXT\in0k-lazarusIdeSRC-wndDEBUG"/>
-        <OtherUnitFiles Value="srcEXT\in0k-lazarusIdeSRC-wndDEBUG;srcPKG;srcEXT\in0k-lazarusIdeSRC-SourceEditor-onActivate;srcPKG\wndNodes;srcEXT\in0k-lazarusIdeSRC-FuckUpForm;srcEXT\in0k-lazarusIdeSRC-testFormIS"/>
+        <OtherUnitFiles Value="srcEXT\in0k-lazarusIdeSRC-wndDEBUG;srcPKG;srcEXT\in0k-lazarusIdeSRC-SourceEditor-onActivate;srcPKG\wndNodes;srcEXT\in0k-lazarusIdeSRC-FuckUpForm;srcEXT\in0k-lazarusIdeSRC-testFormIS;srcEXT\in0k-bringToSecondPlane;srcEXT\in0k-lazarusIdeSRC-B2SP"/>
         <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>
     </CompilerOptions>
-    <Files Count="14">
+    <Files Count="15">
       <Item1>
         <Filename Value="in0k_lazExt_DEBUG.pas"/>
         <UnitName Value="in0k_lazExt_DEBUG"/>
@@ -71,6 +71,10 @@
         <Filename Value="srcEXT\in0k-lazarusIdeSRC-testFormIS\in0k_lazIdeSRC_testFormIS_ProjectInspector.pas"/>
         <UnitName Value="in0k_lazIdeSRC_testFormIS_ProjectInspector"/>
       </Item14>
+      <Item15>
+        <Filename Value="srcEXT\in0k-lazarusIdeSRC-B2SP\in0k_lazIdeSRC_B2SP.pas"/>
+        <UnitName Value="in0k_lazIdeSRC_B2SP"/>
+      </Item15>
     </Files>
     <RequiredPkgs Count="3">
       <Item1>

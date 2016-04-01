@@ -11,6 +11,9 @@
 {$define in0k_LazIdeEXT_wndInspector_aFNcAFSE___AutoExpand}
 //------------------------------------------------------------------------------
 
+{$define in0k_LazIdeEXT_wndInspector_aFNcAFSE___IdeCommand}
+
+
 //--- # treeView_TrackingSystemForExpandedNodes --------------------------------
 // Система Слежения за Развернутыми Узлами (ССзРУ).
 // Автоматическое СВОРАЧИВАНИЕ узлов развернутых на этапе "treeView_autoExpand".
@@ -21,15 +24,10 @@
 
 
 
-
-{$define lazExt_ProjectInspector_aFFfSE__TrackingSystemForExpanded_mode_01}
-
-{.$define lazExt_ProjectInspector_aFFfSE__treeView_expandedTracking_mode_02}
-
 // подРисовки в дереве
 
-{$define lazExt_ProjectInspector_aFFfSE__treeView_mark_ActiveFileFromSoureceEdit}
-{$define lazExt_ProjectInspector_aFFfSE__treeView_mark_TrackingSystemForExpanded}
+{$define in0k_LazIdeEXT_wndInspector_aFNcAFSE___mark_ActiveFileFromSoureceEdit}
+{$define in0k_LazIdeEXT_wndInspector_aFNcAFSE___mark_TrackingSystemForExpanded}
 
 
 

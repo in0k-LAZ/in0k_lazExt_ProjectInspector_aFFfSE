@@ -6,9 +6,11 @@ unit lazExt_wndInspector_aFNcAFSE;
 {$mode objfpc}{$H+}
 interface
 {%region --- описание НАСТРОЕК УРОВНЯ КОМПИЛЯЦИИ ----------------- /fold }
-//-- ВНИМАНИЕ !!! это ТОЛЬКО список с оисанием !!! ---------------------------//
+//                                                                      //----//
+//   ВНИМАНИЕ !!! это ТОЛЬКО список с оисанием !!!                            //
 //   настройки могут БУДУТ ПЕРЕОПРЕДЕЛЕНЫ ниже при подключении                //
 //   файла настроек "компонента-Расширения" (`in0k_lazExt_SETTINGs.inc`).     //
+//                                                                            //
 //----------------------------------------------------------------------------//
 
 //--- # DebugLOG_mode --------------------------------------------------------//
@@ -20,6 +22,7 @@ interface
 {%endregion}
 {%region --- ОЧИСТКА настроек перед конфигурацией ---------------- /fold }
 {$unDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___DebugLOG_mode}
+{$unDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___IdeCommand}
 {%endregion}
 {$i in0k_lazExt_SETTINGs.inc} // КОНФИГУРАЦИЯ компонента-Расширения.
 {%region --- применение настроек и доп.конфигурация -------------- /fold }
@@ -28,12 +31,20 @@ interface
 {$else}
     {$undef _debugLOG_}
 {$endIf}
+
+
+{$define _lcl___wndZOrederMoving_}
+
 {%endregion}
 
 uses {$ifDef _debugLOG_}in0k_lazExt_DEBUG,{$endIf}
-     Classes, Dialogs, Controls, Forms,
-     ProjectIntf, LazIDEIntf, SrcEditorIntf, IDECommands,
+     Classes, Forms,
+     LazIDEIntf, SrcEditorIntf, //IDECommands,
      LCLIntf, //< это для GetTickCount64 в (Laz 1.4) {todo: обернуть в предКомпиляцию}
+     //---
+     {$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___IdeCommand}
+     IDECommands, MenuIntf, LCLType,
+     {$endIf}
      //---
      in0k_lazIdeSRC_SourceEditor_onActivate,
      //---
@@ -73,14 +84,33 @@ type
   protected //< события, по которым надо что-то поделать
     procedure _Event_SourceEditor_onActivate_(Sender:TObject);
     procedure _Event_wndNodes_ProjectAddNode_(Sender:TObject);
+    {$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___IdeCommand}
+    procedure _Event_IdeCommand_Execute_(Sender:TObject);
+    {$endIf}
+
+  {$ifDef _lcl___wndZOrederMoving_}
+  private
+   _wndZOrederMoving_mode:byte; // какой именно способ будет использован
+  protected
+    procedure _wndZOrederMoving_mode_set_(const mode:byte);
+    procedure _wndZOrederMoving_OFF_;
+    procedure _wndZOrederMoving_         (const form:TCustomForm);
+
+  {$endIf}
+
   public
     constructor Create;
     destructor DESTROY; override;
   protected
     procedure LazarusIDE_OnIDEClose(Sender:TObject);
+  protected
+    {$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___IdeCommand}
+    procedure _LazarusIDE_SetUP__ideCommand_;
+    procedure _LazarusIDE_CLEAN__ideCommand_;
+    {$endIf}
   public
-    procedure LazarusIDE_SetUP;
-    procedure LazarusIDE_Clean;
+    procedure  LazarusIDE_SetUP;
+    procedure  LazarusIDE_CLEAN;
   end;
 
 implementation
@@ -120,6 +150,9 @@ begin
    _SourceEditor_onActivate_.onEvent:=@_Event_SourceEditor_onActivate_;
    _SourceEditor_onActivate_.LazarusIDE_SetUP;
     LazarusIDE.AddHandlerOnIDEClose(@LazarusIDE_OnIDEClose);
+    {$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___IdeCommand}
+   _LazarusIDE_SetUP__ideCommand_;
+    {$endIf}
 end;
 
 procedure tLazExt_wndInspector_aFNcAFSE.LazarusIDE_Clean;
@@ -127,7 +160,34 @@ begin
    _SourceEditor_onActivate_.onEvent:=nil;
    _SourceEditor_onActivate_.LazarusIDE_Clean;
    _lair_nodes_wndInspector_.CLEAR;
+    {$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___IdeCommand}
+   _LazarusIDE_CLEAN__ideCommand_;
+    {$endIf}
 end;
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+{$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___IdeCommand}
+
+procedure tLazExt_wndInspector_aFNcAFSE._LazarusIDE_SetUP__ideCommand_;
+var
+  Key: TIDEShortCut;
+  Cat: TIDECommandCategory;
+  CmdMyTool: TIDECommand;
+begin
+  // register IDE shortcut and menu item
+  Key := IDEShortCut(VK_UNKNOWN,[],VK_UNKNOWN,[]);
+  Cat:=IDECommandList.FindCategoryByName(CommandCategoryToolMenuName);
+  CmdMyTool := RegisterIDECommand(Cat,'Start my tool', 'Starts my tool to do some stuff', Key, @_Event_IdeCommand_Execute_, nil);
+  RegisterIDEMenuCommand(itmSecondaryTools, 'MyTool', 'Start my tool', nil, nil, CmdMyTool);
+end;
+
+procedure tLazExt_wndInspector_aFNcAFSE._LazarusIDE_CLEAN__ideCommand_;
+begin
+
+end;
+
+{$endIf}
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -292,6 +352,40 @@ end;
 
 //------------------------------------------------------------------------------
 
+{$ifDef _lcl___wndZOrederMoving_}
+
+const
+  _cWndZOrederMoving_mode_=0; // НЕТ никакого перемещения
+  _cWndZOrederMoving_mode_=1; // переместить на ПЕРВЫЙ план
+  _cWndZOrederMoving_mode_=2; // переместить на ВТОРОЙ план
+
+procedure tLazExt_wndInspector_aFNcAFSE._wndZOrederMoving_mode_set_(const mode:byte);
+begin
+   _wndZOrederMoving_mode:=mode;
+end;
+
+procedure tLazExt_wndInspector_aFNcAFSE._wndZOrederMoving_OFF_;
+begin
+   _wndZOrederMoving_mode_set_(0);
+end;
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+procedure tLazExt_wndInspector_aFNcAFSE._wndZOrederMoving_(const form:TCustomForm);
+begin
+    if Assigned(form) then begin
+        case _wndZOrederMoving_mode of
+          _cWndZOrederMoving_mode_: form.BringToFront;//  =1; // переместить на ПЕРВЫЙ план
+          _cWndZOrederMoving_mode_: form.BringToFront;//=2; // переместить на ВТОРОЙ план
+        end;
+       _wndZOrederMoving_OFF_;// поработали и ладьненько ... хватит
+    end;
+end;
+
+{$endIf}
+
+//------------------------------------------------------------------------------
+
 procedure tLazExt_wndInspector_aFNcAFSE._Event_SourceEditor_onActivate_(Sender:TObject);
 begin
     {$ifDef _debugLOG_}
@@ -307,6 +401,19 @@ begin
     {$endIf}
    _select_heldCall_;
 end;
+
+{$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___IdeCommand}
+procedure tLazExt_wndInspector_aFNcAFSE._Event_IdeCommand_Execute_(Sender:TObject);
+begin
+    {$ifDef _debugLOG_}
+    DEBUG('_Event_IdeCommand_Execute_', '>>>');
+    {$endIf}
+    // тут ВСЕ выполняется из "ГЛАВНОГО" потока ... можно применить ПРЯМОЙ
+    // вызов
+   _wndZOrederMoving_mode_set_(1);
+   _select_;
+end;
+{$endIf}
 
 end.
 

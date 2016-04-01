@@ -13,7 +13,8 @@ uses
   lazExt_wndInspector_aFNcAFSE_wndNode_PackageEditor, 
   lazExt_wndInspector_aFNcAFSE_wndNode_ProjectInspector, 
   in0k_lazIdeSRC_FuckUpForm, in0k_lazIdeSRC_testFormIS_PackageEditor, 
-  in0k_lazIdeSRC_testFormIS_ProjectInspector, LazarusPackageIntf;
+  in0k_lazIdeSRC_testFormIS_ProjectInspector, in0k_lazIdeSRC_B2SP, 
+  LazarusPackageIntf;
 
 implementation
 
