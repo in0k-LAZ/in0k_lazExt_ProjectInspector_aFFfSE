@@ -19,10 +19,27 @@ interface
 {$define in0k_LazIdeEXT_wndInspector_aFNcAFSE___DebugLOG_mode}
 //------------------------------------------------------------------------------
 
+
+//                                                use_IdeCommand
+//                                                use_AutoMODE
+
+{$define in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_AUTO}
+{$define in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_AUTO_useBringToSecondPlane}
+
+{$define in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_IdeCommand}
+{$define in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_IdeCommand_useBringToFront}
+{$define in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_IdeCommand_shomMsgIfNotFOUND}
+
+
+
 {%endregion}
 {%region --- ОЧИСТКА настроек перед конфигурацией ---------------- /fold }
 {$unDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___DebugLOG_mode}
-{$unDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___IdeCommand}
+{$unDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_AUTO}
+{$unDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_AUTO_useBringToSecondPlane}
+{$unDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_IdeCommand}
+{$unDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_IdeCommand_useBringToFront}
+{$unDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_IdeCommand_shomMsgIfNotFOUND}
 {%endregion}
 {$i in0k_lazExt_SETTINGs.inc} // КОНФИГУРАЦИЯ компонента-Расширения.
 {%region --- применение настроек и доп.конфигурация -------------- /fold }
@@ -33,7 +50,27 @@ interface
 {$endIf}
 
 
-{$define _lcl___wndZOrederMoving_}
+
+//= перетягивание форм по "слоям" (на передний на второй поан) =================
+
+{$ifNDEF in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_AUTO} // не имеет смысла
+    {$unDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_AUTO_useBringToSecondPlane}
+{$endIf}
+{$ifNDEF in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_IdeCommand} // не имеет смысла
+    {$unDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_IdeCommand_useBringToFront}
+{$endIf}
+
+{$undef _lcl___wndZOrederMoving_}
+//------------------------------------------------------------------------------
+{$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_AUTO_useBringToSecondPlane}
+    {$define _lcl___wndZOrederMoving_}
+{$endIf}
+{$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_IdeCommand_useBringToFront}
+    {$define _lcl___wndZOrederMoving_}
+{$endIf}
+
+
+
 
 {%endregion}
 
@@ -42,9 +79,16 @@ uses {$ifDef _debugLOG_}in0k_lazExt_DEBUG,{$endIf}
      LazIDEIntf, SrcEditorIntf, //IDECommands,
      LCLIntf, //< это для GetTickCount64 в (Laz 1.4) {todo: обернуть в предКомпиляцию}
      //---
-     {$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___IdeCommand}
+     {$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_IdeCommand}
      IDECommands, MenuIntf, LCLType,
      {$endIf}
+     {$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_IdeCommand_shomMsgIfNotFOUND}
+     Dialogs,
+     {$endIf}
+     {$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_AUTO_useBringToSecondPlane}
+     in0k_lazIdeSRC_B2SP,
+     {$endIf}
+
      //---
      in0k_lazIdeSRC_SourceEditor_onActivate,
      //---
@@ -77,14 +121,14 @@ type
   protected
     function  _fileName_fromActiveSourceEdit_:string;
   protected //< ОСНОВНАЯ часть ... суть
-    procedure _select_inWindow_(const fileName:string; const Form:TForm; const nodeTYPE:tLazExt_wndInspector_aFFfSE_NodeTYPE);
-    procedure _select_inSCREEN_(const fileName:string);
-    procedure _select_;          //< ПРЯМОЙ вызов
+    function  _select_inWindow_(const fileName:string; const Form:TForm; const nodeTYPE:tLazExt_wndInspector_aFFfSE_NodeTYPE):boolean;
+    function  _select_inSCREEN_(const fileName:string):boolean;
+    function  _select_:boolean;  //< ПРЯМОЙ вызов
     procedure _select_heldCall_; //< ОТЛОЖЕННЫЙ вызов
   protected //< события, по которым надо что-то поделать
     procedure _Event_SourceEditor_onActivate_(Sender:TObject);
     procedure _Event_wndNodes_ProjectAddNode_(Sender:TObject);
-    {$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___IdeCommand}
+    {$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_IdeCommand}
     procedure _Event_IdeCommand_Execute_(Sender:TObject);
     {$endIf}
 
@@ -104,7 +148,7 @@ type
   protected
     procedure LazarusIDE_OnIDEClose(Sender:TObject);
   protected
-    {$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___IdeCommand}
+    {$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_IdeCommand}
     procedure _LazarusIDE_SetUP__ideCommand_;
     procedure _LazarusIDE_CLEAN__ideCommand_;
     {$endIf}
@@ -133,6 +177,10 @@ begin
     _lair_nodes_wndInspector_:=tLazExt_wndInspector_aFFfSE_NodeLST.Create;
     _lair_nodes_wndInspector_.ownerEvent_onNodeAdd:=@_Event_wndNodes_ProjectAddNode_;
     _SourceEditor_onActivate_:=tIn0k_lazIdeSRC_SourceEditor_onActivate.Create;
+     //---
+     {$ifDef _lcl___wndZOrederMoving_}
+    _wndZOrederMoving_OFF_
+     {$endIf}
 end;
 
 destructor tLazExt_wndInspector_aFNcAFSE.DESTROY;
@@ -150,7 +198,7 @@ begin
    _SourceEditor_onActivate_.onEvent:=@_Event_SourceEditor_onActivate_;
    _SourceEditor_onActivate_.LazarusIDE_SetUP;
     LazarusIDE.AddHandlerOnIDEClose(@LazarusIDE_OnIDEClose);
-    {$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___IdeCommand}
+    {$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_IdeCommand}
    _LazarusIDE_SetUP__ideCommand_;
     {$endIf}
 end;
@@ -160,14 +208,14 @@ begin
    _SourceEditor_onActivate_.onEvent:=nil;
    _SourceEditor_onActivate_.LazarusIDE_Clean;
    _lair_nodes_wndInspector_.CLEAR;
-    {$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___IdeCommand}
+    {$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_IdeCommand}
    _LazarusIDE_CLEAN__ideCommand_;
     {$endIf}
 end;
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-{$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___IdeCommand}
+{$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_IdeCommand}
 
 procedure tLazExt_wndInspector_aFNcAFSE._LazarusIDE_SetUP__ideCommand_;
 var
@@ -291,12 +339,18 @@ end;
 //------------------------------------------------------------------------------
 
 // поиск в КОНКРЕТНОМ окне
-procedure tLazExt_wndInspector_aFNcAFSE._select_inWindow_(const fileName:string; const Form:TForm; const nodeTYPE:tLazExt_wndInspector_aFFfSE_NodeTYPE);
+function tLazExt_wndInspector_aFNcAFSE._select_inWindow_(const fileName:string; const Form:TForm; const nodeTYPE:tLazExt_wndInspector_aFFfSE_NodeTYPE):boolean;
 var tmp:tLazExt_wndInspector_aFNcAFSE_wndNode;
 begin
+    result:=FALSE;
     tmp:=_lair_nodes_wndInspector_.Nodes_GET(Form,nodeTYPE);
     if Assigned(tmp) then begin //< перестраховка
-        tmp.Select(fileName);
+        result:=tmp.Select(fileName);
+        {$ifDef _lcl___wndZOrederMoving_}
+        if result then begin //< если оно тут ... попробуем переместить окно
+           _wndZOrederMoving_(Form)
+        end;
+        {$endIf}
     end
     {$ifDef _debugLOG_}
     else begin
@@ -306,19 +360,22 @@ begin
 end;
 
 // поиск файла во ВСЕХ окнах
-procedure tLazExt_wndInspector_aFNcAFSE._select_inSCREEN_(const fileName:string);
+function tLazExt_wndInspector_aFNcAFSE._select_inSCREEN_(const fileName:string):boolean;
 var i:integer;
   tmp:tForm;
 begin
+    result:=false;
     if fileName<>'' then begin
         for i:=0 to Screen.FormCount-1 do begin
             tmp:=Screen.Forms[i];
             if tLazExt_wndInspector_aFNcAFSE_wndNode_ProjectInspector.OfMyType(tmp) then begin
-               _select_inWindow_(fileName,tmp,tLazExt_wndInspector_aFNcAFSE_wndNode_ProjectInspector)
+                if _select_inWindow_(fileName,tmp,tLazExt_wndInspector_aFNcAFSE_wndNode_ProjectInspector)
+                then result:=true;
             end
            else
             if tLazExt_wndInspector_aFNcAFSE_wndNode_PackageEditor.OfMyType(tmp) then begin
-               _select_inWindow_(fileName,tmp,tLazExt_wndInspector_aFNcAFSE_wndNode_PackageEditor);
+                if _select_inWindow_(fileName,tmp,tLazExt_wndInspector_aFNcAFSE_wndNode_PackageEditor)
+                then result:=true;
             end;
         end;
     end
@@ -329,9 +386,9 @@ begin
     {$endIf}
 end;
 
-procedure tLazExt_wndInspector_aFNcAFSE._select_;
+function tLazExt_wndInspector_aFNcAFSE._select_:boolean;
 begin // такое САМОЕ главное событие ... и такое короткое стало
-   _select_inSCREEN_(_fileName_fromActiveSourceEdit_);
+    result:=_select_inSCREEN_(_fileName_fromActiveSourceEdit_);
 end;
 
 procedure tLazExt_wndInspector_aFNcAFSE._select_heldCall_;
@@ -355,9 +412,13 @@ end;
 {$ifDef _lcl___wndZOrederMoving_}
 
 const
-  _cWndZOrederMoving_mode_=0; // НЕТ никакого перемещения
-  _cWndZOrederMoving_mode_=1; // переместить на ПЕРВЫЙ план
-  _cWndZOrederMoving_mode_=2; // переместить на ВТОРОЙ план
+  _cWndZOrederMoving_mode_0=0; // НЕТ никакого перемещения
+   {$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_IdeCommand_useBringToFront}
+  _cWndZOrederMoving_mode_1=1; // переместить на ПЕРВЫЙ план
+   {$endIf}
+   {$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_AUTO_useBringToSecondPlane}
+  _cWndZOrederMoving_mode_2=2; // переместить на ВТОРОЙ план
+   {$endIf}
 
 procedure tLazExt_wndInspector_aFNcAFSE._wndZOrederMoving_mode_set_(const mode:byte);
 begin
@@ -375,8 +436,12 @@ procedure tLazExt_wndInspector_aFNcAFSE._wndZOrederMoving_(const form:TCustomFor
 begin
     if Assigned(form) then begin
         case _wndZOrederMoving_mode of
-          _cWndZOrederMoving_mode_: form.BringToFront;//  =1; // переместить на ПЕРВЫЙ план
-          _cWndZOrederMoving_mode_: form.BringToFront;//=2; // переместить на ВТОРОЙ план
+        {$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_IdeCommand_useBringToFront}
+          _cWndZOrederMoving_mode_1: form.BringToFront; // переместить на ПЕРВЫЙ план
+        {$endIf}
+        {$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_AUTO_useBringToSecondPlane}
+          _cWndZOrederMoving_mode_2: In0k_lazIdeSRC___B2SP(form); // переместить на ВТОРОЙ
+        {$endIf}
         end;
        _wndZOrederMoving_OFF_;// поработали и ладьненько ... хватит
     end;
@@ -391,6 +456,9 @@ begin
     {$ifDef _debugLOG_}
     DEBUG('_Event_SourceEditor_onActivate_', '>>>');
     {$endIf}
+    {$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_AUTO_useBringToSecondPlane}
+   _wndZOrederMoving_mode_set_(2);
+    {$endIf}
    _select_heldCall_;
 end;
 
@@ -402,16 +470,24 @@ begin
    _select_heldCall_;
 end;
 
-{$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___IdeCommand}
+{$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_IdeCommand}
 procedure tLazExt_wndInspector_aFNcAFSE._Event_IdeCommand_Execute_(Sender:TObject);
 begin
     {$ifDef _debugLOG_}
     DEBUG('_Event_IdeCommand_Execute_', '>>>');
     {$endIf}
-    // тут ВСЕ выполняется из "ГЛАВНОГО" потока ... можно применить ПРЯМОЙ
-    // вызов
+    // тут ВСЕ выполняется из "ГЛАВНОГО" потока ... можно применить ПРЯМОЙ вызов
+    {$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_IdeCommand_useBringToFront}
    _wndZOrederMoving_mode_set_(1);
+    {$endIf}
+
+    {$ifNDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_IdeCommand_shomMsgIfNotFOUND}
    _select_;
+    {$else}
+    if NOT _select_ then begin
+        MessageDlg('Not found','File'+LineEnding+'"'+_fileName_fromActiveSourceEdit_+'"'+LineEnding+'NOT found in opened "Inspector" windows.',mtWarning,[mbOK],0);
+    end;
+    {$endIf}
 end;
 {$endIf}
 

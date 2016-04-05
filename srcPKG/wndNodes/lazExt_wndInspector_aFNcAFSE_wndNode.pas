@@ -216,7 +216,7 @@ type
     destructor DESTROY; override;
   public
     property  ownerEvent_onNodeAdd:TNotifyEvent read _owner_onNodeAdd_ write _owner_onNodeAdd_;
-    procedure Select(const FileName:string); virtual;
+    function  Select(const FileName:string):boolean; virtual;
   end;
  tLazExt_wndInspector_aFFfSE_NodeTYPE=class of tLazExt_wndInspector_aFNcAFSE_wndNode;
 
@@ -515,18 +515,24 @@ end;
 //------------------------------------------------------------------------------
 
 // вот ... все ради этого ...
-procedure tLazExt_wndInspector_aFNcAFSE_wndNode.Select(const FileName:string);
+// @ret true нашелся
+// @ret false нет ... это не из нашего
+function tLazExt_wndInspector_aFNcAFSE_wndNode.Select(const FileName:string):boolean;
 var treeNode:TTreeNode;
 begin
     {$ifDef _debugLOG_}
     DEBUG('SELECT in INSPECTOR','>>> "'+self.Form.Caption+'"');
     {$endIf}
+    result  :=false;
     treeNode:=NIL;
     if Assigned(Form) and Assigned(_treeView_) then begin
         // сначала ИСЧЕМ узел с указанным именем
         treeNode:=_treeView_.Items.GetFirstNode;
         while Assigned(treeNode) do begin
-            if FileName=treeNode_NAME(treeNode) then BREAK; //< нашли родимого
+            if FileName=treeNode_NAME(treeNode) then begin //< нашли родимого
+                result:=TRUE;
+                BREAK;
+            end;
             treeNode:=treeNode.GetNext;
         end;
         // если НИЧЕГО не нашли проверим ...

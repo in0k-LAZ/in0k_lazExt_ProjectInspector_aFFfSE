@@ -11,7 +11,14 @@
 {$define in0k_LazIdeEXT_wndInspector_aFNcAFSE___AutoExpand}
 //------------------------------------------------------------------------------
 
-{$define in0k_LazIdeEXT_wndInspector_aFNcAFSE___IdeCommand}
+
+{$define in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_AUTO}
+{$define in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_AUTO_useBringToSecondPlane}
+
+
+{$define in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_IdeCommand}
+{$define in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_IdeCommand_shomMsgIfNotFOUND}
+{$define in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_IdeCommand_useBringToFront}
 
 
 //--- # treeView_TrackingSystemForExpandedNodes --------------------------------
@@ -21,8 +28,6 @@
 // способ функционирования (модель работы)
 {$define in0k_LazIdeEXT_wndInspector_aFNcAFSE___AutoCollapse_mode_01}
 //------------------------------------------------------------------------------
-
-
 
 // подРисовки в дереве
 
@@ -40,6 +45,7 @@
     // можно подключить логи ПодСистем
     //{$define in0k_lazIdeSRC_FuckUpForm__DebugLOG_mode}
     //{$define in0k_lazIdeSRC_SourceEditor_onActivate__DebugLOG_mode}
+    {$define in0k_lazIdeSRC_B2SP___DebugLOG_mode}
 {$endIf}
 {%endregion}
 
