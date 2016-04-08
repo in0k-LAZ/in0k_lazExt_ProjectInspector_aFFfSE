@@ -13,7 +13,7 @@
         <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>
     </CompilerOptions>
-    <Files Count="15">
+    <Files Count="7">
       <Item1>
         <Filename Value="in0k_lazExt_DEBUG.pas"/>
         <UnitName Value="in0k_lazExt_DEBUG"/>
@@ -28,53 +28,25 @@
         <Type Value="Include"/>
       </Item3>
       <Item4>
-        <Filename Value="srcEXT\in0k-lazarusIdeSRC-wndDEBUG\in0k_lazIdeSRC_wndDEBUG.inc"/>
-        <Type Value="Include"/>
+        <Filename Value="srcPKG\lazExt_wndInspector_aFNcAFSE.pas"/>
+        <AddToUsesPkgSection Value="False"/>
+        <UnitName Value="lazExt_wndInspector_aFNcAFSE"/>
       </Item4>
       <Item5>
-        <Filename Value="srcEXT\in0k-lazarusIdeSRC-wndDEBUG\in0k_lazIdeSRC_wndDEBUG.lfm"/>
-        <Type Value="LFM"/>
+        <Filename Value="srcPKG\wndNodes\lazExt_wndInspector_aFNcAFSE_wndNode.pas"/>
+        <AddToUsesPkgSection Value="False"/>
+        <UnitName Value="lazExt_wndInspector_aFNcAFSE_wndNode"/>
       </Item5>
       <Item6>
-        <Filename Value="srcEXT\in0k-lazarusIdeSRC-wndDEBUG\in0k_lazIdeSRC_wndDEBUG.pas"/>
-        <UnitName Value="in0k_lazIdeSRC_wndDEBUG"/>
+        <Filename Value="srcPKG\wndNodes\lazExt_wndInspector_aFNcAFSE_wndNode_PackageEditor.pas"/>
+        <AddToUsesPkgSection Value="False"/>
+        <UnitName Value="lazExt_wndInspector_aFNcAFSE_wndNode_PackageEditor"/>
       </Item6>
       <Item7>
-        <Filename Value="srcPKG\lazExt_wndInspector_aFNcAFSE.pas"/>
-        <UnitName Value="lazExt_wndInspector_aFNcAFSE"/>
-      </Item7>
-      <Item8>
-        <Filename Value="srcEXT\in0k-lazarusIdeSRC-SourceEditor-onActivate\in0k_lazIdeSRC_SourceEditor_onActivate.pas"/>
-        <UnitName Value="in0k_lazIdeSRC_SourceEditor_onActivate"/>
-      </Item8>
-      <Item9>
-        <Filename Value="srcPKG\wndNodes\lazExt_wndInspector_aFNcAFSE_wndNode.pas"/>
-        <UnitName Value="lazExt_wndInspector_aFNcAFSE_wndNode"/>
-      </Item9>
-      <Item10>
-        <Filename Value="srcPKG\wndNodes\lazExt_wndInspector_aFNcAFSE_wndNode_PackageEditor.pas"/>
-        <UnitName Value="lazExt_wndInspector_aFNcAFSE_wndNode_PackageEditor"/>
-      </Item10>
-      <Item11>
         <Filename Value="srcPKG\wndNodes\lazExt_wndInspector_aFNcAFSE_wndNode_ProjectInspector.pas"/>
+        <AddToUsesPkgSection Value="False"/>
         <UnitName Value="lazExt_wndInspector_aFNcAFSE_wndNode_ProjectInspector"/>
-      </Item11>
-      <Item12>
-        <Filename Value="srcEXT\in0k-lazarusIdeSRC-FuckUpForm\in0k_lazIdeSRC_FuckUpForm.pas"/>
-        <UnitName Value="in0k_lazIdeSRC_FuckUpForm"/>
-      </Item12>
-      <Item13>
-        <Filename Value="srcEXT\in0k-lazarusIdeSRC-testFormIS\in0k_lazIdeSRC_testFormIS_PackageEditor.pas"/>
-        <UnitName Value="in0k_lazIdeSRC_testFormIS_PackageEditor"/>
-      </Item13>
-      <Item14>
-        <Filename Value="srcEXT\in0k-lazarusIdeSRC-testFormIS\in0k_lazIdeSRC_testFormIS_ProjectInspector.pas"/>
-        <UnitName Value="in0k_lazIdeSRC_testFormIS_ProjectInspector"/>
-      </Item14>
-      <Item15>
-        <Filename Value="srcEXT\in0k-lazarusIdeSRC-B2SP\in0k_lazIdeSRC_B2SP.pas"/>
-        <UnitName Value="in0k_lazIdeSRC_B2SP"/>
-      </Item15>
+      </Item7>
     </Files>
     <RequiredPkgs Count="3">
       <Item1>

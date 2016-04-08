@@ -11,15 +11,29 @@
 {$define in0k_LazIdeEXT_wndInspector_aFNcAFSE___AutoExpand}
 //------------------------------------------------------------------------------
 
-
-{$define in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_AUTO}
-{$define in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_AUTO_useBringToSecondPlane}
-
-
+//--- # Ide COMMAND ----------------------------------------------------------//
+// Ручной режим работы.
+// Добавляется комманда IDE, на которую можно повешать "Горячую Клавишу"
 {$define in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_IdeCommand}
+// Если файл НЕ найден, то показать сообщение об этом
 {$define in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_IdeCommand_shomMsgIfNotFOUND}
+// Если файл НАЙДЕН, то окно соответствующего инспектора переместить на "ПЕРЕДНИЙ план"
 {$define in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_IdeCommand_useBringToFront}
+// Создать пункт меню в "Главном меню IDE" (SEACRH)
+{$define in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_IdeCommand_IdeMainMenu}
+// Создать пункт меню в "Меню Редакторе Исходного Кода" (правая клавиша в окне редактора)
+{$define in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_IdeCommand_SrcEditMenu}
+//------------------------------------------------------------------------------
 
+
+//--- # Auto Execute ---------------------------------------------------------//
+// АВТОМАТИЧЕСКИЙ режим.
+// Автоматически срабатывает при переходе между вкладками "Редактора Исходного Кода"
+{$define in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_AutoExecute}
+// Если файл НАЙДЕН, то окно соответствующего инспектора переместить на "ВТОРОЙ план"
+// подробности см. https://github.com/in0k-src/in0k-bringToSecondPlane
+{$define in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_AutoExecute_useBringToSecondPlane}
+//------------------------------------------------------------------------------
 
 //--- # treeView_TrackingSystemForExpandedNodes --------------------------------
 // Система Слежения за Развернутыми Узлами (ССзРУ).
@@ -35,7 +49,18 @@
 {$define in0k_LazIdeEXT_wndInspector_aFNcAFSE___mark_TrackingSystemForExpanded}
 
 
+//------------------------------------------------------------------------------
 
+{%region --- "НАСТРОйКИ уровня КОМПИЛЯЦИИ" : ПРИМЕНЕНИЕ ---------- /fold }
+
+{$ifNdef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_AutoExecute}
+    // это НЕ имеет смысла, тока путаницу вводит
+    {$undef in0k_LazIdeEXT_wndInspector_aFNcAFSE___AutoCollapse_mode_01}
+    {$undef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mark_ActiveFileFromSoureceEdit}
+    {$undef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mark_TrackingSystemForExpanded}
+{$endIf}
+
+{%endregion}
 {%region --- # режим ДЕБАГ --------------------------------------- /fold }
 //  Позволяет просматривать лог событий в отдельном окне из IDE
 //  `View` -> `IDE Internals` -> `[eventLog]..wndInspector_aFNcAFSE..`
@@ -48,7 +73,6 @@
     {$define in0k_lazIdeSRC_B2SP___DebugLOG_mode}
 {$endIf}
 {%endregion}
-
 {%region --- # дополнительные специальные настройки -------------- /fold }
 
 // настройка работы подСистемы

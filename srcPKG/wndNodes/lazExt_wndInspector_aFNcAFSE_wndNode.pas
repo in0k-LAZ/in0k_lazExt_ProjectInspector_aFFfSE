@@ -43,11 +43,6 @@ interface
 //------------------------------------------------------------------------------
 
 {%endregion}
-
-// текущий АКТИВНЫЙ файл - файл открытый в ТЕКУЩЕМ АКТИВНОМ окне редактора кода.
-// узел АКТИВНОГО файл - узел дерева, отвечающий за текущий АКТИВНЫЙ файл.
-
-
 {%region --- "НАСТРОйКИ уровня КОМПИЛЯЦИИ" : ОЧИСТКА ------------- /fold }
 //----------------------------------------------------------------------------//
 //   очистка (отключение) ВСЕХ настроек, перед применением конфигурации из    //
@@ -74,8 +69,12 @@ interface
 
 //==============================================================================
 
+{$undef _local___use_Classes_}
+{$undef _local___use_Graphics_}
+
 {$unDef _fuckUp__ide_object_WND_onActivate_}
 {$unDef _fuckUp__ide_object_WND_onDeActivate_}
+{$unDef _fuckUp__ide_object_VTV_onAddition_}
 {$unDef _fuckUp__ide_object_VTV_onAdvancedCustomDrawItem_}
 
 //==============================================================================
@@ -107,7 +106,7 @@ interface
 
 //==============================================================================
 
-// --- определяем, бедет ли ДОП рисование
+// --- определяем, будет ли ДОП рисование
 
 {$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mark_ActiveFileFromSoureceEdit}
     {$define _fuckUp__ide_object_VTV_onAdvancedCustomDrawItem_}
@@ -116,13 +115,41 @@ interface
     {$define _fuckUp__ide_object_VTV_onAdvancedCustomDrawItem_}
 {$endIf}
 
+//==============================================================================
+
+// --- событие добавления узлов в дерево
+
+{$define _local__NodeListHave_onNodeAdd_}
+{$define _fuckUp__ide_object_VTV_onAddition_}
+{$ifNdef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_AutoExecute}
+    {$unDef _local__NodeListHave_onNodeAdd_}
+    {$unDef _fuckUp__ide_object_VTV_onAddition_}
+{$endIf}
+
+//==============================================================================
+// частное использование библиотек
+
+{$IfDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___autoCollapse_mode_01}
+    {$define _local___use_Classes_}
+{$endIf}
+{$IfDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mark_TrackingSystemForExpanded}
+    {$define _local___use_Graphics_}
+{$endIf}
+{$IfDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mark_ActiveFileFromSoureceEdit}
+    {$define _local___use_Graphics_}
+{$endIf}
+
+
+
 
 {%endregion}
 
 uses {$ifDef _debugLOG_}in0k_lazExt_DEBUG,{$endIf}
-     Classes, Forms, ComCtrls, TreeFilterEdit,   Controls, Graphics,
-     SrcEditorIntf,  Dialogs,
-     LCLVersion, //< в зависимости от версий :-(
+     Forms, ComCtrls, TreeFilterEdit, Controls,
+     {$ifDef _local___use_Classes_}Classes,{$endIf}
+     {$ifDef _local___use_Graphics_}Graphics,{$endIf}
+
+     SrcEditorIntf,
      in0k_lazIdeSRC_FuckUpForm;
 
 type
@@ -187,9 +214,11 @@ type
    _ide_object_WND_onDeActivate_original_:TNotifyEvent;
     procedure _WND_onDeActivate_myCustom_(Sender:TObject);
   {$endIf}
+  {$ifDef _fuckUp__ide_object_VTV_onAddition_}
   private //< ФакАпим ДОБАВЛЕНИЕ нового узла в дерево
    _ide_object_VTV_onAddition_original_:TTVExpandedEvent;
     procedure _VTV_onAddition_myCustom_(Sender:TObject; Node:TTreeNode);
+  {$endIf}
   private //< ФакАпим УДАЛЕНИЕ узла из дерева
    _ide_object_VTV_onDeletion_original_:TTVExpandedEvent;
     procedure _VTV_onDeletion_myCustom_(Sender:TObject; Node:TTreeNode);
@@ -209,27 +238,39 @@ type
     {$endif}
   {$endIf}
   {%endregion}
+  {%region --- собятия для родителя ------------------------------- /fold}
+  {$ifDef _local__NodeListHave_onNodeAdd_}
   private //< событие для радителя ... "узел добавлен"
    _owner_onNodeAdd_:TNotifyEvent;
+  public
+    property ownerEvent_onNodeAdd:TNotifyEvent read _owner_onNodeAdd_ write _owner_onNodeAdd_;
+  {$endIf}
+  {%endregion}
   public
     constructor Create{(const aForm:TCustomForm)}; override;
     destructor DESTROY; override;
   public
-    property  ownerEvent_onNodeAdd:TNotifyEvent read _owner_onNodeAdd_ write _owner_onNodeAdd_;
     function  Select(const FileName:string):boolean; virtual;
   end;
  tLazExt_wndInspector_aFFfSE_NodeTYPE=class of tLazExt_wndInspector_aFNcAFSE_wndNode;
 
+  // ХРАНИТЕЛЬ списка окон, которые мы обрабатываем
  tLazExt_wndInspector_aFFfSE_NodeLST=class(tIn0k_lazIdeSRC_FuckUpFrms_LIST)
+  {%region --- собятия для родителя ------------------------------- /fold}
+  {$ifDef _local__NodeListHave_onNodeAdd_}
   private //< событие для радителя ... "узел добавлен"
    _owner_onNodeAdd_:TNotifyEvent;
   public
-    property  ownerEvent_onNodeAdd:TNotifyEvent read _owner_onNodeAdd_ write _owner_onNodeAdd_;
+    property ownerEvent_onNodeAdd:TNotifyEvent read _owner_onNodeAdd_ write _owner_onNodeAdd_;
+  {$endIf}
+  {%endregion}
+  public
     procedure CLEAR;
     function  Nodes_GET(const Form:TCustomForm; const nodeTYPE:tLazExt_wndInspector_aFFfSE_NodeTYPE):tLazExt_wndInspector_aFNcAFSE_wndNode;
   end;
 
 implementation
+uses LCLVersion;
 
 {%region --- возня с ДЕБАГОМ -------------------------------------- /fold}
 {$if declared(in0k_lazIde_DEBUG)}
@@ -241,7 +282,7 @@ implementation
 {$endIf}
 {%endregion}
 
-{$region -- tLazExt_wndInspector_aFNcAFSE_wndNode ---------------------- /fold}
+{$region -- tLazExt_wndInspector_aFNcAFSE_wndNode ----------------- /fold}
 
 constructor tLazExt_wndInspector_aFNcAFSE_wndNode.Create{(const aForm:TCustomForm)};
 begin
@@ -255,7 +296,9 @@ begin
    _slctNode_:=nil;
    _slctFile_:='';
     //---
+    {$ifDef _fuckUp__ide_object_VTV_onAddition_}
    _ide_object_VTV_onAddition_original_:=NIL;
+    {$endIf}
    _ide_object_VTV_onDeletion_original_:=NIL;
     {$ifDef _fuckUp__ide_object_VTV_onAdvancedCustomDrawItem_}
    _ide_object_VTV_onAdvancedCustomDrawItem_original_:=nil;
@@ -459,8 +502,10 @@ begin
         //---
        _treeView_SET_(treeView_FIND(FORM));
         if Assigned(_treeView_) then begin
+             {$ifDef _fuckUp__ide_object_VTV_onAddition_}
             _ide_object_VTV_onAddition_original_:=_treeView_.OnAddition;
             _treeView_.OnAddition:=@_VTV_onAddition_myCustom_;
+             {$endIf}
              //---
             _ide_object_VTV_onDeletion_original_:=_treeView_.OnDeletion;
             _treeView_.OnDeletion:=@_VTV_onDeletion_myCustom_;
@@ -479,10 +524,13 @@ end;
 procedure tLazExt_wndInspector_aFNcAFSE_wndNode.FuckUP_onCLR;
 begin
     if Assigned(_treeView_) then begin
-        _treeView_.OnAddition:=_ide_object_VTV_onAddition_original_;
-         {$ifDef _fuckUp__ide_object_VTV_onAdvancedCustomDrawItem_}
-        _treeView_.OnAdvancedCustomDrawItem:=_ide_object_VTV_onAdvancedCustomDrawItem_original_;
-         {$endIf}
+        {$ifDef _fuckUp__ide_object_VTV_onAddition_}
+       _treeView_.OnAddition:=_ide_object_VTV_onAddition_original_;
+        {$endIf}
+       _treeView_.OnDeletion:=_ide_object_VTV_onDeletion_original_;
+        {$ifDef _fuckUp__ide_object_VTV_onAdvancedCustomDrawItem_}
+       _treeView_.OnAdvancedCustomDrawItem:=_ide_object_VTV_onAdvancedCustomDrawItem_original_;
+        {$endIf}
     end;
    _treeView_:=nil;
     //---
@@ -686,6 +734,7 @@ end;
 
 //------------------------------------------------------------------------------
 
+{$ifDef _fuckUp__ide_object_VTV_onAddition_}
 // при добавление нового узла в дерево
 procedure tLazExt_wndInspector_aFNcAFSE_wndNode._VTV_onAddition_myCustom_(Sender:TObject; Node:TTreeNode);
 begin
@@ -694,6 +743,7 @@ begin
     //--- моя "нагрузка" ----------------------------------------
     if Assigned(_owner_onNodeAdd_) then _owner_onNodeAdd_(self);
 end;
+{$endif}
 
 // при удалении узла из дерева
 procedure tLazExt_wndInspector_aFNcAFSE_wndNode._VTV_onDeletion_myCustom_(Sender:TObject; Node:TTreeNode);
@@ -972,7 +1022,9 @@ end;
 function  tLazExt_wndInspector_aFFfSE_NodeLST.Nodes_GET(const Form:TCustomForm; const nodeTYPE:tLazExt_wndInspector_aFFfSE_NodeTYPE):tLazExt_wndInspector_aFNcAFSE_wndNode;
 begin
     result:=tLazExt_wndInspector_aFNcAFSE_wndNode(fuckUpForms_GET(Form,nodeTYPE));
+    {$ifDef _local__NodeListHave_onNodeAdd_}
     result.ownerEvent_onNodeAdd:=_owner_onNodeAdd_; //< чет не знаю куда еще воткнуть :-(
+    {$endIf}
 end;
 
 {$endregion}
