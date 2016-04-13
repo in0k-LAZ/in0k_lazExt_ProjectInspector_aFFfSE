@@ -1,4 +1,4 @@
-unit lazExt_wndInspector_aFNcAFSE_wndNode_ProjectInspector;
+unit lazExt_wndInspector_FF8S_wndNode_ProjectInspector;
 //<  Специфика обработки окна `ProjectInspector`
 
 {$mode objfpc}{$H+}

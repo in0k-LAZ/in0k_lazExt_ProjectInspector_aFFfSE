@@ -1,4 +1,4 @@
-unit lazExt_wndInspector_aFNcAFSE_wndNode_PackageEditor;
+unit lazExt_wndInspector_FF8S_wndNode_PackageEditor;
 //<  Специфика обработки окна `PackageEditor`
 
 {$mode objfpc}{$H+}

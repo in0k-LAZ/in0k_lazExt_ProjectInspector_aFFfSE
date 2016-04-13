@@ -1,4 +1,4 @@
-unit lazExt_wndInspector_aFNcAFSE_wndNode;
+unit lazExt_wndInspector_FF8S_wndNode;
 
 {$mode objfpc}{$H+}
 interface

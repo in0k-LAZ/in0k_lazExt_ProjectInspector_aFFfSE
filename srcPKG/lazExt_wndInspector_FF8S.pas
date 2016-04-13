@@ -1,4 +1,4 @@
-unit lazExt_wndInspector_aFNcAFSE;
+unit lazExt_wndInspector_FF8S;
 //< Главный класс компонента-Расширения
 
 {todo: описание и документация}
