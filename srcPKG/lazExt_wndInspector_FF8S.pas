@@ -126,9 +126,9 @@ uses {$ifDef _debugLOG_}in0k_lazExt_DEBUG,{$endIf}
      in0k_lazIdeSRC_B2SP, //< для переноса окон
      {$endIf}
      //---
-     lazExt_wndInspector_aFNcAFSE_wndNode,
-     lazExt_wndInspector_aFNcAFSE_wndNode_ProjectInspector,
-     lazExt_wndInspector_aFNcAFSE_wndNode_PackageEditor;
+     lazExt_wndInspector_FF8S_wndNode,
+     lazExt_wndInspector_FF8S_wndNode_ProjectInspector,
+     lazExt_wndInspector_FF8S_wndNode_PackageEditor;
 
 {$ifDef _local___select_heldCall_}
 CONST // ОЧЕНЬ ВАЖНАЯ константа, задержка (в мс) от события до начала выполнения
@@ -140,7 +140,7 @@ CONST // ОЧЕНЬ ВАЖНАЯ константа, задержка (в мс) 
 
 type
 
- tLazExt_wndInspector_aFNcAFSE=class
+ tLazExt_wndInspector_FF8S=class
   {%region --- организация отложенного вызова -------------------- /fold }
   {$ifDef _local___select_heldCall_}
   strict private
@@ -168,7 +168,7 @@ type
    _SourceEditor_onActivate_:tIn0k_lazIdeSRC_SourceEditor_onActivate;
     {$endIf}
   protected
-   _lair_nodes_wndInspector_:tLazExt_wndInspector_aFFfSE_NodeLST;
+   _lair_nodes_wndInspector_:tLazExt_wndInspector_FF8S_NodeLST;
   protected
     function  _fileName_fromActiveSourceEdit_:string;
 
@@ -217,7 +217,7 @@ implementation
 {$endIf}
 {%endregion}
 
-constructor tLazExt_wndInspector_aFNcAFSE.Create;
+constructor tLazExt_wndInspector_FF8S.Create;
 begin
      {$ifDef _local___select_heldCall_}
     _heldCall_THREAD_  :=nil;
@@ -227,10 +227,10 @@ begin
     _wndZOrederMoving_OFF_;
      {$endIf}
      //---
-    _lair_nodes_wndInspector_:=tLazExt_wndInspector_aFFfSE_NodeLST.Create;
+    _lair_nodes_wndInspector_:=tLazExt_wndInspector_FF8S_NodeLST.Create;
 end;
 
-destructor tLazExt_wndInspector_aFNcAFSE.DESTROY;
+destructor tLazExt_wndInspector_FF8S.DESTROY;
 begin
    _lair_nodes_wndInspector_.FREE;
     inherited;
@@ -238,7 +238,7 @@ end;
 
 //------------------------------------------------------------------------------
 
-procedure tLazExt_wndInspector_aFNcAFSE.LazarusIDE_SetUP;
+procedure tLazExt_wndInspector_FF8S.LazarusIDE_SetUP;
 begin
    _lair_nodes_wndInspector_.CLEAR;
     LazarusIDE.AddHandlerOnIDEClose(@LazarusIDE_OnIDEClose);
@@ -250,7 +250,7 @@ begin
     {$endIf}
 end;
 
-procedure tLazExt_wndInspector_aFNcAFSE.LazarusIDE_Clean;
+procedure tLazExt_wndInspector_FF8S.LazarusIDE_Clean;
 begin
     {$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_AutoExecute}
    _LazarusIDE_CLEAN__mode_autoExecute_;
@@ -264,7 +264,7 @@ end;
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 {$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_AutoExecute}
-procedure tLazExt_wndInspector_aFNcAFSE._LazarusIDE_SetUP__mode_autoExecute_;
+procedure tLazExt_wndInspector_FF8S._LazarusIDE_SetUP__mode_autoExecute_;
 begin
    _lair_nodes_wndInspector_.ownerEvent_onNodeAdd:=@_Event_wndNodes_ProjectAddNode_;
    _SourceEditor_onActivate_:=tIn0k_lazIdeSRC_SourceEditor_onActivate.Create;
@@ -274,7 +274,7 @@ end;
 {$endIf}
 
 {$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_AutoExecute}
-procedure tLazExt_wndInspector_aFNcAFSE._LazarusIDE_CLEAN__mode_autoExecute_;
+procedure tLazExt_wndInspector_FF8S._LazarusIDE_CLEAN__mode_autoExecute_;
 begin
    _SourceEditor_onActivate_.onEvent:=nil;
    _SourceEditor_onActivate_.LazarusIDE_Clean;
@@ -292,7 +292,7 @@ end;
 const _cIdeCommand_NAME_='Find File in "Inspector"';
 const _cIdeCommand_DESC_='Find current activ in source edit File in "Inspector" windows';
 
-procedure tLazExt_wndInspector_aFNcAFSE._LazarusIDE_SetUP__mode_ideCommand_;
+procedure tLazExt_wndInspector_FF8S._LazarusIDE_SetUP__mode_ideCommand_;
 var Key:TIDEShortCut;
     Cat:TIDECommandCategory;
  {%H-}MyTool:TIDECommand;
@@ -312,7 +312,7 @@ end;
 {$endIf}
 
 {$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_IdeCommand}
-procedure tLazExt_wndInspector_aFNcAFSE._LazarusIDE_CLEAN__mode_ideCommand_;
+procedure tLazExt_wndInspector_FF8S._LazarusIDE_CLEAN__mode_ideCommand_;
 begin
      // по ходу оно само все отписывается ...
 end;
@@ -320,7 +320,7 @@ end;
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-procedure tLazExt_wndInspector_aFNcAFSE.LazarusIDE_OnIDEClose(Sender:TObject);
+procedure tLazExt_wndInspector_FF8S.LazarusIDE_OnIDEClose(Sender:TObject);
 begin
     LazarusIDE_Clean;
 end;
@@ -328,7 +328,7 @@ end;
 //------------------------------------------------------------------------------
 
 // имя файла в ТЕКУЩЕМ активном окне редактора
-function tLazExt_wndInspector_aFNcAFSE._fileName_fromActiveSourceEdit_:string;
+function tLazExt_wndInspector_FF8S._fileName_fromActiveSourceEdit_:string;
 var tmpSourceEditor:TSourceEditorInterface;
 begin
     result:='';
@@ -356,14 +356,14 @@ end;
 type
 _THeldCallTHREAD_=class(TThread)
   private
-   _owner_:tLazExt_wndInspector_aFNcAFSE;
+   _owner_:tLazExt_wndInspector_FF8S;
   public
-    Constructor Create(Owner:tLazExt_wndInspector_aFNcAFSE);
+    Constructor Create(Owner:tLazExt_wndInspector_FF8S);
   protected
     procedure Execute; override;
   end;
 
-Constructor _THeldCallTHREAD_.Create(Owner:tLazExt_wndInspector_aFNcAFSE);
+Constructor _THeldCallTHREAD_.Create(Owner:tLazExt_wndInspector_FF8S);
 begin
     inherited Create(true);
     FreeOnTerminate:=TRUE;
@@ -384,7 +384,7 @@ end;
 
 {%endregion}
 
-procedure tLazExt_wndInspector_aFNcAFSE._heldCall_execute_;
+procedure tLazExt_wndInspector_FF8S._heldCall_execute_;
 begin // call only `Synchronize(@_heldCall_execute_)`
     if GetTickCount64-_heldCall_timeST_<clazExt_wndInspector_aFNcAFSE__timeHeldCallForSelect then begin
         if Assigned(_heldCall_THREAD_) then _heldCall_THREAD_.Terminate;
@@ -397,7 +397,7 @@ begin // call only `Synchronize(@_heldCall_execute_)`
     end;
 end;
 
-procedure tLazExt_wndInspector_aFNcAFSE._heldCall_doSetUp_;
+procedure tLazExt_wndInspector_FF8S._heldCall_doSetUp_;
 begin // call only `Synchronize(@_heldCall_setUp_)`
    _heldCall_timeST_:=GetTickCount64;
     if not Assigned(_heldCall_THREAD_) then begin
@@ -407,12 +407,12 @@ end;
 
 //------------------------------------------------------------------------------
 
-procedure tLazExt_wndInspector_aFNcAFSE._heldCall_select_doSetUp_;
+procedure tLazExt_wndInspector_FF8S._heldCall_select_doSetUp_;
 begin
     TThread.Synchronize(nil,@_heldCall_doSetUp_);
 end;
 
-procedure tLazExt_wndInspector_aFNcAFSE._heldCall_select_execute_;
+procedure tLazExt_wndInspector_FF8S._heldCall_select_execute_;
 begin
     TThread.Synchronize(nil,@_heldCall_execute_);
 end;
@@ -434,19 +434,19 @@ const
   _cWndZOrederMoving_mode_2=2; // переместить на ВТОРОЙ план
    {$endIf}
 
-procedure tLazExt_wndInspector_aFNcAFSE._wndZOrederMoving_mode_set_(const mode:byte);
+procedure tLazExt_wndInspector_FF8S._wndZOrederMoving_mode_set_(const mode:byte);
 begin
    _wndZOrederMoving_mode:=mode;
 end;
 
-procedure tLazExt_wndInspector_aFNcAFSE._wndZOrederMoving_OFF_;
+procedure tLazExt_wndInspector_FF8S._wndZOrederMoving_OFF_;
 begin
    _wndZOrederMoving_mode_set_(_cWndZOrederMoving_mode_0);
 end;
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-procedure tLazExt_wndInspector_aFNcAFSE._wndZOrederMoving_(const form:TCustomForm);
+procedure tLazExt_wndInspector_FF8S._wndZOrederMoving_(const form:TCustomForm);
 begin
     if Assigned(form) then begin
         case _wndZOrederMoving_mode of
@@ -467,8 +467,8 @@ end;
 //------------------------------------------------------------------------------
 
 // поиск в КОНКРЕТНОМ окне
-function tLazExt_wndInspector_aFNcAFSE._select_inWindow_(const fileName:string; const Form:TForm; const nodeTYPE:tLazExt_wndInspector_aFFfSE_NodeTYPE):boolean;
-var tmp:tLazExt_wndInspector_aFNcAFSE_wndNode;
+function tLazExt_wndInspector_FF8S._select_inWindow_(const fileName:string; const Form:TForm; const nodeTYPE:tLazExt_wndInspector_aFFfSE_NodeTYPE):boolean;
+var tmp:tLazExt_wndInspector_FF8S_wndNode;
 begin
     result:=FALSE;
     tmp:=_lair_nodes_wndInspector_.Nodes_GET(Form,nodeTYPE);
@@ -488,7 +488,7 @@ begin
 end;
 
 // поиск файла во ВСЕХ окнах
-function tLazExt_wndInspector_aFNcAFSE._select_inSCREEN_(const fileName:string):boolean;
+function tLazExt_wndInspector_FF8S._select_inSCREEN_(const fileName:string):boolean;
 var i:integer;
   tmp:tForm;
 begin
@@ -496,13 +496,13 @@ begin
     if fileName<>'' then begin
         for i:=0 to Screen.FormCount-1 do begin
             tmp:=Screen.Forms[i];
-            if tLazExt_wndInspector_aFNcAFSE_wndNode_ProjectInspector.OfMyType(tmp) then begin
-                if _select_inWindow_(fileName,tmp,tLazExt_wndInspector_aFNcAFSE_wndNode_ProjectInspector)
+            if tLazExt_wndInspector_FF8S_wndNode_ProjectInspector.OfMyType(tmp) then begin
+                if _select_inWindow_(fileName,tmp,tLazExt_wndInspector_FF8S_wndNode_ProjectInspector)
                 then result:=true;
             end
            else
-            if tLazExt_wndInspector_aFNcAFSE_wndNode_PackageEditor.OfMyType(tmp) then begin
-                if _select_inWindow_(fileName,tmp,tLazExt_wndInspector_aFNcAFSE_wndNode_PackageEditor)
+            if tLazExt_wndInspector_FF8S_wndNode_PackageEditor.OfMyType(tmp) then begin
+                if _select_inWindow_(fileName,tmp,tLazExt_wndInspector_FF8S_wndNode_PackageEditor)
                 then result:=true;
             end;
         end;
@@ -514,13 +514,13 @@ begin
     {$endIf}
 end;
 
-function tLazExt_wndInspector_aFNcAFSE._select_:boolean;
+function tLazExt_wndInspector_FF8S._select_:boolean;
 begin // такое САМОЕ главное событие ... и такое короткое стало
     result:=_select_inSCREEN_(_fileName_fromActiveSourceEdit_);
 end;
 
 {$ifDef _local___select_heldCall_}
-procedure tLazExt_wndInspector_aFNcAFSE._select_heldCall_;
+procedure tLazExt_wndInspector_FF8S._select_heldCall_;
 begin
     //
     // зачем так сложно? источник проблем окно "Project Inspector"
@@ -542,7 +542,7 @@ end;
 //------------------------------------------------------------------------------
 
 {$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_IdeCommand}
-procedure tLazExt_wndInspector_aFNcAFSE._Event_IdeCommand_Execute_(Sender:TObject);
+procedure tLazExt_wndInspector_FF8S._Event_IdeCommand_Execute_(Sender:TObject);
 begin
     {$ifDef _debugLOG_}
     DEBUG('_Event_IdeCommand_Execute_', '>>>');
@@ -563,7 +563,7 @@ end;
 {$endIf}
 
 {$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_AutoExecute}
-procedure tLazExt_wndInspector_aFNcAFSE._Event_SourceEditor_onActivate_(Sender:TObject);
+procedure tLazExt_wndInspector_FF8S._Event_SourceEditor_onActivate_(Sender:TObject);
 begin
     {$ifDef _debugLOG_}
     DEBUG('_Event_SourceEditor_onActivate_', '>>>');
@@ -576,7 +576,7 @@ end;
 {$endIf}
 
 {$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_AutoExecute}
-procedure tLazExt_wndInspector_aFNcAFSE._Event_wndNodes_ProjectAddNode_(Sender:TObject);
+procedure tLazExt_wndInspector_FF8S._Event_wndNodes_ProjectAddNode_(Sender:TObject);
 begin
     {$ifDef _debugLOG_}
     DEBUG('_Event_wndNodes_ProjectAddNode_', '>>>');

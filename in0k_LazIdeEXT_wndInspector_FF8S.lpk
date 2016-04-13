@@ -28,24 +28,24 @@
         <Type Value="Include"/>
       </Item3>
       <Item4>
-        <Filename Value="srcPKG\lazExt_wndInspector_aFNcAFSE.pas"/>
+        <Filename Value="srcPKG\lazExt_wndInspector_FF8S.pas"/>
         <AddToUsesPkgSection Value="False"/>
-        <UnitName Value="lazExt_wndInspector_aFNcAFSE"/>
+        <UnitName Value="lazExt_wndInspector_FF8S"/>
       </Item4>
       <Item5>
-        <Filename Value="srcPKG\wndNodes\lazExt_wndInspector_aFNcAFSE_wndNode.pas"/>
+        <Filename Value="srcPKG\wndNodes\lazExt_wndInspector_FF8S_wndNode.pas"/>
         <AddToUsesPkgSection Value="False"/>
-        <UnitName Value="lazExt_wndInspector_aFNcAFSE_wndNode"/>
+        <UnitName Value="lazExt_wndInspector_FF8S_wndNode"/>
       </Item5>
       <Item6>
-        <Filename Value="srcPKG\wndNodes\lazExt_wndInspector_aFNcAFSE_wndNode_PackageEditor.pas"/>
+        <Filename Value="srcPKG\wndNodes\lazExt_wndInspector_FF8S_wndNode_PackageEditor.pas"/>
         <AddToUsesPkgSection Value="False"/>
-        <UnitName Value="lazExt_wndInspector_aFNcAFSE_wndNode_PackageEditor"/>
+        <UnitName Value="lazExt_wndInspector_FF8S_wndNode_PackageEditor"/>
       </Item6>
       <Item7>
-        <Filename Value="srcPKG\wndNodes\lazExt_wndInspector_aFNcAFSE_wndNode_ProjectInspector.pas"/>
+        <Filename Value="srcPKG\wndNodes\lazExt_wndInspector_FF8S_wndNode_ProjectInspector.pas"/>
         <AddToUsesPkgSection Value="False"/>
-        <UnitName Value="lazExt_wndInspector_aFNcAFSE_wndNode_ProjectInspector"/>
+        <UnitName Value="lazExt_wndInspector_FF8S_wndNode_ProjectInspector"/>
       </Item7>
     </Files>
     <RequiredPkgs Count="3">
