@@ -33,13 +33,13 @@ interface
 //--- # mark ActiveFileFromSoureceEdit -----------------------------------------
 // Отмечать текущей АКТИВНЫЙ файл.
 // Дорисовывать в интерфейсе: выделение для узла АКТИВНОГО файла.
-{$define in0k_LazIdeEXT_wndInspector_aFNcAFSE___mark_ActiveFileFromSoureceEdit}
+{$define in0k_LazIdeEXT_wndInspector_FF8S___mark_ActiveFileFromSoureceEdit}
 //------------------------------------------------------------------------------
 
 //--- # mark TrackingSystemForExpandedNodes ------------------------------------
 // Отмечать деятельность системы "ССзРУ".
 // Дорисовывать в интерфейсе: отметки о сворачиваемых файлах.
-{$define in0k_LazIdeEXT_wndInspector_aFNcAFSE___mark_TrackingSystemForExpanded}
+{$define in0k_LazIdeEXT_wndInspector_FF8S___mark_TrackingSystemForExpanded}
 //------------------------------------------------------------------------------
 
 {%endregion}
@@ -51,8 +51,8 @@ interface
 {$unDef in0k_LazIdeEXT_wndInspector_FF8S___DebugLOG}
 {$unDef in0k_LazIdeEXT_wndInspector_FF8S___AutoExpand}
 {$unDef in0k_LazIdeEXT_wndInspector_FF8S___AutoMODE_AutoCollapse_mode01}
-{$unDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mark_ActiveFileFromSoureceEdit}
-{$unDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mark_TrackingSystemForExpanded}
+{$unDef in0k_LazIdeEXT_wndInspector_FF8S___mark_ActiveFileFromSoureceEdit}
+{$unDef in0k_LazIdeEXT_wndInspector_FF8S___mark_TrackingSystemForExpanded}
 {%endregion}
 {$i in0k_lazExt_SETTINGs.inc} // настройка-конфигурация Компонента-Расширения
 {%region --- "НАСТРОйКИ уровня КОМПИЛЯЦИИ" : ПРИМЕНЕНИЕ ---------- /fold }
@@ -101,17 +101,17 @@ interface
 
 {$ifnDef lazExt_ProjectInspector_aFFfSE__TSfEN_ON}
     // БЕЗ слежения это НЕвозможно
-    {$unDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mark_TrackingSystemForExpanded}
+    {$unDef in0k_LazIdeEXT_wndInspector_FF8S___mark_TrackingSystemForExpanded}
 {$endIf}
 
 //==============================================================================
 
 // --- определяем, будет ли ДОП рисование
 
-{$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mark_ActiveFileFromSoureceEdit}
+{$ifDef in0k_LazIdeEXT_wndInspector_FF8S___mark_ActiveFileFromSoureceEdit}
     {$define _fuckUp__ide_object_VTV_onAdvancedCustomDrawItem_}
 {$endIf}
-{$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mark_TrackingSystemForExpanded}
+{$ifDef in0k_LazIdeEXT_wndInspector_FF8S___mark_TrackingSystemForExpanded}
     {$define _fuckUp__ide_object_VTV_onAdvancedCustomDrawItem_}
 {$endIf}
 
@@ -132,10 +132,10 @@ interface
 {$IfDef in0k_LazIdeEXT_wndInspector_FF8S___AutoMODE_AutoCollapse_mode01}
     {$define _local___use_Classes_}
 {$endIf}
-{$IfDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mark_TrackingSystemForExpanded}
+{$IfDef in0k_LazIdeEXT_wndInspector_FF8S___mark_TrackingSystemForExpanded}
     {$define _local___use_Graphics_}
 {$endIf}
-{$IfDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mark_ActiveFileFromSoureceEdit}
+{$IfDef in0k_LazIdeEXT_wndInspector_FF8S___mark_ActiveFileFromSoureceEdit}
     {$define _local___use_Graphics_}
 {$endIf}
 
@@ -195,7 +195,7 @@ type
     {$endIf}
     {%endregion}
     {%region --- "ССзРУ" Степень СВЕРНУТОСТИ для рисования ------- /fold}
-    {$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mark_TrackingSystemForExpanded}
+    {$ifDef in0k_LazIdeEXT_wndInspector_FF8S___mark_TrackingSystemForExpanded}
   protected
     function _TSfEN__node_willBeCollapsed_(const node:TTreeNode):boolean;
     function _TSfEN__node_willBeNoVisible_(const node:TTreeNode):boolean;
@@ -227,12 +227,12 @@ type
    _ide_object_VTV_onAdvancedCustomDrawItem_original_:TTVAdvancedCustomDrawItemEvent;
     procedure _VTV_onAdvancedCustomDrawItem_myCustom_(Sender:TCustomTreeView; Node:TTreeNode; State:TCustomDrawState; Stage:TCustomDrawStage; var PaintImages,DefaultDraw:Boolean);
   private //< рисование ДОП примитивов
-    {$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mark_ActiveFileFromSoureceEdit}
+    {$ifDef in0k_LazIdeEXT_wndInspector_FF8S___mark_ActiveFileFromSoureceEdit}
     procedure _VTV_drawMARK_selected_(const Sender:TCustomTreeView; const Node:TTreeNode; const Color:TColor);
     procedure _VTV_onAdvancedCustomDrawItem_myCustom_selected_(const Sender:TCustomTreeView; const Node:TTreeNode);
     procedure _VTV_onAdvancedCustomDrawItem_myCustom_slctFLDR_(const Sender:TCustomTreeView; const Node:TTreeNode);
     {$endif}
-    {$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mark_TrackingSystemForExpanded}
+    {$ifDef in0k_LazIdeEXT_wndInspector_FF8S___mark_TrackingSystemForExpanded}
     procedure _VTV_drawMARK_clspMARK_(const Sender:TCustomTreeView; const Node:TTreeNode; const Color:TColor);
     procedure _VTV_onAdvancedCustomDrawItem_myCustom_clspMARK(const Sender:TCustomTreeView; const Node:TTreeNode);
     {$endif}
@@ -768,14 +768,14 @@ begin
     //--- вызов ОРИГИНАЛЬНОГО обработчика, то что было изначально
     if Assigned(_ide_object_VTV_onAdvancedCustomDrawItem_original_) then _ide_object_VTV_onAdvancedCustomDrawItem_original_(Sender,Node,State,Stage,PaintImages,DefaultDraw);
     //--- моя "нагрузка" ----------------------------------------
-    {$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mark_ActiveFileFromSoureceEdit}
+    {$ifDef in0k_LazIdeEXT_wndInspector_FF8S___mark_ActiveFileFromSoureceEdit}
     //--- выделение текущего файла
     if Stage=cdPostPaint then begin
        _VTV_onAdvancedCustomDrawItem_myCustom_selected_(Sender,Node);
        _VTV_onAdvancedCustomDrawItem_myCustom_slctFLDR_(Sender,Node);
     end;
     {$endif}
-    {$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mark_TrackingSystemForExpanded}
+    {$ifDef in0k_LazIdeEXT_wndInspector_FF8S___mark_TrackingSystemForExpanded}
     //--- маркер СВОРАЧИВАЕМОСТИ
     if Stage=cdPostPaint then begin
        _VTV_onAdvancedCustomDrawItem_myCustom_clspMARK(Sender,Node);
@@ -898,7 +898,7 @@ end;
 {%endregion}
 {$endIf}
 
-{$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mark_TrackingSystemForExpanded}
+{$ifDef in0k_LazIdeEXT_wndInspector_FF8S___mark_TrackingSystemForExpanded}
 {%region --- "ССзРУ" Степень СВЕРНУТОСТИ для рисования ------------ /fold}
 
 // этот узел - ПАПКА (и она РАЗВЕРНУТА) и будет свернута
@@ -936,7 +936,7 @@ end;
 {$ifDef _fuckUp__ide_object_VTV_onAdvancedCustomDrawItem_}
 {%region --- рисование ДОП примитивов ----------------------------- /fold}
 
-{$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mark_ActiveFileFromSoureceEdit}
+{$ifDef in0k_LazIdeEXT_wndInspector_FF8S___mark_ActiveFileFromSoureceEdit}
 
 // рисуем Прямоугольник с линией Справа
 procedure tLazExt_wndInspector_FF8S_wndNode._VTV_drawMARK_selected_(const Sender:TCustomTreeView; const Node:TTreeNode; const Color:TColor);
@@ -976,7 +976,7 @@ end;
 {$endif}
 
 
-{$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mark_TrackingSystemForExpanded}
+{$ifDef in0k_LazIdeEXT_wndInspector_FF8S___mark_TrackingSystemForExpanded}
 
 // рисуем Уголок слева
 procedure tLazExt_wndInspector_FF8S_wndNode._VTV_drawMARK_clspMARK_(const Sender:TCustomTreeView; const Node:TTreeNode; const Color:TColor);

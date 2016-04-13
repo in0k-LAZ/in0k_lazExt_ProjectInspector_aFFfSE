@@ -47,13 +47,14 @@
 //--- # mark ActiveFileFromSoureceEdit -----------------------------------------
 // Отмечать текущей АКТИВНЫЙ файл.
 // Дорисовывать в интерфейсе: выделение для узла АКТИВНОГО файла.
-{$define in0k_LazIdeEXT_wndInspector_aFNcAFSE___mark_ActiveFileFromSoureceEdit}
+{$define in0k_LazIdeEXT_wndInspector_FF8S___mark_ActiveFileFromSoureceEdit}
 //------------------------------------------------------------------------------
 
 //--- # mark TrackingSystemForExpandedNodes ------------------------------------
 // Отмечать деятельность системы "ССзРУ".
 // Дорисовывать в интерфейсе: отметки о сворачиваемых файлах.
-{$define in0k_LazIdeEXT_wndInspector_aFNcAFSE___mark_TrackingSystemForExpanded}
+{$define in0k_LazIdeEXT_wndInspector_FF8S___mark_TrackingSystemForExpanded}
+{$define in0k_LazIdeEXT_wndInspector_FF8S___mark_TrackingSystemForExpanded}
 //------------------------------------------------------------------------------
 
 
@@ -65,16 +66,16 @@
 //  расширенный дебаг
 {$ifDef in0k_LazIdeEXT_wndInspector_FF8S___DebugLOG}
     // можно подключить логи ПодСистем
-    //{$define in0k_lazIdeSRC_FuckUpForm__DebugLOG_mode}
-    //{$define in0k_lazIdeSRC_SourceEditor_onActivate__DebugLOG_mode}
-    //{$define in0k_lazIdeSRC_B2SP___DebugLOG_mode}
+    //{$define in0k_lazIdeSRC_SourceEditor_onActivate___DebugLOG}
+    //{$define in0k_lazIdeSRC_FuckUpForm___DebugLOG}
+    //{$define in0k_lazIdeSRC_B2SP___DebugLOG}
 {$endIf}
 //------------------------------------------------------------------------------
 
 {%region --- # дополнительные специальные настройки -------------- /fold }
 
 // настройка работы подСистемы
-{$unDEF in0k_lazIdeSRC_SourceEditor_onActivate__inFocusONLY} //< событие нужно в ЛЮБОМ состоянии
+{$unDEF in0k_lazIdeSRC_SourceEditor_onActivate___inFocusONLY} //< событие нужно в ЛЮБОМ состоянии
 
 {%endregion}
 {%region --- # "НАСТРОйКИ уровня КОМПИЛЯЦИИ" : ПРИМЕНЕНИЕ -------- /fold }
@@ -82,16 +83,16 @@
 {$ifNdef in0k_LazIdeEXT_wndInspector_FF8S___AutoMODE}
     // это НЕ имеет смысла, тока путаницу вводит
     {$undef in0k_LazIdeEXT_wndInspector_FF8S___AutoMODE_AutoCollapse_mode01}
-    {$undef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mark_ActiveFileFromSoureceEdit}
-    {$undef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mark_TrackingSystemForExpanded}
+    {$undef in0k_LazIdeEXT_wndInspector_FF8S___mark_ActiveFileFromSoureceEdit}
+    {$undef in0k_LazIdeEXT_wndInspector_FF8S___mark_TrackingSystemForExpanded}
 {$endIf}
 
 //--- возня с ОТКЛЮЧЕНИЕ дебага ----------------------------------------------//
 {$ifNDef in0k_LazIdeEXT_wndInspector_FF8S___DebugLOG}
     // НУЖНО ОТКЛЮЧИТЬ логи ПодСистем тоже
-    {$undef in0k_lazIdeSRC_FuckUpForm__DebugLOG_mode}
-    {$undef in0k_lazIdeSRC_SourceEditor_onActivate__DebugLOG_mode}
-    {$undef in0k_lazIdeSRC_B2SP___DebugLOG_mode}
+    {$undef in0k_lazIdeSRC_SourceEditor_onActivate___DebugLOG}
+    {$undef in0k_lazIdeSRC_FuckUpForm___DebugLOG}
+    {$undef in0k_lazIdeSRC_B2SP___DebugLOG}
 {$endIf}
 
 {%endregion}

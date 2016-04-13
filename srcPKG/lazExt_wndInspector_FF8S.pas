@@ -29,9 +29,9 @@ interface
 // Если файл НАЙДЕН, то окно соответствующего инспектора переместить на "ПЕРЕДНИЙ план"
 {$define in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand_useBringToFront}
 // Создать пункт меню в "Главном меню IDE" (SEACRH)
-{$define in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand_in_IdeMainMenu}
+{$define in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand_IdeMainMenu}
 // Создать пункт меню в "Меню Редакторе Исходного Кода" (правая клавиша в окне редактора)
-{$define in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand_in_SrcEditMenu}
+{$define in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand_SrcEditMenu}
 //------------------------------------------------------------------------------
 
 
@@ -52,8 +52,8 @@ interface
 {$unDef in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand}
 {$unDef in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand_useBringToFront}
 {$unDef in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand_shomMsgIfNotFOUND}
-{$unDef in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand_in_IdeMainMenu}
-{$unDef in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand_in_SrcEditMenu}
+{$unDef in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand_IdeMainMenu}
+{$unDef in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand_SrcEditMenu}
 {$unDef in0k_LazIdeEXT_wndInspector_FF8S___AutoMODE}
 {$unDef in0k_LazIdeEXT_wndInspector_FF8S___AutoMODE_useBringToSecondPlane}
 {%endregion}
@@ -69,15 +69,15 @@ interface
 //===== РУЧНОЙ режим  ==========================================================
 {$ifNDEF in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand} // не имеет смысла
     {$unDef in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand_useBringToFront}
-    {$unDef in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand_in_IdeMainMenu}
-    {$unDef in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand_in_SrcEditMenu}
+    {$unDef in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand_IdeMainMenu}
+    {$unDef in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand_SrcEditMenu}
 {$endIf}
 
 {$undef _local___use_MenuIntf_}
-{$ifDef in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand_in_IdeMainMenu}
+{$ifDef in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand_IdeMainMenu}
     {$define _local___use_MenuIntf_}
 {$endIf}
-{$ifDef in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand_in_SrcEditMenu}
+{$ifDef in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand_SrcEditMenu}
     {$define _local___use_MenuIntf_}
 {$endIf}
 
@@ -300,11 +300,11 @@ begin
     Key   :=IDEShortCut(VK_F,[ssShift, ssAlt, ssCtrl],VK_UNKNOWN,[]);
     Cat   :=IDECommandList.FindCategoryByName(CommandCategoryToolMenuName);
     MyTool:=RegisterIDECommand(Cat, _cIdeCommand_NAME_,_cIdeCommand_DESC_, Key, @_Event_IdeCommand_Execute_,nil);
-    {$ifDef in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand_in_IdeMainMenu}
+    {$ifDef in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand_IdeMainMenu}
     // пункт меню В ГЛАВНОМ (Search)
     RegisterIDEMenuCommand(mnuSearch, _cIdeCommand_DESC_, _cIdeCommand_NAME_, nil, nil, MyTool);
     {$endIf}
-    {$ifDef in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand_in_SrcEditMenu}
+    {$ifDef in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand_SrcEditMenu}
     // пункт меню в редакторе исходного кода (по правой клавише)
     RegisterIDEMenuCommand(SrcEditMenuSectionFirstStatic,_cIdeCommand_DESC_, _cIdeCommand_NAME_, nil, nil, MyTool);
     {$endIf}
