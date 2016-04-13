@@ -8,7 +8,32 @@
 //--- # treeView_autoExpand ----------------------------------------------------
 // Автоматически РАЗВОРАЧИВАТЬ узлы.
 // При выделении искомого узла АКТИВНОГО файла, РАЗВЕРНУТЬ его дерево родителей.
-{$define in0k_LazIdeEXT_wndInspector_aFNcAFSE___AutoExpand}
+{$define in0k_LazIdeEXT_wndInspector_FF8S___AutoExpand}
+//------------------------------------------------------------------------------
+
+
+//--- # Ide COMMAND ----------------------------------------------------------//
+// Ручной режим работы.
+// Добавляется комманда IDE, на которую можно повешать "Горячую Клавишу"
+{$define in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand}
+// Если файл НЕ найден, то показать сообщение об этом
+{$define in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand_shomMsgIfNotFOUND}
+// Если файл НАЙДЕН, то окно соответствующего инспектора переместить на "ПЕРЕДНИЙ план"
+{$define in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand_useBringToFront}
+// Создать пункт меню в "Главном меню IDE" (SEACRH)
+{$define in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand_in_IdeMainMenu}
+// Создать пункт меню в "Меню Редакторе Исходного Кода" (правая клавиша в окне редактора)
+{$define in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand_in_SrcEditMenu}
+//------------------------------------------------------------------------------
+
+
+//--- # Auto Execute ---------------------------------------------------------//
+// АВТОМАТИЧЕСКИЙ режим.
+// Автоматически срабатывает при переходе между вкладками "Редактора Исходного Кода"
+{$define in0k_LazIdeEXT_wndInspector_FF8S___AutoMODE}
+// Если файл НАЙДЕН, то окно соответствующего инспектора переместить на "ВТОРОЙ план"
+// подробности см. https://github.com/in0k-src/in0k-bringToSecondPlane
+{$define in0k_LazIdeEXT_wndInspector_FF8S___AutoMODE_useBringToSecondPlane}
 //------------------------------------------------------------------------------
 
 //--- # treeView_AutoCollapse --------------------------------------------------
@@ -16,32 +41,7 @@
 // Автоматическое СВОРАЧИВАНИЕ узлов развернутых на этапе "treeView_autoExpand".
 //---------
 // способ функционирования (модель работы)
-{$define in0k_LazIdeEXT_wndInspector_aFNcAFSE___AutoCollapse_mode_01}
-//------------------------------------------------------------------------------
-
-
-//--- # Ide COMMAND ----------------------------------------------------------//
-// Ручной режим работы.
-// Добавляется комманда IDE, на которую можно повешать "Горячую Клавишу"
-{$define in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_IdeCommand}
-// Если файл НЕ найден, то показать сообщение об этом
-{$define in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_IdeCommand_shomMsgIfNotFOUND}
-// Если файл НАЙДЕН, то окно соответствующего инспектора переместить на "ПЕРЕДНИЙ план"
-{$define in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_IdeCommand_useBringToFront}
-// Создать пункт меню в "Главном меню IDE" (SEACRH)
-{$define in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_IdeCommand_IdeMainMenu}
-// Создать пункт меню в "Меню Редакторе Исходного Кода" (правая клавиша в окне редактора)
-{$define in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_IdeCommand_SrcEditMenu}
-//------------------------------------------------------------------------------
-
-
-//--- # Auto Execute ---------------------------------------------------------//
-// АВТОМАТИЧЕСКИЙ режим.
-// Автоматически срабатывает при переходе между вкладками "Редактора Исходного Кода"
-{$define in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_AutoExecute}
-// Если файл НАЙДЕН, то окно соответствующего инспектора переместить на "ВТОРОЙ план"
-// подробности см. https://github.com/in0k-src/in0k-bringToSecondPlane
-{$define in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_AutoExecute_useBringToSecondPlane}
+{$define in0k_LazIdeEXT_wndInspector_FF8S___AutoMODE_AutoCollapse_mode01}
 //------------------------------------------------------------------------------
 
 //--- # mark ActiveFileFromSoureceEdit -----------------------------------------
@@ -60,9 +60,10 @@
 //--- # DEBUG ------------------------------------------------------------------
 //  Позволяет просматривать лог событий в отдельном окне из IDE
 //  `View` -> `IDE Internals` -> `[eventLog]..wndInspector_aFNcAFSE..`
-{$define in0k_LazIdeEXT_wndInspector_aFNcAFSE___DebugLOG_mode}
+{$define in0k_LazIdeEXT_wndInspector_FF8S___DebugLOG}
+{$define in0k_LazIdeEXT_wndInspector_FF8S___DebugLOG}
 //  расширенный дебаг
-{$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___DebugLOG_mode}
+{$ifDef in0k_LazIdeEXT_wndInspector_FF8S___DebugLOG}
     // можно подключить логи ПодСистем
     //{$define in0k_lazIdeSRC_FuckUpForm__DebugLOG_mode}
     //{$define in0k_lazIdeSRC_SourceEditor_onActivate__DebugLOG_mode}
@@ -78,15 +79,15 @@
 {%endregion}
 {%region --- # "НАСТРОйКИ уровня КОМПИЛЯЦИИ" : ПРИМЕНЕНИЕ -------- /fold }
 
-{$ifNdef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_AutoExecute}
+{$ifNdef in0k_LazIdeEXT_wndInspector_FF8S___AutoMODE}
     // это НЕ имеет смысла, тока путаницу вводит
-    {$undef in0k_LazIdeEXT_wndInspector_aFNcAFSE___AutoCollapse_mode_01}
+    {$undef in0k_LazIdeEXT_wndInspector_FF8S___AutoMODE_AutoCollapse_mode01}
     {$undef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mark_ActiveFileFromSoureceEdit}
     {$undef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mark_TrackingSystemForExpanded}
 {$endIf}
 
 //--- возня с ОТКЛЮЧЕНИЕ дебага ----------------------------------------------//
-{$ifNDef lazExt_ProjectInspector_aFFfSE__EventLOG_mode}
+{$ifNDef in0k_LazIdeEXT_wndInspector_FF8S___DebugLOG}
     // НУЖНО ОТКЛЮЧИТЬ логи ПодСистем тоже
     {$undef in0k_lazIdeSRC_FuckUpForm__DebugLOG_mode}
     {$undef in0k_lazIdeSRC_SourceEditor_onActivate__DebugLOG_mode}

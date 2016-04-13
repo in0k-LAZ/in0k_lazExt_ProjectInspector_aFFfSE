@@ -16,68 +16,68 @@ interface
 //--- # DebugLOG_mode --------------------------------------------------------//
 // Режим логирования.
 // В код включаются вызовы `DEBUG` с описанием текущих событий и состояний.
-{$define in0k_LazIdeEXT_wndInspector_aFNcAFSE___DebugLOG_mode}
+{$define in0k_LazIdeEXT_wndInspector_FF8S___DebugLOG}
 //------------------------------------------------------------------------------
 
 
 //--- # Ide COMMAND ----------------------------------------------------------//
 // Ручной режим работы.
 // Добавляется комманда IDE, на которую можно повешать "Горячую Клавишу"
-{$define in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_IdeCommand}
+{$define in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand}
 // Если файл НЕ найден, то показать сообщение об этом
-{$define in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_IdeCommand_shomMsgIfNotFOUND}
+{$define in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand_shomMsgIfNotFOUND}
 // Если файл НАЙДЕН, то окно соответствующего инспектора переместить на "ПЕРЕДНИЙ план"
-{$define in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_IdeCommand_useBringToFront}
+{$define in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand_useBringToFront}
 // Создать пункт меню в "Главном меню IDE" (SEACRH)
-{$define in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_IdeCommand_IdeMainMenu}
+{$define in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand_in_IdeMainMenu}
 // Создать пункт меню в "Меню Редакторе Исходного Кода" (правая клавиша в окне редактора)
-{$define in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_IdeCommand_SrcEditMenu}
+{$define in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand_in_SrcEditMenu}
 //------------------------------------------------------------------------------
 
 
 //--- # Auto Execute ---------------------------------------------------------//
 // АВТОМАТИЧЕСКИЙ режим.
 // Автоматически срабатывает при переходе между вкладками "Редактора Исходного Кода"
-{$define in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_AutoExecute}
+{$define in0k_LazIdeEXT_wndInspector_FF8S___AutoMODE}
 // Если файл НАЙДЕН, то окно соответствующего инспектора переместить на "ВТОРОЙ план"
 // подробности см. https://github.com/in0k-src/in0k-bringToSecondPlane
-{$define in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_AutoExecute_useBringToSecondPlane}
+{$define in0k_LazIdeEXT_wndInspector_FF8S___AutoMODE_useBringToSecondPlane}
 //------------------------------------------------------------------------------
 
 {%endregion}
 {%region --- "НАСТРОйКИ уровня КОМПИЛЯЦИИ" : ОЧИСТКА ------------- /fold }
 //   ВСЕ отключаем, перед применением настроек !!!                      //----//
 //----------------------------------------------------------------------------//
-{$unDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___DebugLOG_mode}
-{$unDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_IdeCommand}
-{$unDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_IdeCommand_useBringToFront}
-{$unDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_IdeCommand_shomMsgIfNotFOUND}
-{$unDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_IdeCommand_IdeMainMenu}
-{$unDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_IdeCommand_SrcEditMenu}
-{$unDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_AutoExecute}
-{$unDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_AutoExecute_useBringToSecondPlane}
+{$unDef in0k_LazIdeEXT_wndInspector_FF8S___DebugLOG}
+{$unDef in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand}
+{$unDef in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand_useBringToFront}
+{$unDef in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand_shomMsgIfNotFOUND}
+{$unDef in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand_in_IdeMainMenu}
+{$unDef in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand_in_SrcEditMenu}
+{$unDef in0k_LazIdeEXT_wndInspector_FF8S___AutoMODE}
+{$unDef in0k_LazIdeEXT_wndInspector_FF8S___AutoMODE_useBringToSecondPlane}
 {%endregion}
 {$i in0k_lazExt_SETTINGs.inc} // КОНФИГУРАЦИЯ компонента-Расширения.
 {%region --- "НАСТРОйКИ уровня КОМПИЛЯЦИИ" : ПРИМЕНЕНИЕ ---------- /fold }
 
-{$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___DebugLOG_mode}
+{$ifDef in0k_LazIdeEXT_wndInspector_FF8S___DebugLOG}
     {$define _debugLOG_}//< типа да ... можно делать ДЕБАГ отметки
 {$else}
     {$undef _debugLOG_}
 {$endIf}
 
 //===== РУЧНОЙ режим  ==========================================================
-{$ifNDEF in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_IdeCommand} // не имеет смысла
-    {$unDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_IdeCommand_useBringToFront}
-    {$unDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_IdeCommand_IdeMainMenu}
-    {$unDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_IdeCommand_SrcEditMenu}
+{$ifNDEF in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand} // не имеет смысла
+    {$unDef in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand_useBringToFront}
+    {$unDef in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand_in_IdeMainMenu}
+    {$unDef in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand_in_SrcEditMenu}
 {$endIf}
 
 {$undef _local___use_MenuIntf_}
-{$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_IdeCommand_IdeMainMenu}
+{$ifDef in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand_in_IdeMainMenu}
     {$define _local___use_MenuIntf_}
 {$endIf}
-{$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_IdeCommand_SrcEditMenu}
+{$ifDef in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand_in_SrcEditMenu}
     {$define _local___use_MenuIntf_}
 {$endIf}
 
@@ -87,18 +87,18 @@ interface
 //===== АВТО режим, отложенный запуск ==========================================
 {$define _local___select_heldCall_}
 //------------------------------------------------------------------------------
-{$ifNDEF in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_AutoExecute} // не имеет смысла
-    {$unDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_AutoExecute_useBringToSecondPlane}
+{$ifNDEF in0k_LazIdeEXT_wndInspector_FF8S___AutoMODE} // не имеет смысла
+    {$unDef in0k_LazIdeEXT_wndInspector_FF8S___AutoMODE_useBringToSecondPlane}
     {$undef _local___select_heldCall_}
 {$endIf}
 
 //===== перетягивание форм по "слоям" (на передний на второй поан) =============
 {$undef _local___wndZOrederMoving_}
 //------------------------------------------------------------------------------
-{$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_AutoExecute_useBringToSecondPlane}
+{$ifDef in0k_LazIdeEXT_wndInspector_FF8S___AutoMODE_useBringToSecondPlane}
     {$define _local___wndZOrederMoving_}
 {$endIf}
-{$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_IdeCommand_useBringToFront}
+{$ifDef in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand_useBringToFront}
     {$define _local___wndZOrederMoving_}
 {$endIf}
 
@@ -109,20 +109,20 @@ uses {$ifDef _debugLOG_}in0k_lazExt_DEBUG,{$endIf}
      LazIDEIntf, SrcEditorIntf,
      LCLIntf, //< это для GetTickCount64 в (Laz 1.4) {todo: обернуть в предКомпиляцию}
      //--- ручной режим
-     {$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_IdeCommand}
+     {$ifDef in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand}
      IDECommands, LCLType, //< регистрация комманды
      {$endIf}
      {$ifDef _local___use_MenuIntf_}
      MenuIntf,//< добавление пунктов меню
      {$endIf}
-     {$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_IdeCommand_shomMsgIfNotFOUND}
+     {$ifDef in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand_shomMsgIfNotFOUND}
      Dialogs, //< показ сообщенй
      {$endIf}
      //--- авто режим
-     {$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_AutoExecute}
+     {$ifDef in0k_LazIdeEXT_wndInspector_FF8S___AutoMODE}
      in0k_lazIdeSRC_SourceEditor_onActivate, //< отлов событий
      {$endIf}
-     {$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_AutoExecute_useBringToSecondPlane}
+     {$ifDef in0k_LazIdeEXT_wndInspector_FF8S___AutoMODE_useBringToSecondPlane}
      in0k_lazIdeSRC_B2SP, //< для переноса окон
      {$endIf}
      //---
@@ -164,7 +164,7 @@ type
   {$endIf}
   {%endregion}
   protected
-    {$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_AutoExecute}
+    {$ifDef in0k_LazIdeEXT_wndInspector_FF8S___AutoMODE}
    _SourceEditor_onActivate_:tIn0k_lazIdeSRC_SourceEditor_onActivate;
     {$endIf}
   protected
@@ -177,11 +177,11 @@ type
     function  _select_inSCREEN_(const fileName:string):boolean;
     function  _select_:boolean;  //< ПРЯМОЙ вызов
   protected //< РУЧНОЕ событие
-    {$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_IdeCommand}
+    {$ifDef in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand}
     procedure _Event_IdeCommand_Execute_(Sender:TObject);
     {$endIf}
   protected //< АВТО событие
-    {$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_AutoExecute}
+    {$ifDef in0k_LazIdeEXT_wndInspector_FF8S___AutoMODE}
     procedure _select_heldCall_; //< ОТЛОЖЕННЫЙ вызов
     procedure _Event_SourceEditor_onActivate_(Sender:TObject);
     procedure _Event_wndNodes_ProjectAddNode_(Sender:TObject);
@@ -190,11 +190,11 @@ type
     constructor Create;
     destructor DESTROY; override;
   protected
-    {$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_IdeCommand}
+    {$ifDef in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand}
     procedure _LazarusIDE_SetUP__mode_ideCommand_;
     procedure _LazarusIDE_CLEAN__mode_ideCommand_;
     {$endIf}
-    {$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_AutoExecute}
+    {$ifDef in0k_LazIdeEXT_wndInspector_FF8S___AutoMODE}
     procedure _LazarusIDE_SetUP__mode_autoExecute_;
     procedure _LazarusIDE_CLEAN__mode_autoExecute_;
     {$endIf}
@@ -242,20 +242,20 @@ procedure tLazExt_wndInspector_FF8S.LazarusIDE_SetUP;
 begin
    _lair_nodes_wndInspector_.CLEAR;
     LazarusIDE.AddHandlerOnIDEClose(@LazarusIDE_OnIDEClose);
-    {$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_IdeCommand}
+    {$ifDef in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand}
    _LazarusIDE_SetUP__mode_ideCommand_;
     {$endIf}
-    {$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_AutoExecute}
+    {$ifDef in0k_LazIdeEXT_wndInspector_FF8S___AutoMODE}
    _LazarusIDE_SetUP__mode_autoExecute_
     {$endIf}
 end;
 
 procedure tLazExt_wndInspector_FF8S.LazarusIDE_Clean;
 begin
-    {$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_AutoExecute}
+    {$ifDef in0k_LazIdeEXT_wndInspector_FF8S___AutoMODE}
    _LazarusIDE_CLEAN__mode_autoExecute_;
     {$endIf}
-    {$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_IdeCommand}
+    {$ifDef in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand}
    _LazarusIDE_CLEAN__mode_ideCommand_;
     {$endIf}
    _lair_nodes_wndInspector_.CLEAR;
@@ -263,7 +263,7 @@ end;
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-{$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_AutoExecute}
+{$ifDef in0k_LazIdeEXT_wndInspector_FF8S___AutoMODE}
 procedure tLazExt_wndInspector_FF8S._LazarusIDE_SetUP__mode_autoExecute_;
 begin
    _lair_nodes_wndInspector_.ownerEvent_onNodeAdd:=@_Event_wndNodes_ProjectAddNode_;
@@ -273,7 +273,7 @@ begin
 end;
 {$endIf}
 
-{$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_AutoExecute}
+{$ifDef in0k_LazIdeEXT_wndInspector_FF8S___AutoMODE}
 procedure tLazExt_wndInspector_FF8S._LazarusIDE_CLEAN__mode_autoExecute_;
 begin
    _SourceEditor_onActivate_.onEvent:=nil;
@@ -285,7 +285,7 @@ end;
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-{$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_IdeCommand}
+{$ifDef in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand}
 
 {todo: а как же быть с переводом????}
 
@@ -300,18 +300,18 @@ begin
     Key   :=IDEShortCut(VK_F,[ssShift, ssAlt, ssCtrl],VK_UNKNOWN,[]);
     Cat   :=IDECommandList.FindCategoryByName(CommandCategoryToolMenuName);
     MyTool:=RegisterIDECommand(Cat, _cIdeCommand_NAME_,_cIdeCommand_DESC_, Key, @_Event_IdeCommand_Execute_,nil);
-    {$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_IdeCommand_IdeMainMenu}
+    {$ifDef in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand_in_IdeMainMenu}
     // пункт меню В ГЛАВНОМ (Search)
     RegisterIDEMenuCommand(mnuSearch, _cIdeCommand_DESC_, _cIdeCommand_NAME_, nil, nil, MyTool);
     {$endIf}
-    {$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_IdeCommand_SrcEditMenu}
+    {$ifDef in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand_in_SrcEditMenu}
     // пункт меню в редакторе исходного кода (по правой клавише)
     RegisterIDEMenuCommand(SrcEditMenuSectionFirstStatic,_cIdeCommand_DESC_, _cIdeCommand_NAME_, nil, nil, MyTool);
     {$endIf}
 end;
 {$endIf}
 
-{$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_IdeCommand}
+{$ifDef in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand}
 procedure tLazExt_wndInspector_FF8S._LazarusIDE_CLEAN__mode_ideCommand_;
 begin
      // по ходу оно само все отписывается ...
@@ -427,10 +427,10 @@ end;
 
 const
   _cWndZOrederMoving_mode_0=0; // НЕТ никакого перемещения
-   {$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_IdeCommand_useBringToFront}
+   {$ifDef in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand_useBringToFront}
   _cWndZOrederMoving_mode_1=1; // переместить на ПЕРВЫЙ план
    {$endIf}
-   {$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_AutoExecute_useBringToSecondPlane}
+   {$ifDef in0k_LazIdeEXT_wndInspector_FF8S___AutoMODE_useBringToSecondPlane}
   _cWndZOrederMoving_mode_2=2; // переместить на ВТОРОЙ план
    {$endIf}
 
@@ -450,10 +450,10 @@ procedure tLazExt_wndInspector_FF8S._wndZOrederMoving_(const form:TCustomForm);
 begin
     if Assigned(form) then begin
         case _wndZOrederMoving_mode of
-        {$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_IdeCommand_useBringToFront}
+        {$ifDef in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand_useBringToFront}
           _cWndZOrederMoving_mode_1: form.BringToFront; // переместить на ПЕРВЫЙ план
         {$endIf}
-        {$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_AutoExecute_useBringToSecondPlane}
+        {$ifDef in0k_LazIdeEXT_wndInspector_FF8S___AutoMODE_useBringToSecondPlane}
           _cWndZOrederMoving_mode_2: In0k_lazIdeSRC___B2SP(form); // переместить на ВТОРОЙ
         {$endIf}
         end;
@@ -541,18 +541,18 @@ end;
 
 //------------------------------------------------------------------------------
 
-{$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_IdeCommand}
+{$ifDef in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand}
 procedure tLazExt_wndInspector_FF8S._Event_IdeCommand_Execute_(Sender:TObject);
 begin
     {$ifDef _debugLOG_}
     DEBUG('_Event_IdeCommand_Execute_', '>>>');
     {$endIf}
     // тут ВСЕ выполняется из "ГЛАВНОГО" потока ... можно применить ПРЯМОЙ вызов
-    {$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_IdeCommand_useBringToFront}
+    {$ifDef in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand_useBringToFront}
    _wndZOrederMoving_mode_set_(1);
     {$endIf}
 
-    {$ifNDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_IdeCommand_shomMsgIfNotFOUND}
+    {$ifNDef in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand_shomMsgIfNotFOUND}
    _select_;
     {$else}
     if NOT _select_ then begin
@@ -562,20 +562,20 @@ begin
 end;
 {$endIf}
 
-{$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_AutoExecute}
+{$ifDef in0k_LazIdeEXT_wndInspector_FF8S___AutoMODE}
 procedure tLazExt_wndInspector_FF8S._Event_SourceEditor_onActivate_(Sender:TObject);
 begin
     {$ifDef _debugLOG_}
     DEBUG('_Event_SourceEditor_onActivate_', '>>>');
     {$endIf}
-    {$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_AutoExecute_useBringToSecondPlane}
+    {$ifDef in0k_LazIdeEXT_wndInspector_FF8S___AutoMODE_useBringToSecondPlane}
    _wndZOrederMoving_mode_set_(2);
     {$endIf}
    _select_heldCall_;
 end;
 {$endIf}
 
-{$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_AutoExecute}
+{$ifDef in0k_LazIdeEXT_wndInspector_FF8S___AutoMODE}
 procedure tLazExt_wndInspector_FF8S._Event_wndNodes_ProjectAddNode_(Sender:TObject);
 begin
     {$ifDef _debugLOG_}
