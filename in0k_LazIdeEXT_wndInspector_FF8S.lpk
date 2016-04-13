@@ -3,13 +3,13 @@
   <Package Version="4">
     <PathDelim Value="\"/>
     <Name Value="in0k_LazIdeEXT_wndInspector_FF8S"/>
-    <Type Value="RunAndDesignTime"/>
+    <Type Value="DesignTime"/>
     <CompilerOptions>
       <Version Value="11"/>
       <PathDelim Value="\"/>
       <SearchPaths>
         <IncludeFiles Value="srcEXT\in0k-lazarusIdeSRC-wndDEBUG"/>
-        <OtherUnitFiles Value="srcEXT\in0k-lazarusIdeSRC-wndDEBUG;srcPKG;srcEXT\in0k-lazarusIdeSRC-SourceEditor-onActivate;srcPKG\wndNodes;srcEXT\in0k-lazarusIdeSRC-FuckUpForm;srcEXT\in0k-lazarusIdeSRC-testFormIS;srcEXT\in0k-bringToSecondPlane;srcEXT\in0k-lazarusIdeSRC-B2SP"/>
+        <OtherUnitFiles Value="srcEXT\in0k-lazarusIdeSRC-wndDEBUG;srcEXT\in0k-lazarusIdeSRC-SourceEditor-onActivate;srcEXT\in0k-lazarusIdeSRC-FuckUpForm;srcEXT\in0k-lazarusIdeSRC-testFormIS;srcEXT\in0k-bringToSecondPlane;srcEXT\in0k-lazarusIdeSRC-B2SP;srcPKG;srcPKG\wndNodes"/>
         <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>
     </CompilerOptions>
