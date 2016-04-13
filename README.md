@@ -27,6 +27,9 @@
        "Инспектора"
 
 
+
+
+
 {{keypress|}}+{{keypress|J}}
 
 - пункт меню фывафыва фыва фыва фыва 
@@ -43,7 +46,7 @@
 
 Полный список возможностей смотрите на страницах WIKI
 
-
+Установка проходит по [стандартной схеме](i0). При необходимости, перед установкой пакета, отредактируйте файл настроек in0k_lazExt_aBTF_CodeExplorer_INI.inc.
 
 in0k LazIdeEXT wndInspector aFNcAFSE
 
@@ -65,6 +68,8 @@ Automatic focus to the node, the corresponding to the Active File in the Source 
 [8]: http://wiki.freepascal.org/Extending_the_IDE#Active_source_editor
 
 [9]: https://github.com/in0k-src/in0k-bringToSecondPlane
+
+[i0]:http://wiki.freepascal.org/Install_Packages#Adding_known_packages
 
 Find File and Select
 
