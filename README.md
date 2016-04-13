@@ -1,77 +1,46 @@
 # in0k_LazIdeEXT_wndInspector_FF8S
 
-[Эксперт](1) для среды разработки [Lazarus IDE](2).
+[Expert](D1) for [Lazarus IDE](D2).
 
-## Добавляемые функции IDE
-  Поиск файла из "[Редактора Исходного Кода](3)", в открытых окнах "Инспекторах"
-  ("[Инспектор Проекта](5)", "[Редактор Пакета](6)").
+## Adds features to the IDE
+  Searching file from "[Source Editor](0)", in open "Inspectors" windows
+  ("[Project Inspector](1)", "[Package Editor](2)").
 
-### Использование
-  Установка фокуса на узел "Дерева Зависимостей", соответствующий к активному
-  файлу окна "Редактор Исходного Кода".
+### Use
 
-* Ручной режим
-  - горячая клавиша: `Ctrl`+`Shift`+`Alt`+`F` (для изменения см. [Shortcuts](7))
-  - пункт меню: `IDE menu`->`Search`->`Find File in "Inspector"`
-  - пункт меню: `Source editor`->`Рopup menu`->`Find File in "Inspector"`
-  - дополнительно:
-    + перемещение окна "Инспектора", в котором найден файл, на "Передний План"
-    + сообщение "файл не найден", если файл не найден ни в одном из открытых
-      окон "Инспекторов"
-* Автоматический режим
-   - поиск запускается при изменении "[Активного Редактора Исходных Кодов](8)"
-   - дополнительно:
-     + перемещение окна "Инспектора", в котором найден файл, на "[Второй План](9)"
-     + визуальное выделение активного узла в "Дереве Зависимостей"
-     + сохранение состояния свернутых узлов в "Дереве Зависимостей" окна
-       "Инспектора"
+  Setting focus to a node "Dependency Tree" of window "Inspector", 
+  according to the current [active](3) file in the "Source Editor".
 
+* IDE Command
+  - shortcut: `Ctrl`+`Shift`+`Alt`+`F` (to change see [Shortcuts](4))
+  - menu item: `IDE menu`->`Search`->`Find File in "Inspector"`
+  - menu item: `Source editor`->`Рopup menu`->`Find File in "Inspector"`
+  - additionally:
+    + if file found in "Inspector", then brings window to "foreground" 
+    + message, if the file is not found in any of the open windows "Inspectors"
+* Auto mode
+   - the search starts when you change "[Active source editor](3)"
+   - additionally:
+     + if file found in "Inspector", then brings window to "[Second Plan](5)"
+     + visual highlighting of the active node in the "Dependency Tree"
+     + save state of collapsed nodes in the "Dependency Tree"
 
+## Installation and Configuration
+* Sources: clone the repository with ALL subprojects OR 
+  download the latest version of the "FULL source code" archive
+* Installation: It uses a [standard](I0) installation package scheme 
+* Configuration: before the "build" package, edit the file `in0k_lazExt_SETTINGs.inc`.
 
+[D1]: http://wiki.lazarus.freepascal.org/Extending_the_IDE#Overview
+[D2]: http://www.lazarus-ide.org/ 
+[I0]: http://wiki.freepascal.org/Install_Packages#Adding_known_packages
+[ 0]: http://wiki.freepascal.org/IDE_Window:_Source_Editor
+[ 1]: http://wiki.freepascal.org/IDE_Window:_Project_Inspector
+[ 2]: http://wiki.freepascal.org/IDE_Window:_Package_Editor
+[ 3]: http://wiki.freepascal.org/Extending_the_IDE#Active_source_editor
+[ 4]: http://wiki.freepascal.org/Lazarus_IDE_Shortcuts
+[ 5]: https://github.com/in0k-src/in0k-bringToSecondPlane
 
-
-{{keypress|}}+{{keypress|J}}
-
-- пункт меню фывафыва фыва фыва фыва 
-  Ипользуется
-
-#### Автоматический
-
-
-Расширение функционала окон "Project  Inspector" и "Package Editor"
-
-* Автоматический фокус на узел, соответствующий к активному файлу в окне "Редактор Исходного Кода".
-* Дополнительное визуальное выделение активных узлов
-* Автоматическое сворачивание узлов
-
-Полный список возможностей смотрите на страницах WIKI
-
-Установка проходит по [стандартной схеме](i0). При необходимости, перед установкой пакета, отредактируйте файл настроек in0k_lazExt_aBTF_CodeExplorer_INI.inc.
-
-in0k LazIdeEXT wndInspector aFNcAFSE
-
-Automatic focus to the node, the corresponding to the Active File in the Source Editor
-
-Автоматический фокус на узел, соответствующий к активному файлу в редакторе исходного кода
-
-[1]: http://wiki.lazarus.freepascal.org/Extending_the_IDE#Overview 'Extending the IDE'
-[2]: http://www.lazarus-ide.org/ 'http://www.lazarus-ide.org/'
-[3]: http://wiki.lazarus.freepascal.org/IDE_Window:_Source_Editor
-
-[4]: http://wiki.freepascal.org/Extending_the_IDE#Active_source_editor
-
-
-[5]: http://wiki.freepascal.org/IDE_Window:_Project_Inspector
-[6]: http://wiki.freepascal.org/IDE_Window:_Package_Editor
-
-[7]: http://wiki.freepascal.org/Lazarus_IDE_Shortcuts
-[8]: http://wiki.freepascal.org/Extending_the_IDE#Active_source_editor
-
-[9]: https://github.com/in0k-src/in0k-bringToSecondPlane
-
-[i0]:http://wiki.freepascal.org/Install_Packages#Adding_known_packages
-
-Find File and Select
 
 
 
