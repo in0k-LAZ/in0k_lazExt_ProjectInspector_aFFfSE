@@ -107,13 +107,14 @@ interface
 uses {$ifDef _debugLOG_}in0k_lazExt_DEBUG,{$endIf}
      Classes, Forms,
      LazIDEIntf, SrcEditorIntf,
-     {$ifDef _local___use_MenuIntf_}MenuIntf,{$endIf} //< добавление пунктов меню
      LCLIntf, //< это для GetTickCount64 в (Laz 1.4) {todo: обернуть в предКомпиляцию}
      //--- ручной режим
      {$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_IdeCommand}
      IDECommands, LCLType, //< регистрация комманды
      {$endIf}
-
+     {$ifDef _local___use_MenuIntf_}
+     MenuIntf,//< добавление пунктов меню
+     {$endIf}
      {$ifDef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_IdeCommand_shomMsgIfNotFOUND}
      Dialogs, //< показ сообщенй
      {$endIf}

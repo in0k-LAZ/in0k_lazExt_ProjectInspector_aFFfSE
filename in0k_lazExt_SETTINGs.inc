@@ -1,7 +1,7 @@
 //------------------------------------------------------------------------------
-//
-// Опции настройки компиляции     д
-//
+// in0k_LazIdeEXT_wndInspector_aFNcAFSE
+//      Compilation settings of the component
+//      Настройки компиляции компонента
 //------------------------------------------------------------------------------
 
 
@@ -10,6 +10,15 @@
 // При выделении искомого узла АКТИВНОГО файла, РАЗВЕРНУТЬ его дерево родителей.
 {$define in0k_LazIdeEXT_wndInspector_aFNcAFSE___AutoExpand}
 //------------------------------------------------------------------------------
+
+//--- # treeView_AutoCollapse --------------------------------------------------
+// Система Слежения за Развернутыми Узлами (ССзРУ).
+// Автоматическое СВОРАЧИВАНИЕ узлов развернутых на этапе "treeView_autoExpand".
+//---------
+// способ функционирования (модель работы)
+{$define in0k_LazIdeEXT_wndInspector_aFNcAFSE___AutoCollapse_mode_01}
+//------------------------------------------------------------------------------
+
 
 //--- # Ide COMMAND ----------------------------------------------------------//
 // Ручной режим работы.
@@ -35,33 +44,20 @@
 {$define in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_AutoExecute_useBringToSecondPlane}
 //------------------------------------------------------------------------------
 
-//--- # treeView_TrackingSystemForExpandedNodes --------------------------------
-// Система Слежения за Развернутыми Узлами (ССзРУ).
-// Автоматическое СВОРАЧИВАНИЕ узлов развернутых на этапе "treeView_autoExpand".
-//---------
-// способ функционирования (модель работы)
-{$define in0k_LazIdeEXT_wndInspector_aFNcAFSE___AutoCollapse_mode_01}
-//------------------------------------------------------------------------------
-
-// подРисовки в дереве
-
+//--- # mark ActiveFileFromSoureceEdit -----------------------------------------
+// Отмечать текущей АКТИВНЫЙ файл.
+// Дорисовывать в интерфейсе: выделение для узла АКТИВНОГО файла.
 {$define in0k_LazIdeEXT_wndInspector_aFNcAFSE___mark_ActiveFileFromSoureceEdit}
-{$define in0k_LazIdeEXT_wndInspector_aFNcAFSE___mark_TrackingSystemForExpanded}
-
-
 //------------------------------------------------------------------------------
 
-{%region --- "НАСТРОйКИ уровня КОМПИЛЯЦИИ" : ПРИМЕНЕНИЕ ---------- /fold }
+//--- # mark TrackingSystemForExpandedNodes ------------------------------------
+// Отмечать деятельность системы "ССзРУ".
+// Дорисовывать в интерфейсе: отметки о сворачиваемых файлах.
+{$define in0k_LazIdeEXT_wndInspector_aFNcAFSE___mark_TrackingSystemForExpanded}
+//------------------------------------------------------------------------------
 
-{$ifNdef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_AutoExecute}
-    // это НЕ имеет смысла, тока путаницу вводит
-    {$undef in0k_LazIdeEXT_wndInspector_aFNcAFSE___AutoCollapse_mode_01}
-    {$undef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mark_ActiveFileFromSoureceEdit}
-    {$undef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mark_TrackingSystemForExpanded}
-{$endIf}
 
-{%endregion}
-{%region --- # режим ДЕБАГ --------------------------------------- /fold }
+//--- # DEBUG ------------------------------------------------------------------
 //  Позволяет просматривать лог событий в отдельном окне из IDE
 //  `View` -> `IDE Internals` -> `[eventLog]..wndInspector_aFNcAFSE..`
 {$define in0k_LazIdeEXT_wndInspector_aFNcAFSE___DebugLOG_mode}
@@ -70,21 +66,34 @@
     // можно подключить логи ПодСистем
     //{$define in0k_lazIdeSRC_FuckUpForm__DebugLOG_mode}
     //{$define in0k_lazIdeSRC_SourceEditor_onActivate__DebugLOG_mode}
-    {$define in0k_lazIdeSRC_B2SP___DebugLOG_mode}
+    //{$define in0k_lazIdeSRC_B2SP___DebugLOG_mode}
 {$endIf}
-{%endregion}
+//------------------------------------------------------------------------------
+
 {%region --- # дополнительные специальные настройки -------------- /fold }
 
 // настройка работы подСистемы
 {$unDEF in0k_lazIdeSRC_SourceEditor_onActivate__inFocusONLY} //< событие нужно в ЛЮБОМ состоянии
+
+{%endregion}
+{%region --- # "НАСТРОйКИ уровня КОМПИЛЯЦИИ" : ПРИМЕНЕНИЕ -------- /fold }
+
+{$ifNdef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mode_AutoExecute}
+    // это НЕ имеет смысла, тока путаницу вводит
+    {$undef in0k_LazIdeEXT_wndInspector_aFNcAFSE___AutoCollapse_mode_01}
+    {$undef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mark_ActiveFileFromSoureceEdit}
+    {$undef in0k_LazIdeEXT_wndInspector_aFNcAFSE___mark_TrackingSystemForExpanded}
+{$endIf}
 
 //--- возня с ОТКЛЮЧЕНИЕ дебага ----------------------------------------------//
 {$ifNDef lazExt_ProjectInspector_aFFfSE__EventLOG_mode}
     // НУЖНО ОТКЛЮЧИТЬ логи ПодСистем тоже
     {$undef in0k_lazIdeSRC_FuckUpForm__DebugLOG_mode}
     {$undef in0k_lazIdeSRC_SourceEditor_onActivate__DebugLOG_mode}
+    {$undef in0k_lazIdeSRC_B2SP___DebugLOG_mode}
 {$endIf}
 
 {%endregion}
+
 
 
