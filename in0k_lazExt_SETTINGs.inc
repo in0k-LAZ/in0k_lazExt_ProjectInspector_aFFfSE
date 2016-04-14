@@ -54,7 +54,6 @@
 // Отмечать деятельность системы "ССзРУ".
 // Дорисовывать в интерфейсе: отметки о сворачиваемых файлах.
 {$define in0k_LazIdeEXT_wndInspector_FF8S___mark_TrackingSystemForExpanded}
-{$define in0k_LazIdeEXT_wndInspector_FF8S___mark_TrackingSystemForExpanded}
 //------------------------------------------------------------------------------
 
 

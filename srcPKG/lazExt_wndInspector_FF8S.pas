@@ -1,5 +1,5 @@
 unit lazExt_wndInspector_FF8S;
-//< Главный класс компонента-Расширения
+//< Главный класс компонента-Расширения `... Find File & Select`
 
 {todo: описание и документация}
 
@@ -21,22 +21,20 @@ interface
 
 
 //--- # Ide COMMAND ----------------------------------------------------------//
-// Ручной режим работы.
 // Добавляется комманда IDE, на которую можно повешать "Горячую Клавишу"
 {$define in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand}
 // Если файл НЕ найден, то показать сообщение об этом
 {$define in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand_shomMsgIfNotFOUND}
 // Если файл НАЙДЕН, то окно соответствующего инспектора переместить на "ПЕРЕДНИЙ план"
 {$define in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand_useBringToFront}
-// Создать пункт меню в "Главном меню IDE" (SEACRH)
-{$define in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand_IdeMainMenu}
-// Создать пункт меню в "Меню Редакторе Исходного Кода" (правая клавиша в окне редактора)
-{$define in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand_SrcEditMenu}
+// Пункт меню: `IDE menu`->`Search`->`Find File in "Inspector"`
+{$define in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand_in_IdeMainMenu}
+// Пункт меню: `Source editor`->`Рopup menu`->`Find File in "Inspector"`
+{$define in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand_in_SrcEditMenu}
 //------------------------------------------------------------------------------
 
 
 //--- # Auto Execute ---------------------------------------------------------//
-// АВТОМАТИЧЕСКИЙ режим.
 // Автоматически срабатывает при переходе между вкладками "Редактора Исходного Кода"
 {$define in0k_LazIdeEXT_wndInspector_FF8S___AutoMODE}
 // Если файл НАЙДЕН, то окно соответствующего инспектора переместить на "ВТОРОЙ план"
@@ -52,12 +50,12 @@ interface
 {$unDef in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand}
 {$unDef in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand_useBringToFront}
 {$unDef in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand_shomMsgIfNotFOUND}
-{$unDef in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand_IdeMainMenu}
-{$unDef in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand_SrcEditMenu}
+{$unDef in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand_in_IdeMainMenu}
+{$unDef in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand_in_SrcEditMenu}
 {$unDef in0k_LazIdeEXT_wndInspector_FF8S___AutoMODE}
 {$unDef in0k_LazIdeEXT_wndInspector_FF8S___AutoMODE_useBringToSecondPlane}
 {%endregion}
-{$i in0k_lazExt_SETTINGs.inc} // КОНФИГУРАЦИЯ компонента-Расширения.
+{$i in0k_lazExt_SETTINGs.inc} // КОНФИГУРАЦИЯ "компонента-Расширения".
 {%region --- "НАСТРОйКИ уровня КОМПИЛЯЦИИ" : ПРИМЕНЕНИЕ ---------- /fold }
 
 {$ifDef in0k_LazIdeEXT_wndInspector_FF8S___DebugLOG}
@@ -69,15 +67,15 @@ interface
 //===== РУЧНОЙ режим  ==========================================================
 {$ifNDEF in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand} // не имеет смысла
     {$unDef in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand_useBringToFront}
-    {$unDef in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand_IdeMainMenu}
-    {$unDef in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand_SrcEditMenu}
+    {$unDef in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand_in_IdeMainMenu}
+    {$unDef in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand_in_SrcEditMenu}
 {$endIf}
 
 {$undef _local___use_MenuIntf_}
-{$ifDef in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand_IdeMainMenu}
+{$ifDef in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand_in_IdeMainMenu}
     {$define _local___use_MenuIntf_}
 {$endIf}
-{$ifDef in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand_SrcEditMenu}
+{$ifDef in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand_in_SrcEditMenu}
     {$define _local___use_MenuIntf_}
 {$endIf}
 
@@ -171,20 +169,19 @@ type
    _lair_nodes_wndInspector_:tLazExt_wndInspector_FF8S_NodeLST;
   protected
     function  _fileName_fromActiveSourceEdit_:string;
-
   protected //< ОСНОВНАЯ часть ... суть
     function  _select_inWindow_(const fileName:string; const Form:TForm; const nodeTYPE:tLazExt_wndInspector_aFFfSE_NodeTYPE):boolean;
     function  _select_inSCREEN_(const fileName:string):boolean;
     function  _select_:boolean;  //< ПРЯМОЙ вызов
   protected //< РУЧНОЕ событие
     {$ifDef in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand}
-    procedure _Event_IdeCommand_Execute_(Sender:TObject);
+    procedure _Event_IdeCommand_Execute_({%H-}Sender:TObject);
     {$endIf}
   protected //< АВТО событие
     {$ifDef in0k_LazIdeEXT_wndInspector_FF8S___AutoMODE}
     procedure _select_heldCall_; //< ОТЛОЖЕННЫЙ вызов
-    procedure _Event_SourceEditor_onActivate_(Sender:TObject);
-    procedure _Event_wndNodes_ProjectAddNode_(Sender:TObject);
+    procedure _Event_SourceEditor_onActivate_({%H-}Sender:TObject);
+    procedure _Event_wndNodes_ProjectAddNode_({%H-}Sender:TObject);
     {$endIf}
   public
     constructor Create;
@@ -199,7 +196,7 @@ type
     procedure _LazarusIDE_CLEAN__mode_autoExecute_;
     {$endIf}
   protected
-    procedure  LazarusIDE_OnIDEClose(Sender:TObject);
+    procedure  LazarusIDE_OnIDEClose({%H-}Sender:TObject);
   public
     procedure  LazarusIDE_SetUP;
     procedure  LazarusIDE_CLEAN;
@@ -300,11 +297,11 @@ begin
     Key   :=IDEShortCut(VK_F,[ssShift, ssAlt, ssCtrl],VK_UNKNOWN,[]);
     Cat   :=IDECommandList.FindCategoryByName(CommandCategoryToolMenuName);
     MyTool:=RegisterIDECommand(Cat, _cIdeCommand_NAME_,_cIdeCommand_DESC_, Key, @_Event_IdeCommand_Execute_,nil);
-    {$ifDef in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand_IdeMainMenu}
+    {$ifDef in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand_in_IdeMainMenu}
     // пункт меню В ГЛАВНОМ (Search)
     RegisterIDEMenuCommand(mnuSearch, _cIdeCommand_DESC_, _cIdeCommand_NAME_, nil, nil, MyTool);
     {$endIf}
-    {$ifDef in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand_SrcEditMenu}
+    {$ifDef in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand_in_SrcEditMenu}
     // пункт меню в редакторе исходного кода (по правой клавише)
     RegisterIDEMenuCommand(SrcEditMenuSectionFirstStatic,_cIdeCommand_DESC_, _cIdeCommand_NAME_, nil, nil, MyTool);
     {$endIf}
@@ -539,25 +536,22 @@ end;
 
 //------------------------------------------------------------------------------
 
-//------------------------------------------------------------------------------
-
 {$ifDef in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand}
 procedure tLazExt_wndInspector_FF8S._Event_IdeCommand_Execute_(Sender:TObject);
 begin
     {$ifDef _debugLOG_}
     DEBUG('_Event_IdeCommand_Execute_', '>>>');
     {$endIf}
-    // тут ВСЕ выполняется из "ГЛАВНОГО" потока ... можно применить ПРЯМОЙ вызов
     {$ifDef in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand_useBringToFront}
    _wndZOrederMoving_mode_set_(1);
     {$endIf}
-
-    {$ifNDef in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand_shomMsgIfNotFOUND}
-   _select_;
-    {$else}
+    // тут ВСЕ выполняется из "ГЛАВНОГО" потока ... можно применить ПРЯМОЙ вызов
+    {$ifDef in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand_shomMsgIfNotFOUND}
     if NOT _select_ then begin
         MessageDlg('Not found','File'+LineEnding+'"'+_fileName_fromActiveSourceEdit_+'"'+LineEnding+'NOT found in opened "Inspector" windows.',mtWarning,[mbOK],0);
     end;
+    {$else}
+   _select_;
     {$endIf}
 end;
 {$endIf}

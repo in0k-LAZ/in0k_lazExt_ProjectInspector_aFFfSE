@@ -12,6 +12,15 @@
         <OtherUnitFiles Value="srcEXT\in0k-lazarusIdeSRC-wndDEBUG;srcEXT\in0k-lazarusIdeSRC-SourceEditor-onActivate;srcEXT\in0k-lazarusIdeSRC-FuckUpForm;srcEXT\in0k-lazarusIdeSRC-testFormIS;srcEXT\in0k-bringToSecondPlane;srcEXT\in0k-lazarusIdeSRC-B2SP;srcPKG;srcPKG\wndNodes"/>
         <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>
+      <Other>
+        <Verbosity>
+          <ShoLineNum Value="True"/>
+          <ShowExecInfo Value="True"/>
+          <ShowHintsForUnusedUnitsInMainSrc Value="True"/>
+          <ShowHintsForSenderNotUsed Value="True"/>
+        </Verbosity>
+        <WriteFPCLogo Value="False"/>
+      </Other>
     </CompilerOptions>
     <Files Count="7">
       <Item1>
