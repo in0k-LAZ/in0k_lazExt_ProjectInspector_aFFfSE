@@ -27,7 +27,7 @@
 
 ## Installation and Configuration
 * Sources: clone the repository with ALL subprojects OR 
-  download the latest version of the "FULL source code" archive ('.._fullSRC.zip')
+  download the latest version of the "FULL source code" archive (`.._fullSRC.zip`)
 * Installation: It uses a [standard](I0) installation package scheme 
 * Configuration: before the "build" package, edit the file `in0k_lazExt_SETTINGs.inc`.
 
