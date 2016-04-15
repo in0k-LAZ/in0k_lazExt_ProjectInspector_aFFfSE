@@ -89,6 +89,10 @@ interface
 {$unDef _fuckUp__ide_object_WND_onDeActivate_}
 {$unDef _fuckUp__ide_object_VTV_onAddition_}
 {$unDef _fuckUp__ide_object_VTV_onAdvancedCustomDrawItem_}
+{$unDef _fuckUp__ide_object_VTV_onAdvancedCustomDraw_}
+
+{$define _fuckUp__ide_object_VTV_onAdvancedCustomDraw_}
+
 
 //==============================================================================
 
@@ -186,7 +190,7 @@ uses {$ifDef _debugLOG_}in0k_lazExt_DEBUG,{$endIf}
      {$ifDef _local___use_Classes_}Classes,{$endIf}
      {$ifDef _local___use_Graphics_}Graphics,{$endIf}
      {$ifDef _local___use_Menus_}Menus,{$endIf}
-     SrcEditorIntf,
+     SrcEditorIntf, LCLProc, LCL,
      in0k_lazIdeSRC_FuckUpForm;
 
 type
@@ -291,7 +295,7 @@ type
    _ide_object_VTV_onDeletion_original_:TTVExpandedEvent;
     procedure _VTV_onDeletion_myCustom_(Sender:TObject; Node:TTreeNode);
   {$ifDef _fuckUp__ide_object_VTV_onAdvancedCustomDrawItem_}
-  private //< ФакАпим РИСОВАНИЕ
+  private //< ФакАпим рисование УЗЛА
    _ide_object_VTV_onAdvancedCustomDrawItem_original_:TTVAdvancedCustomDrawItemEvent;
     procedure _VTV_onAdvancedCustomDrawItem_myCustom_(Sender:TCustomTreeView; Node:TTreeNode; State:TCustomDrawState; Stage:TCustomDrawStage; var PaintImages,DefaultDraw:Boolean);
   private //< рисование ДОП примитивов
@@ -304,6 +308,15 @@ type
     procedure _VTV_drawMARK_clspMARK_(const Sender:TCustomTreeView; const Node:TTreeNode; const Color:TColor);
     procedure _VTV_onAdvancedCustomDrawItem_myCustom_clspMARK(const Sender:TCustomTreeView; const Node:TTreeNode);
     {$endif}
+  {$endIf}
+  {$ifDef _fuckUp__ide_object_VTV_onAdvancedCustomDraw_}
+  private //< ФакАпим рисование ВСЕГО
+   _VTV_drawMARK_miniMap_Active_Width_:integer;
+    function _VTV_drawMARK_miniMap_Active_Width_CLC_:integer;
+  private //< ФакАпим рисование ВСЕГО
+   _VTV_drawMARK_selected_MIDLE_:integer;
+   _ide_object_VTV_onAdvancedCustomDraw_original_:TTVAdvancedCustomDrawEvent;
+    procedure _VTV_onAdvancedCustomDraw_myCustom_(Sender:TCustomTreeView; const ARect:TRect; Stage:TCustomDrawStage; var DefaultDraw:Boolean);
   {$endIf}
   {%endregion}
   {%region --- собятия для родителя ------------------------------- /fold}
@@ -585,6 +598,10 @@ begin
            _ide_object_VTV_onAdvancedCustomDrawItem_original_:=_treeView_.OnAdvancedCustomDrawItem;
            _treeView_.OnAdvancedCustomDrawItem:=@_VTV_onAdvancedCustomDrawItem_myCustom_;
             {$endIf}
+            {$ifDef _fuckUp__ide_object_VTV_onAdvancedCustomDraw_}
+           _ide_object_VTV_onAdvancedCustomDraw_original_:=_treeView_.OnAdvancedCustomDraw;
+           _treeView_.OnAdvancedCustomDraw:=@_VTV_onAdvancedCustomDraw_myCustom_;
+            {$endIf}
             //---
             {$ifDef _fuckUp__ide_object_IPM_onPopUp_}
             if Assigned(_treeView_.PopupMenu) then begin
@@ -864,6 +881,71 @@ begin
 end;
 {$endif}
 
+{$ifDef _fuckUp__ide_object_VTV_onAdvancedCustomDraw_}
+
+function tLazExt_wndInspector_FF8S_wndNode._VTV_drawMARK_miniMap_Active_Width_CLC_:integer;
+begin
+
+    getSytemM
+    result:= ComCtrls.ScrollBarWidth div 4;
+    if result=0 then result:=4;
+end;
+
+
+procedure tLazExt_wndInspector_FF8S_wndNode._VTV_onAdvancedCustomDraw_myCustom_(Sender:TCustomTreeView; const ARect:TRect; Stage:TCustomDrawStage; var DefaultDraw:Boolean);
+var X:integer;
+  r:TRect;
+    N:tTreeNode;
+begin
+    //--- вызов ОРИГИНАЛЬНОГО обработчика, то что было изначально
+    if Assigned(_ide_object_VTV_onAdvancedCustomDraw_original_) then _ide_object_VTV_onAdvancedCustomDraw_original_(Sender,ARect,Stage,DefaultDraw);
+    //--- моя "нагрузка" ----------------------------------------
+    if Stage=cdPostPaint then begin
+        DefaultDraw:=TRUE;
+        if Assigned(_slctNode_) then begin
+//            _VTV_drawMARK_selected_(sender,_slctNode_,clRed);
+          {  sender.Canvas.Pen.Color:=clRED;
+           _slctNode_.DisplayRect(true);
+            Sender.Canvas.Frame(R); }
+
+    Sender.Canvas.Pen.Color:=clRed;
+    {r:=_slctNode_.DisplayRect(TRUE);
+    Sender.Canvas.Frame(R);
+
+    }
+    N:=sender.Items.GetLastExpandedSubNode;
+    X:=N.Top+N.Height;
+    X:=trunc((_slctNode_.Top/X)*(ARect.Bottom-ARect.Top)+ARect.Top); //Sender.ClientHeight))-tTree(Sender).ScrolledTop;
+    Sender.Canvas.Line(R.Right,R.Top,ARect.Right-4,X);
+
+    R.Top   :=X;
+    R.Left  :=ARect.Right-_VTV_drawMARK_miniMap_Active_Width_CLC_;
+    R.Bottom:=X+_slctNode_.Height;
+    R.Right:=ARect.Right;
+
+
+    Sender.Canvas.Frame( R);
+    Sender.Canvas.Line(r.Left,_VTV_drawMARK_selected_MIDLE_,r.Left ,r.Top);
+
+
+    {
+
+
+            N:=sender.Items.GetLastExpandedSubNode;
+            X:=N.Top+N.Height;
+            X:=trunc((Node.Top/X)*Sender.ClientHeight)-tTree(Sender).ScrolledTop;
+
+    Sender.Canvas.Line(r.Right,r.Top,Sender.Canvas.Width,x);
+
+            }
+
+        end;
+
+    end;
+end;
+{$endif}
+
+
 //------------------------------------------------------------------------------
 
 {$ifDef _fuckUp__ide_object_IPM_onPopUp_}
@@ -1030,15 +1112,57 @@ end;
 
 {$ifDef in0k_LazIdeEXT_wndInspector_FF8S___mark_ActiveFileFromSoureceEdit}
 
+type
+  tTree=class(TTreeView)
+   public
+     property ScrolledTop;
+     function my_getMaxScrollTOP:integer;
+   end;
+
+function tTree.my_getMaxScrollTOP:integer;
+begin
+    result:=GetMaxScrollTop;
+end;
+
+
+
 // рисуем Прямоугольник с линией Справа
 procedure tLazExt_wndInspector_FF8S_wndNode._VTV_drawMARK_selected_(const Sender:TCustomTreeView; const Node:TTreeNode; const Color:TColor);
 var r:TRect;
+  x:integer;
+  N:TTreeNode;
 begin
     Sender.Canvas.Pen.Color:=Color;
     r:=Node.DisplayRect(TRUE);
     Sender.Canvas.Frame(R);
     r.Top:=(r.Bottom+r.Top) div 2;
     Sender.Canvas.Line(r.Right,r.Top,Sender.Canvas.Width,r.Top);
+    //-----------------
+   _VTV_drawMARK_selected_MIDLE_:=r.Top;
+//    with sender.Items.GetLastExpandedSubNode do begin
+//        X:=Top+Height;
+//    end;
+//    X:=trunc( (Node.Top/(X))* Sender.ClientHeight);;
+
+    X:=tTree(Sender).ClientHeight;
+    //X:=tTree(Sender).my_getMaxScrollTOP;
+    X:=trunc( (Node.Top/(X+tTree(Sender).my_getMaxScrollTOP))* X);;
+
+    N:=sender.Items.GetLastExpandedSubNode;
+    X:=N.Top+N.Height;
+
+    //
+    X:=trunc((Node.Top/X)*Sender.ClientHeight)-tTree(Sender).ScrolledTop;
+
+    Sender.Canvas.Line(r.Right,r.Top,Sender.Canvas.Width,x);
+
+    GetSystemMetrics
+
+//    Node.Top;
+
+//    Sender.ClientHeight:=;
+
+
 end;
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -1087,6 +1211,7 @@ begin
     // РИСУЕМ
     Sender.Canvas.Line(r.Left,r.Top   ,r.Right,r.Top);
     Sender.Canvas.Line(r.Left,r.Bottom,r.Left ,r.Top);
+    //---
 end;
 
 // рисование: МАРКЕР авто-Сворачивания
@@ -1142,14 +1267,9 @@ end;
 //------------------------------------------------------------------------------
 
 procedure tLazExt_wndInspector_FF8S_wndNode._IMP_do_treeView_Collapse_All_;
-var treeNode:TTreeNode;
 begin
    _treeView_.BeginUpdate;
-    treeNode:=_treeView_.Items.GetFirstNode;
-    while Assigned(treeNode) do begin
-        treeNode.Collapse(false);
-        treeNode:=treeNode.GetNext;
-    end;
+   _treeView_.FullCollapse;
    _treeView_.EndUpdate;
 end;
 
