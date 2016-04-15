@@ -103,8 +103,8 @@ interface
 {%endregion}
 
 uses {$ifDef _debugLOG_}in0k_lazExt_DEBUG,{$endIf}
-     Classes, Forms,
-     LazIDEIntf, SrcEditorIntf,
+     Classes, Forms, Controls,
+     LazIDEIntf, SrcEditorIntf, ProjectIntf, PackageIntf,
      LCLIntf, //< это для GetTickCount64 в (Laz 1.4) {todo: обернуть в предКомпиляцию}
      //--- ручной режим
      {$ifDef in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand}
@@ -239,6 +239,11 @@ procedure tLazExt_wndInspector_FF8S.LazarusIDE_SetUP;
 begin
    _lair_nodes_wndInspector_.CLEAR;
     LazarusIDE.AddHandlerOnIDEClose(@LazarusIDE_OnIDEClose);
+    //LazarusIDE.AddHandlerOnProjectOpened(@LazarusIDE_OnProjectOpen,true);
+    //PackageEditingInterface.AddHandlerOnPackageFileLoaded(@LazarusIDE_OnPackageOpen);
+
+    //PackageEditingInterface.DoOpenPackageFile();
+
     {$ifDef in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand}
    _LazarusIDE_SetUP__mode_ideCommand_;
     {$endIf}
@@ -285,7 +290,6 @@ end;
 {$ifDef in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand}
 
 {todo: а как же быть с переводом????}
-
 const _cIdeCommand_NAME_='Find File in "Inspector"';
 const _cIdeCommand_DESC_='Find current activ in source edit File in "Inspector" windows';
 
@@ -321,6 +325,11 @@ procedure tLazExt_wndInspector_FF8S.LazarusIDE_OnIDEClose(Sender:TObject);
 begin
     LazarusIDE_Clean;
 end;
+
+{TODO: надо как-то перейти на нижеЗакомментированные методы ..
+       LazarusIDE_OnProjectOpen(Sender:TObject; AProject:TLazProject):TModalResult;
+       LazarusIDE_OnPackageOpen(Sender: TObject);
+       последний пока чет не работает не работает :-(                          }
 
 //------------------------------------------------------------------------------
 

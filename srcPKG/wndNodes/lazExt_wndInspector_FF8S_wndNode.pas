@@ -42,6 +42,14 @@ interface
 {$define in0k_LazIdeEXT_wndInspector_FF8S___mark_TrackingSystemForExpanded}
 //------------------------------------------------------------------------------
 
+
+//--- # PopUp menu -------------------------------------------------------------
+// Добавлять пункты меню к PopUpMenu "Дерева Зависимостей"
+{$define in0k_LazIdeEXT_wndInspector_FF8S___treeViewPopUp_Collapse_All}
+{$define in0k_LazIdeEXT_wndInspector_FF8S___treeViewPopUp_Collapse_withOutFocused}
+{$define in0k_LazIdeEXT_wndInspector_FF8S___treeViewPopUp_Collapse_withOutActive}
+//------------------------------------------------------------------------------
+
 {%endregion}
 {%region --- "НАСТРОйКИ уровня КОМПИЛЯЦИИ" : ОЧИСТКА ------------- /fold }
 //----------------------------------------------------------------------------//
@@ -53,6 +61,9 @@ interface
 {$unDef in0k_LazIdeEXT_wndInspector_FF8S___AutoMODE_AutoCollapse_mode01}
 {$unDef in0k_LazIdeEXT_wndInspector_FF8S___mark_ActiveFileFromSoureceEdit}
 {$unDef in0k_LazIdeEXT_wndInspector_FF8S___mark_TrackingSystemForExpanded}
+{$unDef in0k_LazIdeEXT_wndInspector_FF8S___treeViewPopUp_Collapse_All}
+{$unDef in0k_LazIdeEXT_wndInspector_FF8S___treeViewPopUp_Collapse_withOutFocused}
+{$unDef in0k_LazIdeEXT_wndInspector_FF8S___treeViewPopUp_Collapse_withOutActive}
 {%endregion}
 {$i in0k_lazExt_SETTINGs.inc} // настройка-конфигурация Компонента-Расширения
 {%region --- "НАСТРОйКИ уровня КОМПИЛЯЦИИ" : ПРИМЕНЕНИЕ ---------- /fold }
@@ -71,6 +82,8 @@ interface
 
 {$undef _local___use_Classes_}
 {$undef _local___use_Graphics_}
+{$undef _local___prc_treeNode_do_expandAllParent_}
+
 
 {$unDef _fuckUp__ide_object_WND_onActivate_}
 {$unDef _fuckUp__ide_object_WND_onDeActivate_}
@@ -79,7 +92,9 @@ interface
 
 //==============================================================================
 
-{$ifNdef in0k_LazIdeEXT_wndInspector_FF8S___AutoExpand}
+{$ifDef in0k_LazIdeEXT_wndInspector_FF8S___AutoExpand}
+    {$define _local___prc_treeNode_do_expandAllParent_}
+{$else}
     // БЕЗ автоматического разворачивания это НЕИМЕЕТ СМЫСЛА
     {$undef in0k_LazIdeEXT_wndInspector_FF8S___AutoMODE_AutoCollapse_mode01}
     {$undef lazExt_ProjectInspector_aFFfSE__TrackingSystemForExpanded_mode_02}
@@ -119,10 +134,10 @@ interface
 
 // --- событие добавления узлов в дерево
 
-{$define _local__NodeListHave_onNodeAdd_}
+{$define _local___NodeListHave_onNodeAdd_}
 {$define _fuckUp__ide_object_VTV_onAddition_}
 {$ifNdef in0k_LazIdeEXT_wndInspector_FF8S___AutoMODE}
-    {$unDef _local__NodeListHave_onNodeAdd_}
+    {$unDef _local___NodeListHave_onNodeAdd_}
     {$unDef _fuckUp__ide_object_VTV_onAddition_}
 {$endIf}
 
@@ -139,8 +154,30 @@ interface
     {$define _local___use_Graphics_}
 {$endIf}
 
+//==============================================================================
+// работа с PopUP
 
-
+{$undef _fuckUp__ide_object_IPM_onPopUp_}
+{$undef _local___use_Menus_}
+{$undef _local___treeView_popUp_}
+{$IfDef in0k_LazIdeEXT_wndInspector_FF8S___treeViewPopUp_Collapse_All}
+    {$define _fuckUp__ide_object_IPM_onPopUp_}
+    {$define _local___prc_treeNode_do_expandAllParent_}
+    {$define _local___treeView_popUp_}
+    {$define _local___use_Menus_}
+{$endIf}
+{$IfDef in0k_LazIdeEXT_wndInspector_FF8S___treeViewPopUp_Collapse_withOutFocused}
+    {$define _fuckUp__ide_object_IPM_onPopUp_}
+    {$define _local___prc_treeNode_do_expandAllParent_}
+    {$define _local___treeView_popUp_}
+    {$define _local___use_Menus_}
+{$endIf}
+{$IfDef in0k_LazIdeEXT_wndInspector_FF8S___treeViewPopUp_Collapse_withOutActive}
+    {$define _fuckUp__ide_object_IPM_onPopUp_}
+    {$define _local___prc_treeNode_do_expandAllParent_}
+    {$define _local___treeView_popUp_}
+    {$define _local___use_Menus_}
+{$endIf}
 
 {%endregion}
 
@@ -148,7 +185,7 @@ uses {$ifDef _debugLOG_}in0k_lazExt_DEBUG,{$endIf}
      Forms, ComCtrls, TreeFilterEdit, Controls,
      {$ifDef _local___use_Classes_}Classes,{$endIf}
      {$ifDef _local___use_Graphics_}Graphics,{$endIf}
-
+     {$ifDef _local___use_Menus_}Menus,{$endIf}
      SrcEditorIntf,
      in0k_lazIdeSRC_FuckUpForm;
 
@@ -170,13 +207,14 @@ type
     procedure _treeView_SET_(const value:tTreeView);
     procedure _treeView_set_DO_autoExpand_;
   protected
+    {$ifDef _local___prc_treeNode_do_expandAllParent_}
+    procedure _treeNode_do_expandAllParent_(const node:TTreeNode); inline;
+    {$endif}
+  protected
    _slctNode_:TTreeNode; //< последний отмеченный узел
    _slctFile_:string;    //< последний отмеченный узел (имя файла) нужен для отлова событый связанных с "перевставкой узлов"
     procedure _slctNode_SET_(const value:TTreeNode);
     procedure _slctNode_do_selectInTREE_;
-    {$ifDef in0k_LazIdeEXT_wndInspector_FF8S___AutoExpand}
-    procedure _slctNode_do_expandAllParent_(const node:TTreeNode); inline;
-    {$endif}
   protected
   {%region --- Система Слежение за Развернутыми Узлами (ССзРУ) ---- /fold}
   {$ifDef lazExt_ProjectInspector_aFFfSE__TSfEN_ON}
@@ -203,6 +241,31 @@ type
     {%endregion}
   {$endif}
   {%endregion}
+  {%region --- Работа с treeView PopUP Menu ----------------------- /fold}
+  {$ifDef _local___treeView_popUp_}
+  protected
+    procedure _IMP_onPopUP_; virtual;
+  protected
+    function  _IMP_PopupMenu_FND_   (const PM:TPopupMenu; const AnEvent:TNotifyEvent):TMenuItem;
+    function  _IMP_PopupMenu_CRT_   (const PM:TPopupMenu; const AnEvent:TNotifyEvent):TMenuItem;
+  private
+    procedure _IMP_do_treeView_Collapse_All_;
+  protected
+    function  _IMP_prepare_Separator_:TMenuItem;
+    {$IfDef in0k_LazIdeEXT_wndInspector_FF8S___treeViewPopUp_Collapse_All}
+    procedure _IMP_do_treeViewPopUp_Collapse_All({%H-}Sender:TObject);
+    function  _IMP_prepare_menuItem_Collapse_All_:TMenuItem;
+    {$endIf}
+    {$IfDef in0k_LazIdeEXT_wndInspector_FF8S___treeViewPopUp_Collapse_withOutFocused}
+    procedure _IMP_do_treeViewPopUp_Collapse_withOutFocused({%H-}Sender:TObject);
+    function  _IMP_prepare_menuItem_Collapse_withOutFocused:TMenuItem;
+    {$endIf}
+    {$IfDef in0k_LazIdeEXT_wndInspector_FF8S___treeViewPopUp_Collapse_withOutActive}
+    procedure _IMP_do_treeViewPopUp_Collapse_withOutActive({%H-}Sender:TObject);
+    function  _IMP_prepare_menuItem_Collapse_withOutActive:TMenuItem;
+    {$endIf}
+  {$endif}
+  {%endregion}
   {%region --- сабЕвентинг событий форма и её компанентов --------- /fold}
   {$ifDef _fuckUp__ide_object_WND_onActivate_}
   private //< ФакАпим получение фокуса формой
@@ -218,6 +281,11 @@ type
   private //< ФакАпим ДОБАВЛЕНИЕ нового узла в дерево
    _ide_object_VTV_onAddition_original_:TTVExpandedEvent;
     procedure _VTV_onAddition_myCustom_(Sender:TObject; Node:TTreeNode);
+  {$endIf}
+  {$ifDef _fuckUp__ide_object_IPM_onPopUp_}
+  private //< ФакАпим Событие "появление PopUP"
+   _ide_object_IPM_onPopUp_original_:TNotifyEvent;
+    procedure _IPM_onPopUp_myCustom_(Sender:TObject);
   {$endIf}
   private //< ФакАпим УДАЛЕНИЕ узла из дерева
    _ide_object_VTV_onDeletion_original_:TTVExpandedEvent;
@@ -239,7 +307,7 @@ type
   {$endIf}
   {%endregion}
   {%region --- собятия для родителя ------------------------------- /fold}
-  {$ifDef _local__NodeListHave_onNodeAdd_}
+  {$ifDef _local___NodeListHave_onNodeAdd_}
   private //< событие для радителя ... "узел добавлен"
    _owner_onNodeAdd_:TNotifyEvent;
   public
@@ -257,7 +325,7 @@ type
   // ХРАНИТЕЛЬ списка окон, которые мы обрабатываем
  tLazExt_wndInspector_FF8S_NodeLST=class(tIn0k_lazIdeSRC_FuckUpFrms_LIST)
   {%region --- собятия для родителя ------------------------------- /fold}
-  {$ifDef _local__NodeListHave_onNodeAdd_}
+  {$ifDef _local___NodeListHave_onNodeAdd_}
   private //< событие для радителя ... "узел добавлен"
    _owner_onNodeAdd_:TNotifyEvent;
   public
@@ -302,6 +370,9 @@ begin
    _ide_object_VTV_onDeletion_original_:=NIL;
     {$ifDef _fuckUp__ide_object_VTV_onAdvancedCustomDrawItem_}
    _ide_object_VTV_onAdvancedCustomDrawItem_original_:=nil;
+    {$endIf}
+    {$ifDef _fuckUp__ide_object_IPM_onPopUp_}
+   _ide_object_IPM_onPopUp_original_:=NIL;
     {$endIf}
 end;
 
@@ -502,18 +573,25 @@ begin
         //---
        _treeView_SET_(treeView_FIND(FORM));
         if Assigned(_treeView_) then begin
-             {$ifDef _fuckUp__ide_object_VTV_onAddition_}
-            _ide_object_VTV_onAddition_original_:=_treeView_.OnAddition;
-            _treeView_.OnAddition:=@_VTV_onAddition_myCustom_;
-             {$endIf}
-             //---
-            _ide_object_VTV_onDeletion_original_:=_treeView_.OnDeletion;
-            _treeView_.OnDeletion:=@_VTV_onDeletion_myCustom_;
-             //---
-             {$ifDef _fuckUp__ide_object_VTV_onAdvancedCustomDrawItem_}
-            _ide_object_VTV_onAdvancedCustomDrawItem_original_:=_treeView_.OnAdvancedCustomDrawItem;
-            _treeView_.OnAdvancedCustomDrawItem:=@_VTV_onAdvancedCustomDrawItem_myCustom_;
-             {$endIf}
+            {$ifDef _fuckUp__ide_object_VTV_onAddition_}
+           _ide_object_VTV_onAddition_original_:=_treeView_.OnAddition;
+           _treeView_.OnAddition:=@_VTV_onAddition_myCustom_;
+            {$endIf}
+            //---
+           _ide_object_VTV_onDeletion_original_:=_treeView_.OnDeletion;
+           _treeView_.OnDeletion:=@_VTV_onDeletion_myCustom_;
+            //---
+            {$ifDef _fuckUp__ide_object_VTV_onAdvancedCustomDrawItem_}
+           _ide_object_VTV_onAdvancedCustomDrawItem_original_:=_treeView_.OnAdvancedCustomDrawItem;
+           _treeView_.OnAdvancedCustomDrawItem:=@_VTV_onAdvancedCustomDrawItem_myCustom_;
+            {$endIf}
+            //---
+            {$ifDef _fuckUp__ide_object_IPM_onPopUp_}
+            if Assigned(_treeView_.PopupMenu) then begin
+               _ide_object_IPM_onPopUp_original_:=_treeView_.PopupMenu.OnPopup;
+               _treeView_.PopupMenu.OnPopup:=@_IPM_onPopUp_myCustom_;
+            end;
+            {$endIf}
         end
         else begin //< это ОГРОМНЫЙ касяк ... надо чтобы мне сообщили
             {todo: окошко с просьбой сообщить мне и удалить компонент}
@@ -642,6 +720,21 @@ end;
 
 //------------------------------------------------------------------------------
 
+{$ifDef _local___prc_treeNode_do_expandAllParent_}
+// разворачивание ВСЕХ родиетелей узла
+procedure tLazExt_wndInspector_FF8S_wndNode._treeNode_do_expandAllParent_(const node:TTreeNode);
+var tmp:TTreeNode;
+begin
+    tmp:=node.Parent;
+    while Assigned(tmp) do begin
+        tmp.Expand(false);
+        tmp:=tmp.Parent;
+    end;
+end;
+{$endif}
+
+//------------------------------------------------------------------------------
+
 procedure tLazExt_wndInspector_FF8S_wndNode._slctNode_SET_(const value:TTreeNode);
 begin
     {$ifDef _debugLOG_}
@@ -673,7 +766,7 @@ begin
                     Selected:=_slctNode_;
             end{$ifDef in0k_LazIdeEXT_wndInspector_FF8S___AutoExpand}
             else begin // убедимся что ВСЕ родители узла РАЗВЕРНУТЫ
-               _slctNode_do_expandAllParent_(_slctNode_)
+               _treeNode_do_expandAllParent_(_slctNode_)
             end{$endif};
             EndUpdate;
         end;
@@ -686,19 +779,6 @@ begin
        if not Assigned(_slctNode_) then DEBUG('ERROR','not Assigned(_slctNode_)')
     end{$endIf};
 end;
-
-{$ifDef in0k_LazIdeEXT_wndInspector_FF8S___AutoExpand}
-// разворачивание ВСЕХ родиетелей узла
-procedure tLazExt_wndInspector_FF8S_wndNode._slctNode_do_expandAllParent_(const node:TTreeNode);
-var tmp:TTreeNode;
-begin
-    tmp:=node.Parent;
-    while Assigned(tmp) do begin
-        tmp.Expand(false);
-        tmp:=tmp.Parent;
-    end;
-end;
-{$endif}
 
 //------------------------------------------------------------------------------
 
@@ -783,6 +863,18 @@ begin
     {$endif}
 end;
 {$endif}
+
+//------------------------------------------------------------------------------
+
+{$ifDef _fuckUp__ide_object_IPM_onPopUp_}
+procedure tLazExt_wndInspector_FF8S_wndNode._IPM_onPopUp_myCustom_(Sender:TObject);
+begin
+    //--- вызов ОРИГИНАЛЬНОГО обработчика, то что было изначально
+    if Assigned(_ide_object_IPM_onPopUp_original_) then _ide_object_IPM_onPopUp_original_(Sender);
+    //--- моя "нагрузка" ----------------------------------------
+   _IMP_onPopUP_;
+end;
+{$endIf}
 
 {%endregion}
 
@@ -1010,6 +1102,165 @@ end;
 {%endregion}
 {$endif _fuckUp__ide_object_VTV_onAdvancedCustomDrawItem_}
 
+{$ifDef _local___treeView_popUp_}
+{%region --- Работа с treeView PopUP Menu ------------------------- /fold}
+
+procedure tLazExt_wndInspector_FF8S_wndNode._IMP_onPopUP_;
+begin
+    // do nofing
+end;
+
+//------------------------------------------------------------------------------
+
+function tLazExt_wndInspector_FF8S_wndNode._IMP_PopupMenu_FND_(const PM:TPopupMenu; const AnEvent:TNotifyEvent):TMenuItem;
+var i:integer;
+begin
+    result:=nil;
+    if not( Assigned(PM) and Assigned(AnEvent)) then exit;
+    //---
+    for i:=0 to PM.Items.Count-1 do begin
+        if PM.Items[i].OnClick=AnEvent then begin
+            result:=PM.Items[i];
+            BREAK;
+        end;
+    end;
+end;
+
+function tLazExt_wndInspector_FF8S_wndNode._IMP_PopupMenu_CRT_(const PM:TPopupMenu; const AnEvent:TNotifyEvent):TMenuItem;
+begin
+    result:=TMenuItem.Create(self.Form);
+    PM.Items.Add(result);
+    //---
+    result.OnClick:=AnEvent;
+    result.Checked:=false;
+    result.ShowAlwaysCheckable:=false;
+    result.Visible:=true;
+    result.RadioItem:=false;
+    result.ImageIndex:=-1;
+end;
+
+//------------------------------------------------------------------------------
+
+procedure tLazExt_wndInspector_FF8S_wndNode._IMP_do_treeView_Collapse_All_;
+var treeNode:TTreeNode;
+begin
+   _treeView_.BeginUpdate;
+    treeNode:=_treeView_.Items.GetFirstNode;
+    while Assigned(treeNode) do begin
+        treeNode.Collapse(false);
+        treeNode:=treeNode.GetNext;
+    end;
+   _treeView_.EndUpdate;
+end;
+
+//------------------------------------------------------------------------------
+
+const {todo: а как же быть с переводом????}
+  _cPopUpMenu__CORE_Collapse_All__Caption_='Collapse All';
+
+function tLazExt_wndInspector_FF8S_wndNode._IMP_prepare_Separator_:TMenuItem;
+begin
+    result:=_IMP_PopupMenu_CRT_(_treeView_.PopupMenu,nil);
+    result.Caption:='-';
+end;
+
+//------------------------------------------------------------------------------
+
+{$IfDef in0k_LazIdeEXT_wndInspector_FF8S___treeViewPopUp_Collapse_All}
+
+procedure tLazExt_wndInspector_FF8S_wndNode._IMP_do_treeViewPopUp_Collapse_All(Sender:TObject);
+begin
+    if not Assigned(_treeView_) then Exit; //< на всяк пожарный
+    //---
+   _IMP_do_treeView_Collapse_All_
+end;
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+const {todo: а как же быть с переводом????}
+  _cPopUpMenu__Collapse_All__Caption_=_cPopUpMenu__CORE_Collapse_All__Caption_;
+  _cPopUpMenu__Collapse_All__Hint_   ='';
+
+function tLazExt_wndInspector_FF8S_wndNode._IMP_prepare_menuItem_Collapse_All_:TMenuItem;
+begin
+    result:=_IMP_PopupMenu_FND_(_treeView_.PopupMenu,@_IMP_do_treeViewPopUp_Collapse_All);
+    if not Assigned(result) then begin
+        result:=_IMP_PopupMenu_CRT_(_treeView_.PopupMenu,@_IMP_do_treeViewPopUp_Collapse_All);
+        result.Caption:=_cPopUpMenu__Collapse_All__Caption_;
+        result.Hint   :=_cPopUpMenu__Collapse_All__Hint_;
+    end;
+    result.Enabled:=TRUE;
+end;
+
+{$endIf}
+
+{$IfDef in0k_LazIdeEXT_wndInspector_FF8S___treeViewPopUp_Collapse_withOutFocused}
+
+procedure tLazExt_wndInspector_FF8S_wndNode._IMP_do_treeViewPopUp_Collapse_withOutFocused(Sender:TObject);
+begin
+    if not ( Assigned(_treeView_) and Assigned(_treeView_.Selected) ) then Exit; //< на всяк пожарный
+    //---
+   _treeView_.BeginUpdate; //< он коммулятивный
+       _IMP_do_treeView_Collapse_All_;
+       _treeNode_do_expandAllParent_(_treeView_.Selected);
+   _treeView_.EndUpdate;
+end;
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+const {todo: а как же быть с переводом????}
+  _cPopUpMenu__Collapse_withOutFocused__Caption_=_cPopUpMenu__CORE_Collapse_All__Caption_+' (^) Focused';
+  _cPopUpMenu__Collapse_withOutFocused__Hint_   =_cPopUpMenu__CORE_Collapse_All__Caption_+' without Focused node';
+
+function tLazExt_wndInspector_FF8S_wndNode._IMP_prepare_menuItem_Collapse_withOutFocused:TMenuItem;
+begin
+    result:=_IMP_PopupMenu_FND_(_treeView_.PopupMenu,@_IMP_do_treeViewPopUp_Collapse_withOutFocused);
+    if not Assigned(result) then begin
+        result:=_IMP_PopupMenu_CRT_(_treeView_.PopupMenu,@_IMP_do_treeViewPopUp_Collapse_withOutFocused);
+        result.Caption:=_cPopUpMenu__Collapse_withOutFocused__Caption_;
+        result.Hint   :=_cPopUpMenu__Collapse_withOutFocused__Hint_;
+    end;
+    result.Enabled:=Assigned(_treeView_.Selected);
+end;
+
+{$endIf}
+
+{$IfDef in0k_LazIdeEXT_wndInspector_FF8S___treeViewPopUp_Collapse_withOutActive}
+
+procedure tLazExt_wndInspector_FF8S_wndNode._IMP_do_treeViewPopUp_Collapse_withOutActive(Sender:TObject);
+begin
+    if not ( Assigned(_treeView_) and Assigned(_slctNode_) ) then Exit; //< на всяк пожарный
+    //---
+   _treeView_.BeginUpdate; //< он коммулятивный
+        _IMP_do_treeView_Collapse_All_;
+        _treeNode_do_expandAllParent_(_slctNode_);
+   _treeView_.EndUpdate;
+end;
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+const {todo: а как же быть с переводом????}
+  _cPopUpMenu__Collapse_withOutActive__Caption_=_cPopUpMenu__CORE_Collapse_All__Caption_+' (^) Active';
+  _cPopUpMenu__Collapse_withOutActive__Hint_   =_cPopUpMenu__CORE_Collapse_All__Caption_+' without Active node';
+
+function tLazExt_wndInspector_FF8S_wndNode._IMP_prepare_menuItem_Collapse_withOutActive:TMenuItem;
+begin
+    result:=_IMP_PopupMenu_FND_(_treeView_.PopupMenu,@_IMP_do_treeViewPopUp_Collapse_withOutActive);
+    if not Assigned(result) then begin
+        result:=_IMP_PopupMenu_CRT_(_treeView_.PopupMenu,@_IMP_do_treeViewPopUp_Collapse_withOutActive);
+        result.Caption:=_cPopUpMenu__Collapse_withOutActive__Caption_;
+        result.Hint   :=_cPopUpMenu__Collapse_withOutActive__Hint_;
+    end;
+    result.Enabled:=Assigned(_slctNode_);
+end;
+
+{$endIf}
+
+{%endregion}
+{$endif}
+
+
+
 {$endregion} //------------- End of Class --- tLazExt_wndInspector_FF8S_wndNode <
 
 {$region -- tLazExt_wndInspector_FF8S_NodeLST ------------------- /fold}
@@ -1022,7 +1273,7 @@ end;
 function  tLazExt_wndInspector_FF8S_NodeLST.Nodes_GET(const Form:TCustomForm; const nodeTYPE:tLazExt_wndInspector_aFFfSE_NodeTYPE):tLazExt_wndInspector_FF8S_wndNode;
 begin
     result:=tLazExt_wndInspector_FF8S_wndNode(fuckUpForms_GET(Form,nodeTYPE));
-    {$ifDef _local__NodeListHave_onNodeAdd_}
+    {$ifDef _local___NodeListHave_onNodeAdd_}
     result.ownerEvent_onNodeAdd:=_owner_onNodeAdd_; //< чет не знаю куда еще воткнуть :-(
     {$endIf}
 end;

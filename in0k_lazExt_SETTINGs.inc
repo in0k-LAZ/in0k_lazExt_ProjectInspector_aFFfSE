@@ -56,6 +56,13 @@
 {$define in0k_LazIdeEXT_wndInspector_FF8S___mark_TrackingSystemForExpanded}
 //------------------------------------------------------------------------------
 
+//--- # "Dependency Tree"  PopUp menu ------------------------------------------
+// To add items to PopUp menu "Dependency Tree"
+{$define in0k_LazIdeEXT_wndInspector_FF8S___treeViewPopUp_Collapse_All}
+{$define in0k_LazIdeEXT_wndInspector_FF8S___treeViewPopUp_Collapse_withOutFocused}
+{$define in0k_LazIdeEXT_wndInspector_FF8S___treeViewPopUp_Collapse_withOutActive}
+//------------------------------------------------------------------------------
+
 
 //--- # DEBUG ------------------------------------------------------------------
 //  Позволяет просматривать лог событий в отдельном окне из IDE
