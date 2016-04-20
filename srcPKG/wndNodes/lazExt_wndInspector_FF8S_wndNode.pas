@@ -42,6 +42,8 @@ interface
 {$define in0k_LazIdeEXT_wndInspector_FF8S___mark_TrackingSystemForExpanded}
 //------------------------------------------------------------------------------
 
+{$define in0k_LazIdeEXT_wndInspector_FF8S___miniMap_Select}
+{$define in0k_LazIdeEXT_wndInspector_FF8S___miniMap_Active}
 
 //--- # PopUp menu -------------------------------------------------------------
 // Добавлять пункты меню к PopUpMenu "Дерева Зависимостей"
@@ -61,6 +63,8 @@ interface
 {$unDef in0k_LazIdeEXT_wndInspector_FF8S___AutoMODE_AutoCollapse_mode01}
 {$unDef in0k_LazIdeEXT_wndInspector_FF8S___mark_ActiveFileFromSoureceEdit}
 {$unDef in0k_LazIdeEXT_wndInspector_FF8S___mark_TrackingSystemForExpanded}
+{$unDef in0k_LazIdeEXT_wndInspector_FF8S___miniMap_Select}
+{$unDef in0k_LazIdeEXT_wndInspector_FF8S___miniMap_Active}
 {$unDef in0k_LazIdeEXT_wndInspector_FF8S___treeViewPopUp_Collapse_All}
 {$unDef in0k_LazIdeEXT_wndInspector_FF8S___treeViewPopUp_Collapse_withOutFocused}
 {$unDef in0k_LazIdeEXT_wndInspector_FF8S___treeViewPopUp_Collapse_withOutActive}
@@ -83,6 +87,7 @@ interface
 {$undef _local___use_Classes_}
 {$undef _local___use_Graphics_}
 {$undef _local___prc_treeNode_do_expandAllParent_}
+{$undef _local___treeNode_paint_miniMap_Active}
 
 
 {$unDef _fuckUp__ide_object_WND_onActivate_}
@@ -90,9 +95,6 @@ interface
 {$unDef _fuckUp__ide_object_VTV_onAddition_}
 {$unDef _fuckUp__ide_object_VTV_onAdvancedCustomDrawItem_}
 {$unDef _fuckUp__ide_object_VTV_onAdvancedCustomDraw_}
-
-{$define _fuckUp__ide_object_VTV_onAdvancedCustomDraw_}
-
 
 //==============================================================================
 
@@ -125,14 +127,35 @@ interface
 
 //==============================================================================
 
-// --- определяем, будет ли ДОП рисование
+
+//====== ДОП рисование
+
+// --- рисование всяких МАРКЕРОВ
 
 {$ifDef in0k_LazIdeEXT_wndInspector_FF8S___mark_ActiveFileFromSoureceEdit}
     {$define _fuckUp__ide_object_VTV_onAdvancedCustomDrawItem_}
+{$else}
+    // это Бесполезно будет
+    {$unDef in0k_LazIdeEXT_wndInspector_FF8S___miniMap_Active}
 {$endIf}
 {$ifDef in0k_LazIdeEXT_wndInspector_FF8S___mark_TrackingSystemForExpanded}
     {$define _fuckUp__ide_object_VTV_onAdvancedCustomDrawItem_}
 {$endIf}
+
+// --- рисование МиниКарта
+
+{$unDef _local___treeNode_paint_miniMap_}
+{$ifDef in0k_LazIdeEXT_wndInspector_FF8S___miniMap_Select}
+    {$define _fuckUp__ide_object_VTV_onAdvancedCustomDraw_}
+    {$define _local___treeNode_paint_miniMap_}
+{$endIf}
+{$ifDef in0k_LazIdeEXT_wndInspector_FF8S___miniMap_Active}
+    {$define _fuckUp__ide_object_VTV_onAdvancedCustomDraw_}
+    {$define _local___treeNode_paint_miniMap_}
+{$endIf}
+
+
+
 
 //==============================================================================
 
@@ -155,6 +178,13 @@ interface
     {$define _local___use_Graphics_}
 {$endIf}
 {$IfDef in0k_LazIdeEXT_wndInspector_FF8S___mark_ActiveFileFromSoureceEdit}
+    {$define _local___use_Graphics_}
+{$endIf}
+{$ifDef in0k_LazIdeEXT_wndInspector_FF8S___miniMap_Select}
+    {$define _local___use_Graphics_}
+    {$define _local___use_Themes_}
+{$endIf}
+{$ifDef in0k_LazIdeEXT_wndInspector_FF8S___miniMap_Active}
     {$define _local___use_Graphics_}
 {$endIf}
 
@@ -185,9 +215,14 @@ interface
 
 {%endregion}
 
+
+{ю$define in0k_LazIdeEXT_wndInspector_FF8S___miniMap_Active}
+
+
 uses {$ifDef _debugLOG_}in0k_lazExt_DEBUG,{$endIf}
      Forms, ComCtrls, TreeFilterEdit, Controls,
      {$ifDef _local___use_Classes_}Classes,{$endIf}
+     {$ifDef _local___use_Themes_}Themes,{$endIf}
      {$ifDef _local___use_Graphics_}Graphics,{$endIf}
      {$ifDef _local___use_Menus_}Menus,{$endIf}
      SrcEditorIntf, LCLProc, LCL,
@@ -298,23 +333,9 @@ type
   private //< ФакАпим рисование УЗЛА
    _ide_object_VTV_onAdvancedCustomDrawItem_original_:TTVAdvancedCustomDrawItemEvent;
     procedure _VTV_onAdvancedCustomDrawItem_myCustom_(Sender:TCustomTreeView; Node:TTreeNode; State:TCustomDrawState; Stage:TCustomDrawStage; var PaintImages,DefaultDraw:Boolean);
-  private //< рисование ДОП примитивов
-    {$ifDef in0k_LazIdeEXT_wndInspector_FF8S___mark_ActiveFileFromSoureceEdit}
-    procedure _VTV_drawMARK_selected_(const Sender:TCustomTreeView; const Node:TTreeNode; const Color:TColor);
-    procedure _VTV_onAdvancedCustomDrawItem_myCustom_selected_(const Sender:TCustomTreeView; const Node:TTreeNode);
-    procedure _VTV_onAdvancedCustomDrawItem_myCustom_slctFLDR_(const Sender:TCustomTreeView; const Node:TTreeNode);
-    {$endif}
-    {$ifDef in0k_LazIdeEXT_wndInspector_FF8S___mark_TrackingSystemForExpanded}
-    procedure _VTV_drawMARK_clspMARK_(const Sender:TCustomTreeView; const Node:TTreeNode; const Color:TColor);
-    procedure _VTV_onAdvancedCustomDrawItem_myCustom_clspMARK(const Sender:TCustomTreeView; const Node:TTreeNode);
-    {$endif}
   {$endIf}
   {$ifDef _fuckUp__ide_object_VTV_onAdvancedCustomDraw_}
   private //< ФакАпим рисование ВСЕГО
-   _VTV_drawMARK_miniMap_Active_Width_:integer;
-    function _VTV_drawMARK_miniMap_Active_Width_CLC_:integer;
-  private //< ФакАпим рисование ВСЕГО
-   _VTV_drawMARK_selected_MIDLE_:integer;
    _ide_object_VTV_onAdvancedCustomDraw_original_:TTVAdvancedCustomDrawEvent;
     procedure _VTV_onAdvancedCustomDraw_myCustom_(Sender:TCustomTreeView; const ARect:TRect; Stage:TCustomDrawStage; var DefaultDraw:Boolean);
   {$endIf}
@@ -327,6 +348,39 @@ type
     property ownerEvent_onNodeAdd:TNotifyEvent read _owner_onNodeAdd_ write _owner_onNodeAdd_;
   {$endIf}
   {%endregion}
+  {%region --- ДоРисовка Интерфейса ------------------------------- /fold}
+    {$ifDef in0k_LazIdeEXT_wndInspector_FF8S___mark_ActiveFileFromSoureceEdit}
+  private //< рисование: МАРКЕР АКТИВНЫЙ
+    procedure _VTV_draw_nodeMRK__actvFrme_(const Sender:TCustomTreeView; const Node:TTreeNode; const Color:TColor);
+    procedure _VTV_onAdvancedCustomDrawItem_nodeMARK_active_(const Sender:TCustomTreeView; const Node:TTreeNode);
+    procedure _VTV_onAdvancedCustomDrawItem_nodeMARK_acFLDR_(const Sender:TCustomTreeView; const Node:TTreeNode);
+    procedure _VTV_onAdvancedCustomDrawItem_nodeMARK_(const Sender:TCustomTreeView; const Node:TTreeNode);
+    {$endif}
+    {$ifDef in0k_LazIdeEXT_wndInspector_FF8S___mark_TrackingSystemForExpanded}
+  private //< рисование: МАРКЕР "сворачиваемости"
+    procedure _VTV_draw_nodeMRK__clspMARK_(const Sender:TCustomTreeView; const Node:TTreeNode; const Color:TColor);
+    procedure _VTV_onAdvancedCustomDrawItem_clspMARK_(const Sender:TCustomTreeView; const Node:TTreeNode);
+    {$endif}
+    {$ifDef _local___treeNode_paint_miniMap_}
+  private // общее по миниКарте
+    function  _VTV_find_topLastCollapsed_(const Node:TTreeNode):TTreeNode;
+    function  _VTV_miniMap_select_width_ :integer; inline;
+    procedure _VTV_miniMap_calculate_rects_     (const Sender:TCustomTreeView; const FullHeight:integer; const Node:TTreeNode; var nodeRect,mMapRect:Trect);
+    procedure _VTV_onAdvancedCustomDraw_miniMap_(const Sender:TCustomTreeView; const ARect:TRect);
+    {$endif}
+    {$ifDef in0k_LazIdeEXT_wndInspector_FF8S___miniMap_Select}
+  private // миниКарта: выделенный
+    procedure _VTV_onAdvancedCustomDraw_miniMap_select_(const Sender:TCustomTreeView; const ARect:TRect; const fullHeight:integer; const Node:TTreeNode);
+    {$endIf}
+    {$ifDef in0k_LazIdeEXT_wndInspector_FF8S___miniMap_Active}
+  private // миниКарта: АКТИВНЫЙ
+    function  _VTV_miniMap_active_width_:integer; inline;
+    function  _VTV_miniMap_active_r_POS_:integer; inline;
+    procedure _VTV_onAdvancedCustomDraw_miniMap_active_(const Sender:TCustomTreeView; const ARect:TRect; const fullHeight:integer; const Node:TTreeNode);
+    {$endIf}
+  {%endRegion}
+
+
   public
     constructor Create{(const aForm:TCustomForm)}; override;
     destructor DESTROY; override;
@@ -352,6 +406,11 @@ type
 
 implementation
 uses LCLVersion;
+
+const
+   _cVTV_color_Active_=clHighlight;
+   _cVTV_color_Grayed_=clBtnShadow;
+
 
 {%region --- возня с ДЕБАГОМ -------------------------------------- /fold}
 {$if declared(in0k_lazIde_DEBUG)}
@@ -383,6 +442,9 @@ begin
    _ide_object_VTV_onDeletion_original_:=NIL;
     {$ifDef _fuckUp__ide_object_VTV_onAdvancedCustomDrawItem_}
    _ide_object_VTV_onAdvancedCustomDrawItem_original_:=nil;
+    {$endIf}
+    {$ifDef _fuckUp__ide_object_VTV_onAdvancedCustomDraw_}
+   _ide_object_VTV_onAdvancedCustomDraw_original_:=nil;
     {$endIf}
     {$ifDef _fuckUp__ide_object_IPM_onPopUp_}
    _ide_object_IPM_onPopUp_original_:=NIL;
@@ -867,84 +929,26 @@ begin
     //--- моя "нагрузка" ----------------------------------------
     {$ifDef in0k_LazIdeEXT_wndInspector_FF8S___mark_ActiveFileFromSoureceEdit}
     //--- выделение текущего файла
-    if Stage=cdPostPaint then begin
-       _VTV_onAdvancedCustomDrawItem_myCustom_selected_(Sender,Node);
-       _VTV_onAdvancedCustomDrawItem_myCustom_slctFLDR_(Sender,Node);
-    end;
+    if Stage=cdPostPaint then _VTV_onAdvancedCustomDrawItem_nodeMARK_(Sender,Node);
     {$endif}
     {$ifDef in0k_LazIdeEXT_wndInspector_FF8S___mark_TrackingSystemForExpanded}
     //--- маркер СВОРАЧИВАЕМОСТИ
-    if Stage=cdPostPaint then begin
-       _VTV_onAdvancedCustomDrawItem_myCustom_clspMARK(Sender,Node);
-    end;
+    if Stage=cdPostPaint then _VTV_onAdvancedCustomDrawItem_clspMARK_(Sender,Node);
     {$endif}
 end;
 {$endif}
 
 {$ifDef _fuckUp__ide_object_VTV_onAdvancedCustomDraw_}
-
-function tLazExt_wndInspector_FF8S_wndNode._VTV_drawMARK_miniMap_Active_Width_CLC_:integer;
-begin
-
-    getSytemM
-    result:= ComCtrls.ScrollBarWidth div 4;
-    if result=0 then result:=4;
-end;
-
-
 procedure tLazExt_wndInspector_FF8S_wndNode._VTV_onAdvancedCustomDraw_myCustom_(Sender:TCustomTreeView; const ARect:TRect; Stage:TCustomDrawStage; var DefaultDraw:Boolean);
-var X:integer;
-  r:TRect;
-    N:tTreeNode;
 begin
     //--- вызов ОРИГИНАЛЬНОГО обработчика, то что было изначально
     if Assigned(_ide_object_VTV_onAdvancedCustomDraw_original_) then _ide_object_VTV_onAdvancedCustomDraw_original_(Sender,ARect,Stage,DefaultDraw);
     //--- моя "нагрузка" ----------------------------------------
-    if Stage=cdPostPaint then begin
-        DefaultDraw:=TRUE;
-        if Assigned(_slctNode_) then begin
-//            _VTV_drawMARK_selected_(sender,_slctNode_,clRed);
-          {  sender.Canvas.Pen.Color:=clRED;
-           _slctNode_.DisplayRect(true);
-            Sender.Canvas.Frame(R); }
-
-    Sender.Canvas.Pen.Color:=clRed;
-    {r:=_slctNode_.DisplayRect(TRUE);
-    Sender.Canvas.Frame(R);
-
-    }
-    N:=sender.Items.GetLastExpandedSubNode;
-    X:=N.Top+N.Height;
-    X:=trunc((_slctNode_.Top/X)*(ARect.Bottom-ARect.Top)+ARect.Top); //Sender.ClientHeight))-tTree(Sender).ScrolledTop;
-    Sender.Canvas.Line(R.Right,R.Top,ARect.Right-4,X);
-
-    R.Top   :=X;
-    R.Left  :=ARect.Right-_VTV_drawMARK_miniMap_Active_Width_CLC_;
-    R.Bottom:=X+_slctNode_.Height;
-    R.Right:=ARect.Right;
-
-
-    Sender.Canvas.Frame( R);
-    Sender.Canvas.Line(r.Left,_VTV_drawMARK_selected_MIDLE_,r.Left ,r.Top);
-
-
-    {
-
-
-            N:=sender.Items.GetLastExpandedSubNode;
-            X:=N.Top+N.Height;
-            X:=trunc((Node.Top/X)*Sender.ClientHeight)-tTree(Sender).ScrolledTop;
-
-    Sender.Canvas.Line(r.Right,r.Top,Sender.Canvas.Width,x);
-
-            }
-
-        end;
-
-    end;
+    {$ifDef in0k_LazIdeEXT_wndInspector_FF8S___miniMap_Active}
+    if Stage=cdPostPaint then _VTV_onAdvancedCustomDraw_miniMap_(Sender,ARect);
+    {$endif}
 end;
-{$endif}
-
+{$endIf}
 
 //------------------------------------------------------------------------------
 
@@ -960,8 +964,8 @@ end;
 
 {%endregion}
 
-{$ifDef lazExt_ProjectInspector_aFFfSE__TSfEN_ON}
 {%region --- Система Слежение за Развернутыми Узлами (ССзРУ) ------ /fold}
+{$ifDef lazExt_ProjectInspector_aFFfSE__TSfEN_ON}
 //  "Системе Слежения за Развернутыми Узлами" (ССзРУ)
 //  "Tracking System for Expanded Nodes" (TSfEN)
 
@@ -1104,131 +1108,11 @@ end;
 {%endregion}
 {$endIf}
 
-{%endregion}
 {$endif lazExt_ProjectInspector_aFFfSE__TSfEN_ON}
-
-{$ifDef _fuckUp__ide_object_VTV_onAdvancedCustomDrawItem_}
-{%region --- рисование ДОП примитивов ----------------------------- /fold}
-
-{$ifDef in0k_LazIdeEXT_wndInspector_FF8S___mark_ActiveFileFromSoureceEdit}
-
-type
-  tTree=class(TTreeView)
-   public
-     property ScrolledTop;
-     function my_getMaxScrollTOP:integer;
-   end;
-
-function tTree.my_getMaxScrollTOP:integer;
-begin
-    result:=GetMaxScrollTop;
-end;
-
-
-
-// рисуем Прямоугольник с линией Справа
-procedure tLazExt_wndInspector_FF8S_wndNode._VTV_drawMARK_selected_(const Sender:TCustomTreeView; const Node:TTreeNode; const Color:TColor);
-var r:TRect;
-  x:integer;
-  N:TTreeNode;
-begin
-    Sender.Canvas.Pen.Color:=Color;
-    r:=Node.DisplayRect(TRUE);
-    Sender.Canvas.Frame(R);
-    r.Top:=(r.Bottom+r.Top) div 2;
-    Sender.Canvas.Line(r.Right,r.Top,Sender.Canvas.Width,r.Top);
-    //-----------------
-   _VTV_drawMARK_selected_MIDLE_:=r.Top;
-//    with sender.Items.GetLastExpandedSubNode do begin
-//        X:=Top+Height;
-//    end;
-//    X:=trunc( (Node.Top/(X))* Sender.ClientHeight);;
-
-    X:=tTree(Sender).ClientHeight;
-    //X:=tTree(Sender).my_getMaxScrollTOP;
-    X:=trunc( (Node.Top/(X+tTree(Sender).my_getMaxScrollTOP))* X);;
-
-    N:=sender.Items.GetLastExpandedSubNode;
-    X:=N.Top+N.Height;
-
-    //
-    X:=trunc((Node.Top/X)*Sender.ClientHeight)-tTree(Sender).ScrolledTop;
-
-    Sender.Canvas.Line(r.Right,r.Top,Sender.Canvas.Width,x);
-
-    GetSystemMetrics
-
-//    Node.Top;
-
-//    Sender.ClientHeight:=;
-
-
-end;
-
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-// рисование: Усиливаем выделение АКТИВНОГО
-procedure tLazExt_wndInspector_FF8S_wndNode._VTV_onAdvancedCustomDrawItem_myCustom_selected_(const Sender:TCustomTreeView; const Node:TTreeNode);
-begin
-    if Assigned(_slctNode_) and (_slctNode_=node) then begin // _treeNode_isCurrentActive_(Node) then begin
-        if _ide_ActiveSourceEdit_fileName_=treeNode_NAME(_slctNode_)
-        then _VTV_drawMARK_selected_(Sender,Node,clHighlight)
-        else _VTV_drawMARK_selected_(Sender,Node,clBtnShadow);
-    end;
-end;
-
-procedure tLazExt_wndInspector_FF8S_wndNode._VTV_onAdvancedCustomDrawItem_myCustom_slctFLDR_(const Sender:TCustomTreeView; const Node:TTreeNode);
-begin
-    // это для ПАПКИ
-    if (not Node.Expanded) then begin //< и она ДОЛЖНА быть ОБЯЗАТЕЛЬНО свернута
-        if Assigned(_slctNode_) and (_slctNode_.HasAsParent(Node)) then begin
-            if _ide_ActiveSourceEdit_fileName_=treeNode_NAME(_slctNode_)
-            then _VTV_drawMARK_selected_(Sender,Node,clHighlight)
-            else _VTV_drawMARK_selected_(Sender,Node,clBtnShadow);
-        end;
-    end;
-end;
-
-{$endif}
-
-
-{$ifDef in0k_LazIdeEXT_wndInspector_FF8S___mark_TrackingSystemForExpanded}
-
-// рисуем Уголок слева
-procedure tLazExt_wndInspector_FF8S_wndNode._VTV_drawMARK_clspMARK_(const Sender:TCustomTreeView; const Node:TTreeNode; const Color:TColor);
-var r:TRect;
-begin
-    Sender.Canvas.Pen.Color:=Color;
-    r:=Node.DisplayRect(TRUE);
-    // вычисляем (-: очевидно же по коду :-)  r.Bottom -- как ТЕМП переменная
-    r.Bottom:=((r.Bottom-r.Top) div 4);
-    r.Bottom:=r.Bottom-1; if r.Bottom<=0 then r.Bottom:=1;
-    //
-    r.Left :=r.Left+1;
-    r.Right:=r.Left+r.Bottom+1;
-    r.Top   :=1+r.Top;
-    r.Bottom:=1+r.Top+r.Bottom;
-    // РИСУЕМ
-    Sender.Canvas.Line(r.Left,r.Top   ,r.Right,r.Top);
-    Sender.Canvas.Line(r.Left,r.Bottom,r.Left ,r.Top);
-    //---
-end;
-
-// рисование: МАРКЕР авто-Сворачивания
-procedure tLazExt_wndInspector_FF8S_wndNode._VTV_onAdvancedCustomDrawItem_myCustom_clspMARK(const Sender:TCustomTreeView; const Node:TTreeNode);
-begin
-    if _TSfEN__node_willBeCollapsed_(Node) then _VTV_drawMARK_clspMARK_(Sender,Node,clHighlight)
-   else
-    if _TSfEN__node_willBeNoVisible_(Node) then _VTV_drawMARK_clspMARK_(Sender,Node,clBtnShadow);
-end;
-
-{$endif}
-
 {%endregion}
-{$endif _fuckUp__ide_object_VTV_onAdvancedCustomDrawItem_}
 
-{$ifDef _local___treeView_popUp_}
 {%region --- Работа с treeView PopUP Menu ------------------------- /fold}
+{$ifDef _local___treeView_popUp_}
 
 procedure tLazExt_wndInspector_FF8S_wndNode._IMP_onPopUP_;
 begin
@@ -1376,10 +1260,303 @@ end;
 
 {$endIf}
 
+{$endif}
 {%endregion}
+
+{%region --- рисование ДОП примитивов ----------------------------- /fold}
+
+{$ifDef in0k_LazIdeEXT_wndInspector_FF8S___mark_ActiveFileFromSoureceEdit}
+// рисование: МАРКЕР АКТИВНЫЙ
+
+// рисуем Прямоугольник с линией Справа
+procedure tLazExt_wndInspector_FF8S_wndNode._VTV_draw_nodeMRK__actvFrme_(const Sender:TCustomTreeView; const Node:TTreeNode; const Color:TColor);
+var rect:TRect;
+begin
+    rect:=Node.DisplayRect(TRUE);
+    // прямоугольник выделения
+    Sender.Canvas.Pen.Color:=Color;
+    Sender.Canvas.Frame(rect);
+    // линия вправо (если она влазит в экран)
+    {$ifDef in0k_LazIdeEXT_wndInspector_FF8S___miniMap_Active}
+    if rect.Right<sender.ClientWidth-_VTV_miniMap_active_r_POS_ then begin
+    {$else}
+    if rect.Right<sender.ClientWidth then begin
+    {$endif}
+        rect.Top:=(rect.Bottom+rect.Top) div 2;
+        rect.Left:=sender.ClientWidth;//  Sender.Canvas.Width;
+        {$ifDef in0k_LazIdeEXT_wndInspector_FF8S___miniMap_Active}
+        rect.Left:=rect.Left-_VTV_miniMap_active_r_POS_;
+        {$endif}
+        // !!! тут Right и Left НАОБОРОТ !!!
+        Sender.Canvas.Line(rect.Right,rect.Top,rect.Left,rect.Top);
+    end;
+end;
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+// рисование: Усиливаем выделение АКТИВНОГО
+procedure tLazExt_wndInspector_FF8S_wndNode._VTV_onAdvancedCustomDrawItem_nodeMARK_active_(const Sender:TCustomTreeView; const Node:TTreeNode);
+begin
+     node.IsVisible;
+    if Assigned(_slctNode_) and (_slctNode_=node) then begin // _treeNode_isCurrentActive_(Node) then begin
+        if _ide_ActiveSourceEdit_fileName_=treeNode_NAME(_slctNode_)
+        then _VTV_draw_nodeMRK__actvFrme_(Sender,Node,_cVTV_color_Active_)
+        else _VTV_draw_nodeMRK__actvFrme_(Sender,Node,_cVTV_color_Grayed_);
+    end;
+end;
+
+// рисование: это для ПАПКИ (которая возможно свернута и содержит в себе _slctNode_)
+procedure tLazExt_wndInspector_FF8S_wndNode._VTV_onAdvancedCustomDrawItem_nodeMARK_acFLDR_(const Sender:TCustomTreeView; const Node:TTreeNode);
+begin
+    if (not Node.Expanded) then begin //< и она ДОЛЖНА быть ОБЯЗАТЕЛЬНО свернута
+        if Assigned(_slctNode_) and (_slctNode_.HasAsParent(Node)) then begin
+            if _ide_ActiveSourceEdit_fileName_=treeNode_NAME(_slctNode_)
+            then _VTV_draw_nodeMRK__actvFrme_(Sender,Node,_cVTV_color_Active_)
+            else _VTV_draw_nodeMRK__actvFrme_(Sender,Node,_cVTV_color_Grayed_);
+        end;
+    end;
+end;
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+// рисование: все что связанной с отметкой для АКТИВНОГО файла
+procedure tLazExt_wndInspector_FF8S_wndNode._VTV_onAdvancedCustomDrawItem_nodeMARK_(const Sender:TCustomTreeView; const Node:TTreeNode);
+begin
+    if Assigned(_slctNode_) then begin //< иначе бестолку
+        if (_slctNode_<>Node) then begin
+           _VTV_onAdvancedCustomDrawItem_nodeMARK_acFLDR_(Sender,Node);
+        end
+        else begin
+           _VTV_onAdvancedCustomDrawItem_nodeMARK_active_(Sender,Node);
+        end;
+    end;
+end;
+
 {$endif}
 
 
+{$ifDef in0k_LazIdeEXT_wndInspector_FF8S___mark_TrackingSystemForExpanded}
+// рисование: МАРКЕР авто-Сворачивания
+
+// рисуем Уголок слева
+procedure tLazExt_wndInspector_FF8S_wndNode._VTV_draw_nodeMRK__clspMARK_(const Sender:TCustomTreeView; const Node:TTreeNode; const Color:TColor);
+var r:TRect;
+begin
+    Sender.Canvas.Pen.Color:=Color;
+    r:=Node.DisplayRect(TRUE);
+    // вычисляем (-: очевидно же по коду :-)  r.Bottom -- как ТЕМП переменная
+    r.Bottom:=((r.Bottom-r.Top) div 4);
+    r.Bottom:=r.Bottom-1; if r.Bottom<=0 then r.Bottom:=1;
+    //
+    r.Left :=r.Left+1;
+    r.Right:=r.Left+r.Bottom+1;
+    r.Top   :=1+r.Top;
+    r.Bottom:=1+r.Top+r.Bottom;
+    // РИСУЕМ
+    Sender.Canvas.Line(r.Left,r.Top   ,r.Right,r.Top);
+    Sender.Canvas.Line(r.Left,r.Bottom,r.Left ,r.Top);
+    //---
+end;
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+procedure tLazExt_wndInspector_FF8S_wndNode._VTV_onAdvancedCustomDrawItem_clspMARK_(const Sender:TCustomTreeView; const Node:TTreeNode);
+begin
+    if _TSfEN__node_willBeCollapsed_(Node) then _VTV_draw_nodeMRK__clspMARK_(Sender,Node,_cVTV_color_Active_)
+   else
+    if _TSfEN__node_willBeNoVisible_(Node) then _VTV_draw_nodeMRK__clspMARK_(Sender,Node,_cVTV_color_Grayed_);
+end;
+
+{$endif}
+
+
+{$ifDef _local___treeNode_paint_miniMap_} //------------------------------------
+
+const {todo: подумать как избавиться от ХорКорного определения константы}
+  // ширина маркера на миниКарте для ВЫДЕЛЕННОГО узла (тот который в фокусе)
+ _cVTV_onAdvancedCustomDraw_miniMap_select_minWidth=4;
+  //<от этой константы все остальное расчитывается
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+function tLazExt_wndInspector_FF8S_wndNode._VTV_miniMap_select_width_:integer;
+begin
+    result:=_cVTV_onAdvancedCustomDraw_miniMap_select_minWidth;
+end;
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+// расчитать положение на миниКарте (верх-низ)
+procedure tLazExt_wndInspector_FF8S_wndNode._VTV_miniMap_calculate_rects_(const Sender:TCustomTreeView; const FullHeight:integer; const Node:TTreeNode; var nodeRect,mMapRect:Trect);
+begin
+    nodeRect:=Node.DisplayRect(true);
+    mMapRect:=nodeRect;
+    if Sender.ClientHeight<FullHeight then begin
+        // тут маштаб работает, иначе один в один
+        mMapRect.Top:=trunc((Node.Top/FullHeight)*(Sender.ClientHeight-(nodeRect.Bottom-nodeRect.Top))); //< чуть сжимаем размер миникарты
+        mMapRect.Bottom:=mMapRect.Top+(nodeRect.Bottom-nodeRect.Top);
+    end;
+end;
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+function  tLazExt_wndInspector_FF8S_wndNode._VTV_find_topLastCollapsed_(const Node:TTreeNode):TTreeNode;
+var tmp:TTreeNode;
+begin
+    result:=node;
+    tmp:=result.Parent;
+    while Assigned(tmp){and(tmp.TreeView.Items[0]<>tmp)} do begin
+        if not tmp.Expanded then result:=tmp;
+        //-->
+        tmp:=tmp.Parent;
+    end;
+end;
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+procedure tLazExt_wndInspector_FF8S_wndNode._VTV_onAdvancedCustomDraw_miniMap_(const Sender:TCustomTreeView; const ARect:TRect);
+var fullHeight:integer;
+    node:tTreeNode;
+begin
+    // проверим... стоит ли вообще шевелиться
+    if not (Assigned(_slctNode_) or Assigned(Sender.Selected)) then EXIT; //< делать то НЕЧЕГО
+
+    // расчитаем ПОЛНУЮ высоты содержимого (подсмотрел в исходниках tTreeView)
+    node:=sender.Items.GetLastExpandedSubNode;
+    if not Assigned(node) then EXIT;  //< что-то пошло не так
+    fullHeight:=node.Top+node.Height; // полная высота СОДЕРЖИМОГО дерева
+
+    {$ifDef in0k_LazIdeEXT_wndInspector_FF8S___miniMap_Select}
+    node:=Sender.Selected; //< рисуем миниМап для узла в фокусе
+    if Assigned(node) then begin
+       _VTV_onAdvancedCustomDraw_miniMap_select_(Sender,ARect,fullHeight,node);
+    end;
+    {$endif}
+    {$ifDef in0k_LazIdeEXT_wndInspector_FF8S___miniMap_Active}
+    node:=_slctNode_; //< рисуем миниМап для АКТИВНОГО узла
+    if Assigned(node) then begin
+       _VTV_onAdvancedCustomDraw_miniMap_active_(Sender,ARect,fullHeight,node);
+    end;
+    {$endif}
+end;
+
+{$endif}
+
+
+{$ifDef in0k_LazIdeEXT_wndInspector_FF8S___miniMap_Select} //-------------------
+
+procedure tLazExt_wndInspector_FF8S_wndNode._VTV_onAdvancedCustomDraw_miniMap_select_(const Sender:TCustomTreeView; const ARect:TRect; const fullHeight:integer; const Node:TTreeNode);
+var nodeRect,mMapRect:tRect;
+    Details: TThemedElementDetails;
+    N:TTreeNode;
+begin
+    // что ПРеДСТАВЛЯЕТ наш узел (это может быть один из свернутых родителей)
+    N:=_VTV_find_topLastCollapsed_(Node);
+
+    //---
+    // расчитываем положение и размер на МиниКарте
+   _VTV_miniMap_calculate_rects_(Sender,fullHeight,N,nodeRect,mMapRect);
+    mMapRect.Right:=ARect.Right;
+    mMapRect.Left :=ARect.Right-_VTV_miniMap_select_width_;
+
+    //---
+    // рисуем САМ маркер
+    if (tvoThemedDraw in Sender.Options) then begin
+        if Sender.Focused //and node.IsVisible
+        then Details:=ThemeServices.GetElementDetails(ttItemSelected)
+        else Details:=ThemeServices.GetElementDetails(ttItemSelectedNotFocus);
+        ThemeServices.DrawElement(Sender.Canvas.Handle, Details, mMapRect, nil)
+    end
+    else begin
+        if Sender.Focused //and node.IsVisible
+        then Sender.Canvas.Pen.Color:=Sender.SelectionColor
+        else Sender.Canvas.Pen.Color:=clScrollBar;
+        Sender.Canvas.Rectangle(mMapRect);
+    end;
+    //---
+    // по необходимости рисуем маркер для "свернутого" отца
+    if (N<>Node)and(N.IsVisible) then begin //< ага, УЗЕЛ не видно ... он свернут в родителя "N"
+        // он еще НЕ должен совпадать _slctNode_ или его "свернутым родителеем"
+        if NOT (Assigned(_slctNode_)and((N=_slctNode_)or(N=_VTV_find_topLastCollapsed_(_slctNode_)))) then begin
+            // рисуем САМ маркер
+            if (tvoThemedDraw in Sender.Options) then begin
+                Details:=ThemeServices.GetElementDetails(ttItemSelectedNotFocus);
+                ThemeServices.DrawElement(Sender.Canvas.Handle, Details, nodeRect, nil)
+            end
+            else begin
+                Sender.Canvas.Brush.Color:=clScrollBar;
+                Sender.Canvas.FrameRect(nodeRect);
+            end;
+        end;
+    end;
+end;
+
+{$endIf}
+
+
+{$ifDef in0k_LazIdeEXT_wndInspector_FF8S___miniMap_Active}//--------------------
+
+function tLazExt_wndInspector_FF8S_wndNode._VTV_miniMap_active_width_:integer;
+begin
+    result:=2*_VTV_miniMap_select_width_;
+end;
+
+function tLazExt_wndInspector_FF8S_wndNode._VTV_miniMap_active_r_POS_:integer;
+begin
+    result:=_VTV_miniMap_active_width_-1;
+end;
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+procedure tLazExt_wndInspector_FF8S_wndNode._VTV_onAdvancedCustomDraw_miniMap_active_(const Sender:TCustomTreeView; const ARect:TRect; const fullHeight:integer; const Node:TTreeNode);
+var nodeRect,mMapRect:tRect;
+    D,x:integer;
+    N:TTreeNode;
+begin
+    // что ПРеДСТАВЛЯЕТ наш узел (это может быть один из свернутых родителей)
+    N:=_VTV_find_topLastCollapsed_(Node);
+
+    //---
+    // расчитываем положение и размер на МиниКарте
+   _VTV_miniMap_calculate_rects_(Sender,fullHeight,N,nodeRect,mMapRect);
+    mMapRect.Right:=ARect.Right;
+    mMapRect.Left :=ARect.Right-_VTV_miniMap_active_width_;
+    // ужимаем высоту на ТРЕТЬ
+    d:=(mMapRect.Bottom-mMapRect.Top)div 3; if d=0 then d:=1;
+    mMapRect.Top   :=mMapRect.Top+D;
+    mMapRect.Bottom:=mMapRect.Bottom-D;
+
+    //---
+    // рисуем САМ маркер
+    if _ide_ActiveSourceEdit_fileName_=treeNode_NAME(Node)
+    then Sender.Canvas.Pen.Color:=_cVTV_color_Active_
+    else Sender.Canvas.Pen.Color:=_cVTV_color_Grayed_;
+    Sender.Canvas.Brush.Color:=sender.BackgroundColor;
+    Sender.Canvas.Rectangle(mMapRect);
+    //---
+    // линия до "основного маркера"
+    if Assigned(N) then begin
+        mMapRect.Left:=ARect.Right-_VTV_miniMap_active_r_POS_; // место ВЕРТИКАЛЬНОЙ линии
+        nodeRect:=N.DisplayRect(true);
+        //---
+        if mMapRect.Left<=nodeRect.Right then begin // прямоуголиник пересекаются ...
+            // соединаем соответствующие стороны
+            if mMapRect.Bottom<nodeRect.Top then Sender.Canvas.Line(mMapRect.Left,mMapRect.Bottom,mMapRect.Left,nodeRect.Top)
+           else
+            if nodeRect.Bottom<mMapRect.Top then Sender.Canvas.Line(mMapRect.Left,nodeRect.Bottom,mMapRect.Left,mMapRect.Top);
+        end
+        else begin // рисем линию до СЕРЕДИННОЙ, от нужной стороны
+            X:=nodeRect.Top+(nodeRect.Bottom-nodeRect.top)div 2;
+            if X<mMapRect.Top then Sender.Canvas.Line(mMapRect.Left,X,mMapRect.Left,mMapRect.Top)
+           else
+            if mMapRect.Bottom<X then Sender.Canvas.Line(mMapRect.Left,mMapRect.Bottom,mMapRect.Left,X);
+        end;
+    end;
+end;
+
+{$endIf}
+
+{%endregion}
 
 {$endregion} //------------- End of Class --- tLazExt_wndInspector_FF8S_wndNode <
 

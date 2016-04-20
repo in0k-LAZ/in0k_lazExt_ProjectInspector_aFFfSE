@@ -56,6 +56,11 @@
 {$define in0k_LazIdeEXT_wndInspector_FF8S___mark_TrackingSystemForExpanded}
 //------------------------------------------------------------------------------
 
+{$define in0k_LazIdeEXT_wndInspector_FF8S___miniMap_Select}
+{$define in0k_LazIdeEXT_wndInspector_FF8S___miniMap_Active}
+
+
+
 //--- # "Dependency Tree"  PopUp menu ------------------------------------------
 // To add items to PopUp menu "Dependency Tree"
 {$define in0k_LazIdeEXT_wndInspector_FF8S___treeViewPopUp_Collapse_All}
