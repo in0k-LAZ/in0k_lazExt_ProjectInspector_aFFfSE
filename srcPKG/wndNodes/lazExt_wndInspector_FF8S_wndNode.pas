@@ -181,18 +181,21 @@ interface
     {$define _fuckUp__ide_object_IPM_onPopUp_}
     {$define _local___prc_treeNode_do_expandAllParent_}
     {$define _local___treeView_popUp_}
+    {$define _local___use_Classes_}
     {$define _local___use_Menus_}
 {$endIf}
 {$IfDef in0k_LazIdeEXT_wndInspector_FF8S___treeViewPopUp_Collapse_withOutSelect}
     {$define _fuckUp__ide_object_IPM_onPopUp_}
     {$define _local___prc_treeNode_do_expandAllParent_}
     {$define _local___treeView_popUp_}
+    {$define _local___use_Classes_}
     {$define _local___use_Menus_}
 {$endIf}
 {$IfDef in0k_LazIdeEXT_wndInspector_FF8S___treeViewPopUp_Collapse_withOutActive}
     {$define _fuckUp__ide_object_IPM_onPopUp_}
     {$define _local___prc_treeNode_do_expandAllParent_}
     {$define _local___treeView_popUp_}
+    {$define _local___use_Classes_}
     {$define _local___use_Menus_}
 {$endIf}
 
