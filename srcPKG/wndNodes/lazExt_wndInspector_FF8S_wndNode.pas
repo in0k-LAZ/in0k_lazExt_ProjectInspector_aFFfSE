@@ -42,13 +42,21 @@ interface
 {$define in0k_LazIdeEXT_wndInspector_FF8S___mark_TrackingSystemForExpanded}
 //------------------------------------------------------------------------------
 
+//--- # miniMap Select ---------------------------------------------------------
+// Дорисовывать в интерфейсе: миникарта "Выделенный" узел
 {$define in0k_LazIdeEXT_wndInspector_FF8S___miniMap_Select}
+//------------------------------------------------------------------------------
+
+//--- # miniMap Active ---------------------------------------------------------
+// Дорисовывать в интерфейсе: миникарта "АКТИВНЫЙ" узел
 {$define in0k_LazIdeEXT_wndInspector_FF8S___miniMap_Active}
+//------------------------------------------------------------------------------
+
 
 //--- # PopUp menu -------------------------------------------------------------
 // Добавлять пункты меню к PopUpMenu "Дерева Зависимостей"
 {$define in0k_LazIdeEXT_wndInspector_FF8S___treeViewPopUp_Collapse_All}
-{$define in0k_LazIdeEXT_wndInspector_FF8S___treeViewPopUp_Collapse_withOutFocused}
+{$define in0k_LazIdeEXT_wndInspector_FF8S___treeViewPopUp_Collapse_withOutSelect}
 {$define in0k_LazIdeEXT_wndInspector_FF8S___treeViewPopUp_Collapse_withOutActive}
 //------------------------------------------------------------------------------
 
@@ -66,7 +74,7 @@ interface
 {$unDef in0k_LazIdeEXT_wndInspector_FF8S___miniMap_Select}
 {$unDef in0k_LazIdeEXT_wndInspector_FF8S___miniMap_Active}
 {$unDef in0k_LazIdeEXT_wndInspector_FF8S___treeViewPopUp_Collapse_All}
-{$unDef in0k_LazIdeEXT_wndInspector_FF8S___treeViewPopUp_Collapse_withOutFocused}
+{$unDef in0k_LazIdeEXT_wndInspector_FF8S___treeViewPopUp_Collapse_withOutSelect}
 {$unDef in0k_LazIdeEXT_wndInspector_FF8S___treeViewPopUp_Collapse_withOutActive}
 {%endregion}
 {$i in0k_lazExt_SETTINGs.inc} // настройка-конфигурация Компонента-Расширения
@@ -84,53 +92,66 @@ interface
 
 //==============================================================================
 
-{$undef _local___use_Classes_}
-{$undef _local___use_Graphics_}
 {$undef _local___prc_treeNode_do_expandAllParent_}
-{$undef _local___treeNode_paint_miniMap_Active}
+{$undef _local___treeView_popUp_}
+{$unDef _local___treeNode_paint_miniMap_}
+{$unDef _local___wndInspector___TSfEN_ON_}
 
+{$undef _local___use_Classes_}
+{$undef _local___use_Menus_}
+{$undef _local___use_Graphics_}
+{$undef _local___use_Themes_}
 
 {$unDef _fuckUp__ide_object_WND_onActivate_}
 {$unDef _fuckUp__ide_object_WND_onDeActivate_}
 {$unDef _fuckUp__ide_object_VTV_onAddition_}
 {$unDef _fuckUp__ide_object_VTV_onAdvancedCustomDrawItem_}
 {$unDef _fuckUp__ide_object_VTV_onAdvancedCustomDraw_}
+{$unDef _fuckUp__ide_object_IPM_onPopUp_}
 
 //==============================================================================
 
-{$ifDef in0k_LazIdeEXT_wndInspector_FF8S___AutoExpand}
-    {$define _local___prc_treeNode_do_expandAllParent_}
-{$else}
-    // БЕЗ автоматического разворачивания это НЕИМЕЕТ СМЫСЛА
-    {$undef in0k_LazIdeEXT_wndInspector_FF8S___AutoMODE_AutoCollapse_mode01}
-    {$undef lazExt_ProjectInspector_aFFfSE__TrackingSystemForExpanded_mode_02}
+{$ifdef in0k_LazIdeEXT_wndInspector_FF8S___AutoMODE}
+    // --- событие добавления узлов в дерево
+    {$define _local___NodeListHave_onNodeAdd_}
+    {$define _fuckUp__ide_object_VTV_onAddition_}
 {$endIf}
 
+
+//==== Система слежения за развернутыми узлами ("ССзРУ") =======================
+
+{$ifDef in0k_LazIdeEXT_wndInspector_FF8S___AutoExpand}
+    {$define _local___prc_treeNode_do_expandAllParent_}
+{$else} // БЕЗ автоматического разворачивания это НЕИМЕЕТ СМЫСЛА
+    {$undef in0k_LazIdeEXT_wndInspector_FF8S___AutoMODE_AutoCollapse_mode01}
+    {$undef lazExt_ProjectInspector_aFFfSE__treeView_expandedTracking_mode_02}
+{$endIf}
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
 {$ifDef in0k_LazIdeEXT_wndInspector_FF8S___AutoMODE_AutoCollapse_mode01}
-    {$define  lazExt_ProjectInspector_aFFfSE__TSfEN_ON}
+    {$define _local___wndInspector___TSfEN_ON_}
     {$define _fuckUp__ide_object_WND_onActivate_}
     {ю$define _fuckUp__ide_object_WND_onDeActivate_}
 {$endIf}
 
 {$ifDef lazExt_ProjectInspector_aFFfSE__treeView_expandedTracking_mode_02}
-    {$define lazExt_ProjectInspector_aFFfSE__TSfEN_ON}
+    {$define _local___wndInspector___TSfEN_ON_}
     {$undef  _future_treeView_expandedTracking_mode_01}
     {$define _future_treeView_expandedTracking_mode_02}
 {$endIf}
 
-//==============================================================================
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-{$ifnDef lazExt_ProjectInspector_aFFfSE__TSfEN_ON}
-    // БЕЗ слежения это НЕвозможно
+{$ifnDef _local___wndInspector___TSfEN_ON_} // БЕЗ слежения это НЕвозможно
     {$unDef in0k_LazIdeEXT_wndInspector_FF8S___mark_TrackingSystemForExpanded}
 {$endIf}
 
-//==============================================================================
+
+//===== ДОП рисование ==========================================================
 
 
-//====== ДОП рисование
-
-// --- рисование всяких МАРКЕРОВ
+// --- рисование МАРКЕРОВ
 
 {$ifDef in0k_LazIdeEXT_wndInspector_FF8S___mark_ActiveFileFromSoureceEdit}
     {$define _fuckUp__ide_object_VTV_onAdvancedCustomDrawItem_}
@@ -144,7 +165,6 @@ interface
 
 // --- рисование МиниКарта
 
-{$unDef _local___treeNode_paint_miniMap_}
 {$ifDef in0k_LazIdeEXT_wndInspector_FF8S___miniMap_Select}
     {$define _fuckUp__ide_object_VTV_onAdvancedCustomDraw_}
     {$define _local___treeNode_paint_miniMap_}
@@ -154,22 +174,30 @@ interface
     {$define _local___treeNode_paint_miniMap_}
 {$endIf}
 
-
-
-
 //==============================================================================
+// работа с PopUP
 
-// --- событие добавления узлов в дерево
-
-{$define _local___NodeListHave_onNodeAdd_}
-{$define _fuckUp__ide_object_VTV_onAddition_}
-{$ifNdef in0k_LazIdeEXT_wndInspector_FF8S___AutoMODE}
-    {$unDef _local___NodeListHave_onNodeAdd_}
-    {$unDef _fuckUp__ide_object_VTV_onAddition_}
+{$IfDef in0k_LazIdeEXT_wndInspector_FF8S___treeViewPopUp_Collapse_All}
+    {$define _fuckUp__ide_object_IPM_onPopUp_}
+    {$define _local___prc_treeNode_do_expandAllParent_}
+    {$define _local___treeView_popUp_}
+    {$define _local___use_Menus_}
+{$endIf}
+{$IfDef in0k_LazIdeEXT_wndInspector_FF8S___treeViewPopUp_Collapse_withOutSelect}
+    {$define _fuckUp__ide_object_IPM_onPopUp_}
+    {$define _local___prc_treeNode_do_expandAllParent_}
+    {$define _local___treeView_popUp_}
+    {$define _local___use_Menus_}
+{$endIf}
+{$IfDef in0k_LazIdeEXT_wndInspector_FF8S___treeViewPopUp_Collapse_withOutActive}
+    {$define _fuckUp__ide_object_IPM_onPopUp_}
+    {$define _local___prc_treeNode_do_expandAllParent_}
+    {$define _local___treeView_popUp_}
+    {$define _local___use_Menus_}
 {$endIf}
 
 //==============================================================================
-// частное использование библиотек
+// "частичное" использование библиотек
 
 {$IfDef in0k_LazIdeEXT_wndInspector_FF8S___AutoMODE_AutoCollapse_mode01}
     {$define _local___use_Classes_}
@@ -188,43 +216,15 @@ interface
     {$define _local___use_Graphics_}
 {$endIf}
 
-//==============================================================================
-// работа с PopUP
-
-{$undef _fuckUp__ide_object_IPM_onPopUp_}
-{$undef _local___use_Menus_}
-{$undef _local___treeView_popUp_}
-{$IfDef in0k_LazIdeEXT_wndInspector_FF8S___treeViewPopUp_Collapse_All}
-    {$define _fuckUp__ide_object_IPM_onPopUp_}
-    {$define _local___prc_treeNode_do_expandAllParent_}
-    {$define _local___treeView_popUp_}
-    {$define _local___use_Menus_}
-{$endIf}
-{$IfDef in0k_LazIdeEXT_wndInspector_FF8S___treeViewPopUp_Collapse_withOutFocused}
-    {$define _fuckUp__ide_object_IPM_onPopUp_}
-    {$define _local___prc_treeNode_do_expandAllParent_}
-    {$define _local___treeView_popUp_}
-    {$define _local___use_Menus_}
-{$endIf}
-{$IfDef in0k_LazIdeEXT_wndInspector_FF8S___treeViewPopUp_Collapse_withOutActive}
-    {$define _fuckUp__ide_object_IPM_onPopUp_}
-    {$define _local___prc_treeNode_do_expandAllParent_}
-    {$define _local___treeView_popUp_}
-    {$define _local___use_Menus_}
-{$endIf}
-
 {%endregion}
-
-
-{ю$define in0k_LazIdeEXT_wndInspector_FF8S___miniMap_Active}
 
 
 uses {$ifDef _debugLOG_}in0k_lazExt_DEBUG,{$endIf}
      Forms, ComCtrls, TreeFilterEdit, Controls,
      {$ifDef _local___use_Classes_}Classes,{$endIf}
-     {$ifDef _local___use_Themes_}Themes,{$endIf}
-     {$ifDef _local___use_Graphics_}Graphics,{$endIf}
      {$ifDef _local___use_Menus_}Menus,{$endIf}
+     {$ifDef _local___use_Graphics_}Graphics,{$endIf}
+     {$ifDef _local___use_Themes_}Themes,{$endIf}
      SrcEditorIntf, LCLProc, LCL,
      in0k_lazIdeSRC_FuckUpForm;
 
@@ -244,19 +244,18 @@ type
   protected
    _treeView_:tTreeView; //< дерево с которым работаем
     procedure _treeView_SET_(const value:tTreeView);
-    procedure _treeView_set_DO_autoExpand_;
   protected
     {$ifDef _local___prc_treeNode_do_expandAllParent_}
     procedure _treeNode_do_expandAllParent_(const node:TTreeNode); inline;
     {$endif}
   protected
-   _slctNode_:TTreeNode; //< последний отмеченный узел
-   _slctFile_:string;    //< последний отмеченный узел (имя файла) нужен для отлова событый связанных с "перевставкой узлов"
-    procedure _slctNode_SET_(const value:TTreeNode);
-    procedure _slctNode_do_selectInTREE_;
+   _actvNode_:TTreeNode; //< последний отмеченный узел (АКТИВНЫЙ, это мы его выделяем)
+   _actvFile_:string;    //< последний отмеченный узел (имя файла) нужен для отлова событый связанных с "перевставкой узлов"
+    procedure _actvNode_SET_(const value:TTreeNode);
+    procedure _actvNode_do_selectInTREE_;
   protected
   {%region --- Система Слежение за Развернутыми Узлами (ССзРУ) ---- /fold}
-  {$ifDef lazExt_ProjectInspector_aFFfSE__TSfEN_ON}
+  {$ifDef _local___wndInspector___TSfEN_ON_}
     {%region --- ВАРИАНТ №1 ("ССзРУ" m01) ------------------------ /fold}
     {$ifDef in0k_LazIdeEXT_wndInspector_FF8S___AutoMODE_AutoCollapse_mode01}
   private
@@ -295,9 +294,9 @@ type
     procedure _IMP_do_treeViewPopUp_Collapse_All({%H-}Sender:TObject);
     function  _IMP_prepare_menuItem_Collapse_All_:TMenuItem;
     {$endIf}
-    {$IfDef in0k_LazIdeEXT_wndInspector_FF8S___treeViewPopUp_Collapse_withOutFocused}
-    procedure _IMP_do_treeViewPopUp_Collapse_withOutFocused({%H-}Sender:TObject);
-    function  _IMP_prepare_menuItem_Collapse_withOutFocused:TMenuItem;
+    {$IfDef in0k_LazIdeEXT_wndInspector_FF8S___treeViewPopUp_Collapse_withOutSelect}
+    procedure _IMP_do_treeViewPopUp_Collapse_withOutSelect({%H-}Sender:TObject);
+    function  _IMP_prepare_menuItem_Collapse_withOutSelect:TMenuItem;
     {$endIf}
     {$IfDef in0k_LazIdeEXT_wndInspector_FF8S___treeViewPopUp_Collapse_withOutActive}
     procedure _IMP_do_treeViewPopUp_Collapse_withOutActive({%H-}Sender:TObject);
@@ -316,6 +315,9 @@ type
    _ide_object_WND_onDeActivate_original_:TNotifyEvent;
     procedure _WND_onDeActivate_myCustom_(Sender:TObject);
   {$endIf}
+  private //< ФакАпим УДАЛЕНИЕ узла из дерева
+   _ide_object_VTV_onDeletion_original_:TTVExpandedEvent;
+    procedure _VTV_onDeletion_myCustom_(Sender:TObject; Node:TTreeNode);
   {$ifDef _fuckUp__ide_object_VTV_onAddition_}
   private //< ФакАпим ДОБАВЛЕНИЕ нового узла в дерево
    _ide_object_VTV_onAddition_original_:TTVExpandedEvent;
@@ -326,9 +328,6 @@ type
    _ide_object_IPM_onPopUp_original_:TNotifyEvent;
     procedure _IPM_onPopUp_myCustom_(Sender:TObject);
   {$endIf}
-  private //< ФакАпим УДАЛЕНИЕ узла из дерева
-   _ide_object_VTV_onDeletion_original_:TTVExpandedEvent;
-    procedure _VTV_onDeletion_myCustom_(Sender:TObject; Node:TTreeNode);
   {$ifDef _fuckUp__ide_object_VTV_onAdvancedCustomDrawItem_}
   private //< ФакАпим рисование УЗЛА
    _ide_object_VTV_onAdvancedCustomDrawItem_original_:TTVAdvancedCustomDrawItemEvent;
@@ -363,9 +362,9 @@ type
     {$endif}
     {$ifDef _local___treeNode_paint_miniMap_}
   private // общее по миниКарте
-    function  _VTV_find_topLastCollapsed_(const Node:TTreeNode):TTreeNode;
+    function  _VTV_find_topLastCollapsedParent_ (const Node:TTreeNode):TTreeNode;
     function  _VTV_miniMap_select_width_ :integer; inline;
-    procedure _VTV_miniMap_calculate_rects_     (const Sender:TCustomTreeView; const FullHeight:integer; const Node:TTreeNode; var nodeRect,mMapRect:Trect);
+    procedure _VTV_miniMap_calculate_rects_     (const Sender:TCustomTreeView; const FullHeight:integer; const Node:TTreeNode; out nodeRect,mMapRect:Trect);
     procedure _VTV_onAdvancedCustomDraw_miniMap_(const Sender:TCustomTreeView; const ARect:TRect);
     {$endif}
     {$ifDef in0k_LazIdeEXT_wndInspector_FF8S___miniMap_Select}
@@ -379,8 +378,6 @@ type
     procedure _VTV_onAdvancedCustomDraw_miniMap_active_(const Sender:TCustomTreeView; const ARect:TRect; const fullHeight:integer; const Node:TTreeNode);
     {$endIf}
   {%endRegion}
-
-
   public
     constructor Create{(const aForm:TCustomForm)}; override;
     destructor DESTROY; override;
@@ -407,11 +404,6 @@ type
 implementation
 uses LCLVersion;
 
-const
-   _cVTV_color_Active_=clHighlight;
-   _cVTV_color_Grayed_=clBtnShadow;
-
-
 {%region --- возня с ДЕБАГОМ -------------------------------------- /fold}
 {$if declared(in0k_lazIde_DEBUG)}
     // `in0k_lazIde_DEBUG` - это функция ИНДИКАТОР что используется DEBUG
@@ -433,8 +425,8 @@ begin
     {$endIf}
     //---
    _treeView_:=nil;
-   _slctNode_:=nil;
-   _slctFile_:='';
+   _actvNode_:=nil;
+   _actvFile_:='';
     //---
     {$ifDef _fuckUp__ide_object_VTV_onAddition_}
    _ide_object_VTV_onAddition_original_:=NIL;
@@ -648,13 +640,13 @@ begin
         //---
        _treeView_SET_(treeView_FIND(FORM));
         if Assigned(_treeView_) then begin
+           _ide_object_VTV_onDeletion_original_:=_treeView_.OnDeletion;
+           _treeView_.OnDeletion:=@_VTV_onDeletion_myCustom_;
+            //---
             {$ifDef _fuckUp__ide_object_VTV_onAddition_}
            _ide_object_VTV_onAddition_original_:=_treeView_.OnAddition;
            _treeView_.OnAddition:=@_VTV_onAddition_myCustom_;
             {$endIf}
-            //---
-           _ide_object_VTV_onDeletion_original_:=_treeView_.OnDeletion;
-           _treeView_.OnDeletion:=@_VTV_onDeletion_myCustom_;
             //---
             {$ifDef _fuckUp__ide_object_VTV_onAdvancedCustomDrawItem_}
            _ide_object_VTV_onAdvancedCustomDrawItem_original_:=_treeView_.OnAdvancedCustomDrawItem;
@@ -742,15 +734,15 @@ begin
         end;
         // если НИЧЕГО не нашли проверим ...
         // может мы сюда попали после "перевставки узлов" или "удалении" и т.д.
-        if (not Assigned(treeNode))and (not Assigned(_slctNode_)) and (_slctFile_<>'') then begin
-           _slctNode_:=_treeView_.Items.GetFirstNode;
-            while Assigned(_slctNode_) do begin
-                if _slctFile_=treeNode_NAME(_slctNode_) then BREAK; //< нашли родимого
-               _slctNode_:=_slctNode_.GetNext;
+        if (not Assigned(treeNode))and (not Assigned(_actvNode_)) and (_actvFile_<>'') then begin
+           _actvNode_:=_treeView_.Items.GetFirstNode;
+            while Assigned(_actvNode_) do begin
+                if _actvFile_=treeNode_NAME(_actvNode_) then BREAK; //< нашли родимого
+               _actvNode_:=_actvNode_.GetNext;
             end;
             {$ifdef _fuckUp__ide_object_VTV_onAdvancedCustomDrawItem_} //< это важно ТОЛЬКО при подрисовке
-            if Assigned(_slctNode_)
-            then _slctNode_.Update
+            if Assigned(_actvNode_)
+            then _actvNode_.Update
             else _treeView_.Update;
             {$endIf};
         end;
@@ -763,13 +755,13 @@ begin
     // собсно, то ради чего всё и затевалось
     if Assigned(treeNode) then begin
         // основная часть ... переместить фокус (выделение) на найденный узел
-       _slctNode_SET_(treeNode);
+       _actvNode_SET_(treeNode);
     end
     {$ifdef _fuckUp__ide_object_VTV_onAdvancedCustomDrawItem_} //< это важно ТОЛЬКО при подрисовке
     // если мы НЕ рисуем ... то парить комп НЕ надо
     else begin
-        if Assigned(_slctNode_) then begin
-            _slctNode_.Update; //< возможно мы перешли в другое окно
+        if Assigned(_actvNode_) then begin
+            _actvNode_.Update; //< возможно мы перешли в другое окно
         end;
     end{$endIf};
     //---------------------------------
@@ -784,17 +776,12 @@ procedure tLazExt_wndInspector_FF8S_wndNode._treeView_SET_(const value:tTreeView
 begin
    _treeView_:=value;
     if Assigned(_treeView_) then begin
-       _treeView_set_DO_autoExpand_;
+        {$ifDef in0k_LazIdeEXT_wndInspector_FF8S___AutoExpand}
+          _treeView_.Options:=_treeView_.Options+[tvoAutoExpand];
+        {$else}
+          _treeView_.Options:=_treeView_.Options-[tvoAutoExpand];
+        {$endIf}
     end;
-end;
-
-procedure tLazExt_wndInspector_FF8S_wndNode._treeView_set_DO_autoExpand_;
-begin
-    {$ifDef in0k_LazIdeEXT_wndInspector_FF8S___AutoExpand}
-      _treeView_.Options:=_treeView_.Options+[tvoAutoExpand];
-    {$else}
-      _treeView_.Options:=_treeView_.Options-[tvoAutoExpand];
-    {$endIf}
 end;
 
 //------------------------------------------------------------------------------
@@ -814,38 +801,38 @@ end;
 
 //------------------------------------------------------------------------------
 
-procedure tLazExt_wndInspector_FF8S_wndNode._slctNode_SET_(const value:TTreeNode);
+procedure tLazExt_wndInspector_FF8S_wndNode._actvNode_SET_(const value:TTreeNode);
 begin
     {$ifDef _debugLOG_}
        DEBUG('SELECT', addr2txt(value)+':"'+treeNode_NAME(value)+'"');
     {$endIf}
-   _slctNode_:=value;
-   _slctFile_:=treeNode_NAME(_slctNode_);
+   _actvNode_:=value;
+   _actvFile_:=treeNode_NAME(_actvNode_);
     //--- воот ... теперь пошлу тут разные фичи ----------------------------
     {$ifdef in0k_LazIdeEXT_wndInspector_FF8S___AutoMODE_AutoCollapse_mode01}
     if _TSfENm01__WORK_ then _TSfENm01_listExpandedNodes__2Tree_
     else _TSfENm01__WORK_set_(TRUE);
     {$endIf}
     // это БЕЗ условная фича, ради неё и писался этот компанент
-   _slctNode_do_selectInTREE_;
+   _actvNode_do_selectInTREE_;
     //---
     {$ifdef _fuckUp__ide_object_VTV_onAdvancedCustomDrawItem_} //< это важно ТОЛЬКО при подрисовке
-   _slctNode_.Update;
+   _actvNode_.Update;
     {$endIf}
 end;
 
-// переместить ВЫДЕЛЕНИЕ на _slctNode_ узел
-procedure tLazExt_wndInspector_FF8S_wndNode._slctNode_do_selectInTREE_;
+// переместить ВЫДЕЛЕНИЕ на _actvNode_ узел
+procedure tLazExt_wndInspector_FF8S_wndNode._actvNode_do_selectInTREE_;
 begin
-    if Assigned(Form) and Assigned(_treeView_) and Assigned(_slctNode_) then begin
+    if Assigned(Form) and Assigned(_treeView_) and Assigned(_actvNode_) then begin
         with _treeView_ do begin
             BeginUpdate;
-            if not _slctNode_.Selected then begin //< не будем гонять попусту
+            if not _actvNode_.Selected then begin //< не будем гонять попусту
                     ClearSelection;
-                    Selected:=_slctNode_;
+                    Selected:=_actvNode_;
             end{$ifDef in0k_LazIdeEXT_wndInspector_FF8S___AutoExpand}
             else begin // убедимся что ВСЕ родители узла РАЗВЕРНУТЫ
-               _treeNode_do_expandAllParent_(_slctNode_)
+               _treeNode_do_expandAllParent_(_actvNode_)
             end{$endif};
             EndUpdate;
         end;
@@ -855,7 +842,7 @@ begin
       else
        if not Assigned(_treeView_) then DEBUG('ERROR','not Assigned(_treeView_)')
       else
-       if not Assigned(_slctNode_) then DEBUG('ERROR','not Assigned(_slctNode_)')
+       if not Assigned(_actvNode_) then DEBUG('ERROR','not Assigned(_actvNode_)')
     end{$endIf};
 end;
 
@@ -893,6 +880,20 @@ end;
 
 //------------------------------------------------------------------------------
 
+// при удалении узла из дерева
+procedure tLazExt_wndInspector_FF8S_wndNode._VTV_onDeletion_myCustom_(Sender:TObject; Node:TTreeNode);
+begin
+    //--- вызов ОРИГИНАЛЬНОГО обработчика, то что было изначально
+    if Assigned(_ide_object_VTV_onDeletion_original_) then _ide_object_VTV_onDeletion_original_(Sender,Node);
+    //--- моя "нагрузка" ----------------------------------------
+    if Node=_actvNode_ then begin
+       _actvNode_:=nil;
+        {$ifDef _debugLOG_}
+        DEBUG('DELETE','delete Selected Node:"'+_actvFile_+'"')
+        {$endIf};
+    end;
+end;
+
 {$ifDef _fuckUp__ide_object_VTV_onAddition_}
 // при добавление нового узла в дерево
 procedure tLazExt_wndInspector_FF8S_wndNode._VTV_onAddition_myCustom_(Sender:TObject; Node:TTreeNode);
@@ -904,19 +905,15 @@ begin
 end;
 {$endif}
 
-// при удалении узла из дерева
-procedure tLazExt_wndInspector_FF8S_wndNode._VTV_onDeletion_myCustom_(Sender:TObject; Node:TTreeNode);
+{$ifDef _fuckUp__ide_object_IPM_onPopUp_}
+procedure tLazExt_wndInspector_FF8S_wndNode._IPM_onPopUp_myCustom_(Sender:TObject);
 begin
     //--- вызов ОРИГИНАЛЬНОГО обработчика, то что было изначально
-    if Assigned(_ide_object_VTV_onDeletion_original_) then _ide_object_VTV_onDeletion_original_(Sender,Node);
+    if Assigned(_ide_object_IPM_onPopUp_original_) then _ide_object_IPM_onPopUp_original_(Sender);
     //--- моя "нагрузка" ----------------------------------------
-    if Node=_slctNode_ then begin
-       _slctNode_:=nil;
-        {$ifDef _debugLOG_}
-        DEBUG('DELETE','delete Selected Node:"'+_slctFile_+'"')
-        {$endIf};
-    end;
+   _IMP_onPopUP_;
 end;
+{$endIf}
 
 {$ifDef _fuckUp__ide_object_VTV_onAdvancedCustomDrawItem_}
 // при рисовании узла у дерева
@@ -950,22 +947,10 @@ begin
 end;
 {$endIf}
 
-//------------------------------------------------------------------------------
-
-{$ifDef _fuckUp__ide_object_IPM_onPopUp_}
-procedure tLazExt_wndInspector_FF8S_wndNode._IPM_onPopUp_myCustom_(Sender:TObject);
-begin
-    //--- вызов ОРИГИНАЛЬНОГО обработчика, то что было изначально
-    if Assigned(_ide_object_IPM_onPopUp_original_) then _ide_object_IPM_onPopUp_original_(Sender);
-    //--- моя "нагрузка" ----------------------------------------
-   _IMP_onPopUP_;
-end;
-{$endIf}
-
 {%endregion}
 
 {%region --- Система Слежение за Развернутыми Узлами (ССзРУ) ------ /fold}
-{$ifDef lazExt_ProjectInspector_aFFfSE__TSfEN_ON}
+{$ifDef _local___wndInspector___TSfEN_ON_}
 //  "Системе Слежения за Развернутыми Узлами" (ССзРУ)
 //  "Tracking System for Expanded Nodes" (TSfEN)
 
@@ -1108,7 +1093,7 @@ end;
 {%endregion}
 {$endIf}
 
-{$endif lazExt_ProjectInspector_aFFfSE__TSfEN_ON}
+{$endif _local___wndInspector___TSfEN_ON_}
 {%endregion}
 
 {%region --- Работа с treeView PopUP Menu ------------------------- /fold}
@@ -1198,9 +1183,9 @@ end;
 
 {$endIf}
 
-{$IfDef in0k_LazIdeEXT_wndInspector_FF8S___treeViewPopUp_Collapse_withOutFocused}
+{$IfDef in0k_LazIdeEXT_wndInspector_FF8S___treeViewPopUp_Collapse_withOutSelect}
 
-procedure tLazExt_wndInspector_FF8S_wndNode._IMP_do_treeViewPopUp_Collapse_withOutFocused(Sender:TObject);
+procedure tLazExt_wndInspector_FF8S_wndNode._IMP_do_treeViewPopUp_Collapse_withOutSelect(Sender:TObject);
 begin
     if not ( Assigned(_treeView_) and Assigned(_treeView_.Selected) ) then Exit; //< на всяк пожарный
     //---
@@ -1213,14 +1198,14 @@ end;
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 const {todo: а как же быть с переводом????}
-  _cPopUpMenu__Collapse_withOutFocused__Caption_=_cPopUpMenu__CORE_Collapse_All__Caption_+' (^) Focused';
-  _cPopUpMenu__Collapse_withOutFocused__Hint_   =_cPopUpMenu__CORE_Collapse_All__Caption_+' without Focused node';
+  _cPopUpMenu__Collapse_withOutFocused__Caption_=_cPopUpMenu__CORE_Collapse_All__Caption_+' (^) Select';
+  _cPopUpMenu__Collapse_withOutFocused__Hint_   =_cPopUpMenu__CORE_Collapse_All__Caption_+' without Select node';
 
-function tLazExt_wndInspector_FF8S_wndNode._IMP_prepare_menuItem_Collapse_withOutFocused:TMenuItem;
+function tLazExt_wndInspector_FF8S_wndNode._IMP_prepare_menuItem_Collapse_withOutSelect:TMenuItem;
 begin
-    result:=_IMP_PopupMenu_FND_(_treeView_.PopupMenu,@_IMP_do_treeViewPopUp_Collapse_withOutFocused);
+    result:=_IMP_PopupMenu_FND_(_treeView_.PopupMenu,@_IMP_do_treeViewPopUp_Collapse_withOutSelect);
     if not Assigned(result) then begin
-        result:=_IMP_PopupMenu_CRT_(_treeView_.PopupMenu,@_IMP_do_treeViewPopUp_Collapse_withOutFocused);
+        result:=_IMP_PopupMenu_CRT_(_treeView_.PopupMenu,@_IMP_do_treeViewPopUp_Collapse_withOutSelect);
         result.Caption:=_cPopUpMenu__Collapse_withOutFocused__Caption_;
         result.Hint   :=_cPopUpMenu__Collapse_withOutFocused__Hint_;
     end;
@@ -1233,11 +1218,11 @@ end;
 
 procedure tLazExt_wndInspector_FF8S_wndNode._IMP_do_treeViewPopUp_Collapse_withOutActive(Sender:TObject);
 begin
-    if not ( Assigned(_treeView_) and Assigned(_slctNode_) ) then Exit; //< на всяк пожарный
+    if not ( Assigned(_treeView_) and Assigned(_actvNode_) ) then Exit; //< на всяк пожарный
     //---
    _treeView_.BeginUpdate; //< он коммулятивный
         _IMP_do_treeView_Collapse_All_;
-        _treeNode_do_expandAllParent_(_slctNode_);
+        _treeNode_do_expandAllParent_(_actvNode_);
    _treeView_.EndUpdate;
 end;
 
@@ -1255,7 +1240,7 @@ begin
         result.Caption:=_cPopUpMenu__Collapse_withOutActive__Caption_;
         result.Hint   :=_cPopUpMenu__Collapse_withOutActive__Hint_;
     end;
-    result.Enabled:=Assigned(_slctNode_);
+    result.Enabled:=Assigned(_actvNode_);
 end;
 
 {$endIf}
@@ -1264,6 +1249,13 @@ end;
 {%endregion}
 
 {%region --- рисование ДОП примитивов ----------------------------- /fold}
+
+{$ifDef _local___use_Graphics_} //< наверно что-то рисовать хотим
+const
+   _cVTV_color_Active_=clHighlight;
+   _cVTV_color_Grayed_=clBtnShadow;
+{$endIf _local___use_Graphics_}
+
 
 {$ifDef in0k_LazIdeEXT_wndInspector_FF8S___mark_ActiveFileFromSoureceEdit}
 // рисование: МАРКЕР АКТИВНЫЙ
@@ -1298,19 +1290,19 @@ end;
 procedure tLazExt_wndInspector_FF8S_wndNode._VTV_onAdvancedCustomDrawItem_nodeMARK_active_(const Sender:TCustomTreeView; const Node:TTreeNode);
 begin
      node.IsVisible;
-    if Assigned(_slctNode_) and (_slctNode_=node) then begin // _treeNode_isCurrentActive_(Node) then begin
-        if _ide_ActiveSourceEdit_fileName_=treeNode_NAME(_slctNode_)
+    if Assigned(_actvNode_) and (_actvNode_=node) then begin // _treeNode_isCurrentActive_(Node) then begin
+        if _ide_ActiveSourceEdit_fileName_=treeNode_NAME(_actvNode_)
         then _VTV_draw_nodeMRK__actvFrme_(Sender,Node,_cVTV_color_Active_)
         else _VTV_draw_nodeMRK__actvFrme_(Sender,Node,_cVTV_color_Grayed_);
     end;
 end;
 
-// рисование: это для ПАПКИ (которая возможно свернута и содержит в себе _slctNode_)
+// рисование: это для ПАПКИ (которая возможно свернута и содержит в себе _actvNode_)
 procedure tLazExt_wndInspector_FF8S_wndNode._VTV_onAdvancedCustomDrawItem_nodeMARK_acFLDR_(const Sender:TCustomTreeView; const Node:TTreeNode);
 begin
     if (not Node.Expanded) then begin //< и она ДОЛЖНА быть ОБЯЗАТЕЛЬНО свернута
-        if Assigned(_slctNode_) and (_slctNode_.HasAsParent(Node)) then begin
-            if _ide_ActiveSourceEdit_fileName_=treeNode_NAME(_slctNode_)
+        if Assigned(_actvNode_) and (_actvNode_.HasAsParent(Node)) then begin
+            if _ide_ActiveSourceEdit_fileName_=treeNode_NAME(_actvNode_)
             then _VTV_draw_nodeMRK__actvFrme_(Sender,Node,_cVTV_color_Active_)
             else _VTV_draw_nodeMRK__actvFrme_(Sender,Node,_cVTV_color_Grayed_);
         end;
@@ -1322,8 +1314,8 @@ end;
 // рисование: все что связанной с отметкой для АКТИВНОГО файла
 procedure tLazExt_wndInspector_FF8S_wndNode._VTV_onAdvancedCustomDrawItem_nodeMARK_(const Sender:TCustomTreeView; const Node:TTreeNode);
 begin
-    if Assigned(_slctNode_) then begin //< иначе бестолку
-        if (_slctNode_<>Node) then begin
+    if Assigned(_actvNode_) then begin //< иначе бестолку
+        if (_actvNode_<>Node) then begin
            _VTV_onAdvancedCustomDrawItem_nodeMARK_acFLDR_(Sender,Node);
         end
         else begin
@@ -1335,7 +1327,7 @@ end;
 {$endif}
 
 
-{$ifDef in0k_LazIdeEXT_wndInspector_FF8S___mark_TrackingSystemForExpanded}
+{$ifDef in0k_LazIdeEXT_wndInspector_FF8S___mark_TrackingSystemForExpanded}//----
 // рисование: МАРКЕР авто-Сворачивания
 
 // рисуем Уголок слева
@@ -1387,7 +1379,7 @@ end;
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 // расчитать положение на миниКарте (верх-низ)
-procedure tLazExt_wndInspector_FF8S_wndNode._VTV_miniMap_calculate_rects_(const Sender:TCustomTreeView; const FullHeight:integer; const Node:TTreeNode; var nodeRect,mMapRect:Trect);
+procedure tLazExt_wndInspector_FF8S_wndNode._VTV_miniMap_calculate_rects_(const Sender:TCustomTreeView; const FullHeight:integer; const Node:TTreeNode; out nodeRect,mMapRect:Trect);
 begin
     nodeRect:=Node.DisplayRect(true);
     mMapRect:=nodeRect;
@@ -1400,12 +1392,16 @@ end;
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-function  tLazExt_wndInspector_FF8S_wndNode._VTV_find_topLastCollapsed_(const Node:TTreeNode):TTreeNode;
+// найти СВЕРНУТОГО родителя, расположенного максимально близко к КОРНЮ
+// @prm Node узел с которого начинаем
+// @ret Node "свернутых" родителей НЕТ
+// @ret указатель на родителя, удовлетворяющего условиям поиска
+function  tLazExt_wndInspector_FF8S_wndNode._VTV_find_topLastCollapsedParent_(const Node:TTreeNode):TTreeNode;
 var tmp:TTreeNode;
 begin
     result:=node;
     tmp:=result.Parent;
-    while Assigned(tmp){and(tmp.TreeView.Items[0]<>tmp)} do begin
+    while Assigned(tmp) do begin
         if not tmp.Expanded then result:=tmp;
         //-->
         tmp:=tmp.Parent;
@@ -1419,12 +1415,13 @@ var fullHeight:integer;
     node:tTreeNode;
 begin
     // проверим... стоит ли вообще шевелиться
-    if not (Assigned(_slctNode_) or Assigned(Sender.Selected)) then EXIT; //< делать то НЕЧЕГО
+    if not (Assigned(_actvNode_) or Assigned(Sender.Selected)) then EXIT; //< делать то НЕЧЕГО
 
     // расчитаем ПОЛНУЮ высоты содержимого (подсмотрел в исходниках tTreeView)
     node:=sender.Items.GetLastExpandedSubNode;
     if not Assigned(node) then EXIT;  //< что-то пошло не так
     fullHeight:=node.Top+node.Height; // полная высота СОДЕРЖИМОГО дерева
+    if fullHeight<=0 then EXIT;       //< перестраховка
 
     {$ifDef in0k_LazIdeEXT_wndInspector_FF8S___miniMap_Select}
     node:=Sender.Selected; //< рисуем миниМап для узла в фокусе
@@ -1433,7 +1430,7 @@ begin
     end;
     {$endif}
     {$ifDef in0k_LazIdeEXT_wndInspector_FF8S___miniMap_Active}
-    node:=_slctNode_; //< рисуем миниМап для АКТИВНОГО узла
+    node:=_actvNode_; //< рисуем миниМап для АКТИВНОГО узла
     if Assigned(node) then begin
        _VTV_onAdvancedCustomDraw_miniMap_active_(Sender,ARect,fullHeight,node);
     end;
@@ -1451,7 +1448,7 @@ var nodeRect,mMapRect:tRect;
     N:TTreeNode;
 begin
     // что ПРеДСТАВЛЯЕТ наш узел (это может быть один из свернутых родителей)
-    N:=_VTV_find_topLastCollapsed_(Node);
+    N:=_VTV_find_topLastCollapsedParent_(Node);
 
     //---
     // расчитываем положение и размер на МиниКарте
@@ -1476,8 +1473,8 @@ begin
     //---
     // по необходимости рисуем маркер для "свернутого" отца
     if (N<>Node)and(N.IsVisible) then begin //< ага, УЗЕЛ не видно ... он свернут в родителя "N"
-        // он еще НЕ должен совпадать _slctNode_ или его "свернутым родителеем"
-        if NOT (Assigned(_slctNode_)and((N=_slctNode_)or(N=_VTV_find_topLastCollapsed_(_slctNode_)))) then begin
+        // он еще НЕ должен совпадать _actvNode_ или его "свернутым родителеем"
+        if NOT (Assigned(_actvNode_)and((N=_actvNode_)or(N=_VTV_find_topLastCollapsedParent_(_actvNode_)))) then begin
             // рисуем САМ маркер
             if (tvoThemedDraw in Sender.Options) then begin
                 Details:=ThemeServices.GetElementDetails(ttItemSelectedNotFocus);
@@ -1514,7 +1511,7 @@ var nodeRect,mMapRect:tRect;
     N:TTreeNode;
 begin
     // что ПРеДСТАВЛЯЕТ наш узел (это может быть один из свернутых родителей)
-    N:=_VTV_find_topLastCollapsed_(Node);
+    N:=_VTV_find_topLastCollapsedParent_(Node);
 
     //---
     // расчитываем положение и размер на МиниКарте
