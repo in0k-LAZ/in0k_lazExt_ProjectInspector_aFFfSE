@@ -64,7 +64,7 @@ begin // тут Lazarus ЧИСТИТ все меню ... поэтому кажд
    _IMP_prepare_menuItem_Collapse_withOutActive;
     {$endIf}
     {$IfDef in0k_LazIdeEXT_wndInspector_FF8S___treeViewPopUp_Collapse_withOutActive}
-   _IMP_prepare_menuItem_Collapse_withOutFocused;
+   _IMP_prepare_menuItem_Collapse_withOutSelect;
     {$endIf}
 end;
 

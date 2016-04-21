@@ -56,10 +56,21 @@
 {$define in0k_LazIdeEXT_wndInspector_FF8S___mark_TrackingSystemForExpanded}
 //------------------------------------------------------------------------------
 
+//--- # miniMap Select ---------------------------------------------------------
+// Дорисовывать в интерфейсе: миникарта "Выделенный" узел
+{$define in0k_LazIdeEXT_wndInspector_FF8S___miniMap_Select}
+//------------------------------------------------------------------------------
+
+//--- # miniMap Active ---------------------------------------------------------
+// Дорисовывать в интерфейсе: миникарта "АКТИВНЫЙ" узел
+{$define in0k_LazIdeEXT_wndInspector_FF8S___miniMap_Active}
+//------------------------------------------------------------------------------
+
+
 //--- # "Dependency Tree"  PopUp menu ------------------------------------------
 // To add items to PopUp menu "Dependency Tree"
 {$define in0k_LazIdeEXT_wndInspector_FF8S___treeViewPopUp_Collapse_All}
-{$define in0k_LazIdeEXT_wndInspector_FF8S___treeViewPopUp_Collapse_withOutFocused}
+{$define in0k_LazIdeEXT_wndInspector_FF8S___treeViewPopUp_Collapse_withOutSelect}
 {$define in0k_LazIdeEXT_wndInspector_FF8S___treeViewPopUp_Collapse_withOutActive}
 //------------------------------------------------------------------------------
 
@@ -67,8 +78,7 @@
 //--- # DEBUG ------------------------------------------------------------------
 //  Позволяет просматривать лог событий в отдельном окне из IDE
 //  `View` -> `IDE Internals` -> `[eventLog]..wndInspector_aFNcAFSE..`
-{$define in0k_LazIdeEXT_wndInspector_FF8S___DebugLOG}
-{$define in0k_LazIdeEXT_wndInspector_FF8S___DebugLOG}
+{.$define in0k_LazIdeEXT_wndInspector_FF8S___DebugLOG}
 //  расширенный дебаг
 {$ifDef in0k_LazIdeEXT_wndInspector_FF8S___DebugLOG}
     // можно подключить логи ПодСистем
