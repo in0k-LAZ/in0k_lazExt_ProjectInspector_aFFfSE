@@ -1,4 +1,4 @@
-# in0k_LazIdeEXT_wndInspector_FF8S
+# wndInspector_FF8S
 
 [Expert](D1) for [Lazarus IDE](D2).
 
@@ -6,10 +6,18 @@
   Searching file from "[Source Editor](0)", in open "Inspectors" windows
   ("[Project Inspector](1)", "[Package Editor](2)").
 
-### Use
+### How it works
 
   Setting focus to a node "Dependency Tree" of window "Inspector", 
   according to the current [active](3) file in the "Source Editor".
+
+  For a visual understanding, see demonstration 
+  [IDE Command](https://github.com/in0k-LazarusIDE-plugins/in0k_LazIdeEXT_wndInspector_FF8S/wiki/Animation-'IDE-command')
+  and
+  [Auto MODE](https://github.com/in0k-LazarusIDE-plugins/in0k_LazIdeEXT_wndInspector_FF8S/wiki/Animation-'Auto-MODE').
+
+
+### Features
 
 * IDE Command
   - shortcut: `Ctrl`+`Shift`+`Alt`+`F` (to change see [Shortcuts](4))
@@ -21,15 +29,20 @@
 * Auto mode
    - the search starts when you change "[Active source editor](3)"
    - additionally:
-     + if file found in "Inspector", then brings window to "[Second Plan](5)"
+     + if file found in "Inspector", then brings window to 
+       "[Second Plan](https://github.com/in0k-src/in0k-bringToSecondPlane)"
+       (this works well on Windows systems. For other systems this option is by default NOT included, since it leads to "blink" interface)
      + visual highlighting of the active node in the "Dependency Tree"
      + save state of collapsed nodes in the "Dependency Tree"
+     + "minimap" for Selected and Active node in the "Dependency Tree"
+* "Dependency Tree" in "Inspector"
+  + additional items in `Рopup` menu (`Collapse All ...`)
 
 ## Installation and Configuration
-* Sources: clone the repository with ALL subprojects OR 
-  download the latest version of the "FULL source code" archive (`.._fullSRC.zip`)
-* Installation: It uses a [standard](I0) installation package scheme 
-* Configuration: before the "build" package, edit the file `in0k_lazExt_SETTINGs.inc`.
+* **Sources**: clone the repository with ALL subprojects OR 
+  download "FULL source code" archive (`.._fullSRC.zip`) from last [releas](https://github.com/in0k-LazarusIDE-plugins/in0k_LazIdeEXT_wndInspector_FF8S/releases).
+* **Installation**: It uses a [standard](I0) installation package scheme. 
+* **Configuration**: before the "build" package, edit the file `in0k_lazExt_SETTINGs.inc`.
 
 [D1]: http://wiki.lazarus.freepascal.org/Extending_the_IDE#Overview
 [D2]: http://www.lazarus-ide.org/ 
@@ -39,8 +52,3 @@
 [ 2]: http://wiki.freepascal.org/IDE_Window:_Package_Editor
 [ 3]: http://wiki.freepascal.org/Extending_the_IDE#Active_source_editor
 [ 4]: http://wiki.freepascal.org/Lazarus_IDE_Shortcuts
-[ 5]: https://github.com/in0k-src/in0k-bringToSecondPlane
-
-
-
-
