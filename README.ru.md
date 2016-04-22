@@ -43,4 +43,5 @@
 [ 2]: http://wiki.freepascal.org/IDE_Window:_Package_Editor
 [ 3]: http://wiki.freepascal.org/Extending_the_IDE#Active_source_editor
 [ 4]: http://wiki.freepascal.org/Lazarus_IDE_Shortcuts
-[ 5]: https://github.com/in0k-src/in0k-bringToSecondPlane
+[ 5]:(https://github.com/in0k-src/in0k-bringToSecondPlane)
+
