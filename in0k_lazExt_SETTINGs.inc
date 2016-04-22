@@ -33,7 +33,9 @@
 {$define in0k_LazIdeEXT_wndInspector_FF8S___AutoMODE}
 // Если файл НАЙДЕН, то окно соответствующего инспектора переместить на "ВТОРОЙ план"
 // подробности см. https://github.com/in0k-src/in0k-bringToSecondPlane
+{$IFDEF Windows}
 {$define in0k_LazIdeEXT_wndInspector_FF8S___AutoMODE_useBringToSecondPlane}
+{$endIF}
 //------------------------------------------------------------------------------
 
 //--- # treeView_AutoCollapse --------------------------------------------------
