@@ -37,7 +37,7 @@
 ## Установка и Настройка
 * **Получение исходников**: "клонируйте" репозиторий со ВСЕМИ под проектами или
   скачайте ПОЛНЫЙ архив пакета (`.._fullSRC.zip`) из последнего 
-  [релиза](https://github.com/in0k-LazarusIDE-plugins/in0k_LazIdeEXT_wndInspector_FF8S/releases). 
+  [релиза](https://github.com/in0k-LazarusIDE-plugins/in0k_LazIdeEXT_wndInspector_FF8S/releases).[asdf](R0) 
 * **Установка**: используется [стандартная схема](I0) установки пакетов.
 * **Настройка**: перед "сборкой" пакета отредактируйте файл `in0k_lazExt_SETTINGs.inc`.
 
