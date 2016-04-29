@@ -13,6 +13,11 @@
         <OtherUnitFiles Value="srcEXT\in0k-lazarusIdeSRC-wndDEBUG;srcEXT\in0k-lazarusIdeSRC-SourceEditor-onActivate;srcEXT\in0k-lazarusIdeSRC-FuckUpForm;srcEXT\in0k-lazarusIdeSRC-testFormIS;srcEXT\in0k-bringToSecondPlane;srcEXT\in0k-lazarusIdeSRC-B2SP;srcPKG;srcPKG\wndNodes"/>
         <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>
+      <Linking>
+        <Debugging>
+          <GenerateDebugInfo Value="False"/>
+        </Debugging>
+      </Linking>
       <Other>
         <Verbosity>
           <ShoLineNum Value="True"/>
@@ -26,7 +31,7 @@
     <Description Value="Searching file from &quot;Source Editor&quot;, in open &quot;Inspectors&quot; windows  (&quot;Project Inspector&quot;, &quot;Package Editor&quot;).
 How it works: setting focus to a node &quot;Dependency Tree&quot; of window &quot;Inspector&quot;,  according to the current active file in the &quot;Source Editor&quot;."/>
     <License Value="???"/>
-    <Version Minor="5"/>
+    <Version Minor="5" Release="1"/>
     <Files Count="7">
       <Item1>
         <Filename Value="in0k_lazExt_DEBUG.pas"/>
