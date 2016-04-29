@@ -40,7 +40,7 @@
 
 ## Installation and Configuration
 * **Sources**: clone the repository with ALL subprojects OR 
-  download "FULL source code" archive (`.._fullSRC.zip`) from last [releas](https://github.com/in0k-LazarusIDE-plugins/in0k_LazIdeEXT_wndInspector_FF8S/releases).
+  download "FULL source code" archive (`.._fullSRC.zip`) from last [release](https://github.com/in0k-LazarusIDE-plugins/in0k_LazIdeEXT_wndInspector_FF8S/releases).
 * **Installation**: It uses a [standard](I0) installation package scheme. 
 * **Configuration**: before the "build" package, edit the file `in0k_lazExt_SETTINGs.inc`.
 
