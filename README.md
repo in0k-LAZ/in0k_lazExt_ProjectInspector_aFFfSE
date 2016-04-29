@@ -20,14 +20,14 @@
 ### Features
 
 * IDE Command
-  - shortcut: `Ctrl`+`Shift`+`Alt`+`F` (to change see [Shortcuts](4))
+  - shortcut: `Ctrl`+`Shift`+`Alt`+`F` (to change see [Shortcuts] [id4])
   - menu item: `IDE menu`->`Search`->`Find File in "Inspector"`
   - menu item: `Source editor`->`Рopup menu`->`Find File in "Inspector"`
   - additionally:
     + if file found in "Inspector", then brings window to "foreground" 
     + message, if the file is not found in any of the open windows "Inspectors"
 * Auto mode
-   - the search starts when you change "[Active source editor](3)"
+   - the search starts when you change "[Active source editor][3]"
    - additionally:
      + if file found in "Inspector", then brings window to 
        "[Second Plan](https://github.com/in0k-src/in0k-bringToSecondPlane)"
@@ -50,5 +50,5 @@
 [ 0]: http://wiki.freepascal.org/IDE_Window:_Source_Editor
 [ 1]: http://wiki.freepascal.org/IDE_Window:_Project_Inspector
 [ 2]: http://wiki.freepascal.org/IDE_Window:_Package_Editor
-[ 3]: http://wiki.freepascal.org/Extending_the_IDE#Active_source_editor
-[ 4]: http://wiki.freepascal.org/Lazarus_IDE_Shortcuts
+[3]: http://wiki.freepascal.org/Extending_the_IDE#Active_source_editor
+[id4]: http://wiki.freepascal.org/Lazarus_IDE_Shortcuts
