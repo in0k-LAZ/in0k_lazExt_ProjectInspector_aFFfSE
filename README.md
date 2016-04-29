@@ -41,7 +41,7 @@
 ## Installation and Configuration
 * **Sources**: clone the repository with ALL subprojects OR 
   download "FULL source code" archive (`.._fullSRC.zip`) from last [release][R0].
-* **Installation**: It uses a [standard](I0) installation package scheme. 
+* **Installation**: It uses a [standard][I0] installation package scheme. 
 * **Configuration**: before the "build" package, edit the file `in0k_lazExt_SETTINGs.inc`.
 
 [D1]: http://wiki.lazarus.freepascal.org/Extending_the_IDE#Overview
