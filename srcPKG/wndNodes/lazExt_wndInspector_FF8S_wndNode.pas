@@ -477,6 +477,8 @@ end;
 // тут возможно в разных версиях Лазаруса придется поступать по разному
 {$if     (lcl_major=1) and (lcl_minor=4) and (lcl_release=4)}
     {$define fuckUp_TreeView_byNAME_01}
+{$elseif (lcl_major=1) and (lcl_minor=6) and (lcl_release=0) and (lcl_patch=1)}
+    {$define fuckUp_TreeView_byNAME_01}
 {$elseif (lcl_major=1) and (lcl_minor=6) and (lcl_release=0) and (lcl_patch=2)}
     {$define fuckUp_TreeView_byNAME_01}
 {$elseif (lcl_major=1) and (lcl_minor=6) and (lcl_release=0) and (lcl_patch=4)}
@@ -535,6 +537,8 @@ end;
 {%region --- определение способа получения ------------------------ /fold}
 // тут возможно в разных версиях Лазаруса придется поступать по разному
 {$if     (lcl_major=1) and (lcl_minor=4) and (lcl_release=4)}
+    {$define fuckUp_TreeViewNodeData_01}
+{$elseif (lcl_major=1) and (lcl_minor=6) and (lcl_release=0) and (lcl_patch=1)}
     {$define fuckUp_TreeViewNodeData_01}
 {$elseif (lcl_major=1) and (lcl_minor=6) and (lcl_release=0) and (lcl_patch=2)}
     {$define fuckUp_TreeViewNodeData_01}
