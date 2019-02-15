@@ -7,7 +7,7 @@ unit in0k_LazIdeEXT_wndInspector_FF8S;
 interface
 
 uses
-  in0k_lazExt_DEBUG, in0k_lazExt_REGISTER, LazarusPackageIntf;
+  in0k_lazExt_REGISTER, LazarusPackageIntf;
 
 implementation
 

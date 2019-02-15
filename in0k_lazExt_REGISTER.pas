@@ -30,6 +30,7 @@ procedure REGISTER;
 begin
     // подключаем инфраструктуру для организации ДЕБАГ сообщений
     {$ifDef _debugLOG_}
+    //in0k_lazExt_DEBUG.LazarusIDE_SetUP(tLazExt_wndInspector_FF8S.ClassName);
     in0k_lazExt_DEBUG.LazarusIDE_SetUP(tLazExt_wndInspector_FF8S.ClassName);
     {$endIf}
     // создаем и регистрируем ГЛАВНЫЙ экземпляр класса "компонента-Расширения"

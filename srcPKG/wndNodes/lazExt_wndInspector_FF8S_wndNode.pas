@@ -483,6 +483,8 @@ end;
     {$define fuckUp_TreeView_byNAME_01}
 {$elseif (lcl_major=1) and (lcl_minor=6) and (lcl_release=0) and (lcl_patch=4)}
     {$define fuckUp_TreeView_byNAME_01}
+{$elseif (lcl_major=1) and (lcl_minor=8) and (lcl_release=0) and (lcl_patch=1)}
+    {$define fuckUp_TreeView_byNAME_01}
 {$else} //< способ по умолчанию
     {$WARNING 'NOT Tested in this LazarusIDE version'}
     {$define fuckUp_TreeView_byNAME_01}
@@ -543,6 +545,8 @@ end;
 {$elseif (lcl_major=1) and (lcl_minor=6) and (lcl_release=0) and (lcl_patch=2)}
     {$define fuckUp_TreeViewNodeData_01}
 {$elseif (lcl_major=1) and (lcl_minor=6) and (lcl_release=0) and (lcl_patch=4)}
+    {$define fuckUp_TreeViewNodeData_01}
+{$elseif (lcl_major=1) and (lcl_minor=8) and (lcl_release=0) and (lcl_patch=1)}
     {$define fuckUp_TreeViewNodeData_01}
 {$else} //< способ по умолчанию
     {$WARNING 'NOT Tested in this LazarusIDE version'}
@@ -1021,6 +1025,7 @@ begin //< тупо сохраняем ИМЕНА всех РАЗВЕРНУТЫХ
             tmp:=tmp.GetNext;
         end;
         {$ifDef _debugLOG_}
+        Debug('asdfasdf asdf ');
         DEBUG('_TSfENm01_listExpandedNodes__2List_','SAVE. In List '+inttostr(_TSfENm01__listExpandedNodes_.Count)+' node(s).');
         {$endIf}
     end;

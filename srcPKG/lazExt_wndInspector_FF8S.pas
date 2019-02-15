@@ -239,11 +239,6 @@ procedure tLazExt_wndInspector_FF8S.LazarusIDE_SetUP;
 begin
    _lair_nodes_wndInspector_.CLEAR;
     LazarusIDE.AddHandlerOnIDEClose(@LazarusIDE_OnIDEClose);
-    //LazarusIDE.AddHandlerOnProjectOpened(@LazarusIDE_OnProjectOpen,true);
-    //PackageEditingInterface.AddHandlerOnPackageFileLoaded(@LazarusIDE_OnPackageOpen);
-
-    //PackageEditingInterface.DoOpenPackageFile();
-
     {$ifDef in0k_LazIdeEXT_wndInspector_FF8S___IdeCommand}
    _LazarusIDE_SetUP__mode_ideCommand_;
     {$endIf}
@@ -326,7 +321,7 @@ begin
     LazarusIDE_Clean;
 end;
 
-{TODO: надо как-то перейти на нижеЗакомментированные методы ..
+{TODO: надо как-то перейти на нижеУказанные методы ..
        LazarusIDE_OnProjectOpen(Sender:TObject; AProject:TLazProject):TModalResult;
        LazarusIDE_OnPackageOpen(Sender: TObject);
        последний пока чет не работает не работает :-(                          }
@@ -506,7 +501,7 @@ begin
                 if _select_inWindow_(fileName,tmp,tLazExt_wndInspector_FF8S_wndNode_ProjectInspector)
                 then result:=true;
             end
-           else
+            else
             if tLazExt_wndInspector_FF8S_wndNode_PackageEditor.OfMyType(tmp) then begin
                 if _select_inWindow_(fileName,tmp,tLazExt_wndInspector_FF8S_wndNode_PackageEditor)
                 then result:=true;

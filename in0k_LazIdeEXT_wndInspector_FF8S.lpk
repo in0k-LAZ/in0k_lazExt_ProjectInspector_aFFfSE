@@ -9,9 +9,9 @@
       <Version Value="11"/>
       <PathDelim Value="\"/>
       <SearchPaths>
-        <IncludeFiles Value="srcEXT\in0k-lazarusIdeSRC-wndDEBUG"/>
+        <IncludeFiles Value="srcEXT\in0k-lazarusIdeSRC-wndDEBUG;lib\$(TargetCPU)-$(TargetOS)"/>
         <OtherUnitFiles Value="srcEXT\in0k-lazarusIdeSRC-wndDEBUG;srcEXT\in0k-lazarusIdeSRC-SourceEditor-onActivate;srcEXT\in0k-lazarusIdeSRC-FuckUpForm;srcEXT\in0k-lazarusIdeSRC-testFormIS;srcEXT\in0k-bringToSecondPlane;srcEXT\in0k-lazarusIdeSRC-B2SP;srcPKG;srcPKG\wndNodes"/>
-        <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
+        <UnitOutputDirectory Value="lib\asd\$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>
       <Linking>
         <Debugging>
@@ -32,40 +32,36 @@
 How it works: setting focus to a node &quot;Dependency Tree&quot; of window &quot;Inspector&quot;,  according to the current active file in the &quot;Source Editor&quot;."/>
     <License Value="???"/>
     <Version Minor="5" Release="1"/>
-    <Files Count="7">
+    <Files Count="6">
       <Item1>
-        <Filename Value="in0k_lazExt_DEBUG.pas"/>
-        <UnitName Value="in0k_lazExt_DEBUG"/>
-      </Item1>
-      <Item2>
         <Filename Value="in0k_lazExt_REGISTER.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="in0k_lazExt_REGISTER"/>
-      </Item2>
-      <Item3>
+      </Item1>
+      <Item2>
         <Filename Value="in0k_lazExt_SETTINGs.inc"/>
         <Type Value="Include"/>
-      </Item3>
-      <Item4>
+      </Item2>
+      <Item3>
         <Filename Value="srcPKG\lazExt_wndInspector_FF8S.pas"/>
         <AddToUsesPkgSection Value="False"/>
         <UnitName Value="lazExt_wndInspector_FF8S"/>
-      </Item4>
-      <Item5>
+      </Item3>
+      <Item4>
         <Filename Value="srcPKG\wndNodes\lazExt_wndInspector_FF8S_wndNode.pas"/>
         <AddToUsesPkgSection Value="False"/>
         <UnitName Value="lazExt_wndInspector_FF8S_wndNode"/>
-      </Item5>
-      <Item6>
+      </Item4>
+      <Item5>
         <Filename Value="srcPKG\wndNodes\lazExt_wndInspector_FF8S_wndNode_PackageEditor.pas"/>
         <AddToUsesPkgSection Value="False"/>
         <UnitName Value="lazExt_wndInspector_FF8S_wndNode_PackageEditor"/>
-      </Item6>
-      <Item7>
+      </Item5>
+      <Item6>
         <Filename Value="srcPKG\wndNodes\lazExt_wndInspector_FF8S_wndNode_ProjectInspector.pas"/>
         <AddToUsesPkgSection Value="False"/>
         <UnitName Value="lazExt_wndInspector_FF8S_wndNode_ProjectInspector"/>
-      </Item7>
+      </Item6>
     </Files>
     <RequiredPkgs Count="3">
       <Item1>
